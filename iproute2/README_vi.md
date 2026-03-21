@@ -40,3 +40,5 @@ Thực hiện điều chỉnh định tuyến để thỏa mãn các yêu cầu 
 3. **Client IP 192.168.11.13/24** truy cập `server1`:
    - Traffic đến **port 80** đi qua đường `linux2`.
    - Traffic đến **port 22** đi qua đường `linux3`.
+
+Cơm thêm câu 2: Cấu hình **Load Balance** (chia tải) qua 2 đường đi qua `linux2` và `linux3`: Thêm tham số Layer 4 để tối ưu hóa hiệu suất.
