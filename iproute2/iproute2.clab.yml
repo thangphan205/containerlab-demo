@@ -1,0 +1,67 @@
+name: iproute2-demo
+
+mgmt:
+  network: mgmt
+  ipv4-subnet: 192.168.5.0/24
+
+topology:
+  nodes:
+    linux1:
+      kind: linux
+      image: alpine:latest
+      mgmt-ipv4: 192.168.5.11
+      sysctls:
+        net.ipv4.ip_forward: 1
+      exec:
+        - apk add --no-cache iproute2 tcpdump
+      cmd: sh -c "tail -f /dev/null"
+    linux2:
+      kind: linux
+      image: alpine:latest
+      mgmt-ipv4: 192.168.5.12
+      sysctls:
+        net.ipv4.ip_forward: 1
+      exec:
+        - apk add --no-cache iproute2
+      cmd: sh -c "tail -f /dev/null"
+
+    linux3:
+      kind: linux
+      image: alpine:latest
+      mgmt-ipv4: 192.168.5.13
+      sysctls:
+        net.ipv4.ip_forward: 1
+      exec:
+        - apk add --no-cache iproute2
+      cmd: sh -c "tail -f /dev/null"
+    linux4:
+      kind: linux
+      image: alpine:latest
+      mgmt-ipv4: 192.168.5.14
+      sysctls:
+        net.ipv4.ip_forward: 1
+      exec:
+        - apk add --no-cache iproute2 tcpdump
+      cmd: sh -c "tail -f /dev/null"
+    client1:
+      kind: linux
+      image: alpine:latest
+      mgmt-ipv4: 192.168.5.21
+      exec:
+        - apk add --no-cache traceroute mtr iperf3
+      cmd: sh -c "tail -f /dev/null"
+    server1:
+      kind: linux
+      image: alpine:latest
+      mgmt-ipv4: 192.168.5.22
+      exec:
+        - apk add --no-cache traceroute mtr iperf3
+      cmd: sh -c "tail -f /dev/null"
+
+  links:
+    - endpoints: ["linux1:eth1", "linux2:eth1"]
+    - endpoints: ["linux1:eth2", "linux3:eth1"]
+    - endpoints: ["linux2:eth2", "linux4:eth1"]
+    - endpoints: ["linux3:eth2", "linux4:eth2"]
+    - endpoints: ["client1:eth1", "linux1:eth3"]
+    - endpoints: ["server1:eth1", "linux4:eth3"]
