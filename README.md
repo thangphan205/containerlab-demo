@@ -21,7 +21,8 @@ Trước khi bắt đầu, hãy đảm bảo bạn đã cài đặt:
 
 | Lab Name | Vendor | Technologies | Status |
 | :--- | :--- | :--- | :--- |
-| iproute2 | Linux | Linux Networking | ✅ Completed |
+| [iproute2](./iproute2) | Linux | Linux Networking | ✅ Completed |
+| [iproute2-tc](./iproute2-tc) | Linux | Linux Traffic Control TBF | ✅ Completed |
 | apricot-2026-pcio | FRR | OSPF, ISIS, BGP | 🚧 In Progress |
 | apricot-2026-pcio | FRR, Linux | RPKI | 📅 Planned |
 | apricot-2026-pcio | FRR, Linux | RTBH | 📅 Planned |

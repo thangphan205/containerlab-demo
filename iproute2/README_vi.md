@@ -22,8 +22,8 @@ Thực hiện đặt IP Address theo mô hình mạng (tham khảo file `iproute
 | **linux4** | eth1 | 192.168.24.4/24 | - |
 | | eth2 | 192.168.34.4/24 | - |
 | | eth3 | 192.168.41.1/24 | - |
-| **client1**| eth1 | 192.168.11.2/24 | 192.168.11.1 |
-| **server1**| eth1 | 192.168.41.2/24 | 192.168.41.1 |
+| **client1** | eth1 | 192.168.11.2/24 | 192.168.11.1 |
+| **server1** | eth1 | 192.168.41.2/24 | 192.168.41.1 |
 
 ### 2. Định tuyến & Load Balancing
 
