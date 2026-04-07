@@ -1,0 +1,104 @@
+# Containerlab Generated Directories
+# These are created when containerlab deploys labs
+clab-*/
+*.clab-*
+
+# FRR (Free Range Routing) Files
+# frr.conf is generated at runtime by FRR daemon
+frr.conf
+*.sav
+vtysh.conf
+
+# Containerlab TLS Certificates and Keys
+.tls/
+*.pem
+*.key
+*.crt
+*.cert
+
+# Containerlab Generated Inventory and Metadata
+ansible-inventory.yml
+nornir-simple-inventory.yml
+topology-data.json
+authorized_keys
+.clab-inventory.yml
+*.annotations.json
+
+# OS and IDE Files
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# Python Virtual Environments
+venv/
+env/
+ENV/
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Temporary Files
+*.tmp
+*.temp
+*.bak
+*.backup
+.~lock.*
+
+# System/Log Files
+*.log
+*.log.*
+.bash_history
+.sh_history
+
+# Build Artifacts
+dist/
+build/
+*.egg-info/
+
+# SSH Keys
+*.pub
+id_rsa
+id_dsa
+id_ecdsa
+id_ed25519
+
+# Sensitive Configuration Files
+secrets/
+.env
+.env.local
+.env.*.local
+credentials
+passwords.txt
+
+# Node/JavaScript (if applicable)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Ansible
+*.retry
+
+# Network Lab Specific
+*.pcap
+*.pcapng
+*.html
+
+# VS Code extension cache
+.containerlab_history
+
+# Docker/Container Runtime
+.docker/

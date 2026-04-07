@@ -1,0 +1,86 @@
+name: apricot-2026-pcio
+
+topology:
+  groups:
+    routers:
+      kind: linux
+      image: quay.io/frrouting/frr:10.5.1
+    hosts:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+
+  nodes:
+    router-A1:
+      group: routers
+      binds:
+        - group1-router-A1:/etc/frr
+    router-B1:
+      group: routers
+      binds:
+        - group1-router-B1:/etc/frr
+    router-C1:
+      group: routers
+      binds:
+        - group1-router-C1:/etc/frr
+    router-P1:
+      group: routers
+      binds:
+        - group1-router-P1/daemons:/etc/frr/daemons
+        - group1-router-P1/frr.conf:/etc/frr/frr.conf
+    router-Cust1:
+      group: routers
+      binds:
+        - group1-router-Cust1:/etc/frr
+    server-SRV1:
+      group: hosts
+      exec:
+        - ip link set eth1 up
+        - ip addr add 100.68.1.30/30 dev eth1
+        - ip route add default via 100.68.1.29
+
+    router-A2:
+      group: routers
+      binds:
+        - group2-router-A2:/etc/frr
+    router-B2:
+      group: routers
+      binds:
+        - group2-router-B2:/etc/frr
+    router-C2:
+      group: routers
+      binds:
+        - group2-router-C2:/etc/frr
+    router-P2:
+      group: routers
+      binds:
+        - group2-router-P2:/etc/frr
+    router-Cust2:
+      group: routers
+      binds:
+        - group2-router-Cust2:/etc/frr
+    server-SRV2:
+      group: hosts
+      exec:
+        - ip link set eth1 up
+        - ip addr add 100.68.2.30/30 dev eth1
+        - ip route add default via 100.68.2.29
+
+    router-TR1:
+      group: routers
+      binds:
+        - transit-router-TR1:/etc/frr
+  links:
+    - endpoints: ["router-C1:eth1", "router-B1:eth1"]
+    - endpoints: ["router-C1:eth2", "router-P1:eth1"]
+    - endpoints: ["router-C1:eth3", "router-A1:eth1"]
+    - endpoints: ["router-C1:eth4", "server-SRV1:eth1"]
+    - endpoints: ["router-A1:eth2", "router-Cust1:eth1"]
+
+    - endpoints: ["router-C2:eth1", "router-B2:eth1"]
+    - endpoints: ["router-C2:eth2", "router-P2:eth1"]
+    - endpoints: ["router-C2:eth3", "router-A2:eth1"]
+    - endpoints: ["router-C2:eth4", "server-SRV2:eth1"]
+    - endpoints: ["router-A2:eth2", "router-Cust2:eth1"]
+
+    - endpoints: ["router-TR1:eth1", "router-B1:eth2"]
+    - endpoints: ["router-TR1:eth2", "router-B2:eth2"]
