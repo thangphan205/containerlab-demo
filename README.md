@@ -1,28 +1,78 @@
 # Containerlab Practice & Labs 🚀
 
-Step-by-step demonstrations of network scenarios using Containerlab.
+A collection of network simulation labs and demonstrations using **Containerlab**, featuring topology definitions, router configurations, and practice environments.
 
-Chào mừng bạn đến với kho lưu trữ các bài thực hành mạng sử dụng **Containerlab (clab)**. Đây là nơi tôi lưu trữ và chia sẻ các mô hình mạng giả lập từ cơ bản đến nâng cao.
+## 📌 Repository Overview
 
-## 📌 Mục tiêu của Repo
+This repository contains containerized network lab implementations with:
 
-- Chia sẻ các file topology (`.clab.yml`) đã được tối ưu hóa.
-- Cung cấp cấu hình mẫu (startup-config) cho các Vendor: Cisco (IOS-XRv, NX-OS), Nokia (SRL), Arista (cEOS), FRR,...
-- Hướng dẫn tích hợp Lab mạng với các công cụ NetDevOps như Ansible, Terraform, và Prometheus/Grafana.
+- **Network Topologies**: `.clab.yml` files defining network architectures
+- **Router Configurations**: Complete FRR (Free Range Routing) and Linux routing configs
+- **Practice Environments**: Ready-to-deploy labs for hands-on learning
+- **Automation**: Ansible inventory files and integration support
 
-## 🛠 Yêu cầu hệ thống
+## 📂 Available Labs
 
-Trước khi bắt đầu, hãy đảm bảo bạn đã cài đặt:
+| Lab | Vendor | Technologies | Description | Status |
+|:---|:---|:---|:---|:---|
+| **apricot2026** | FRR | OSPF, IS-IS, BGP, Route-Maps | APRICOT 2026 PCIO networking lab with multi-AS design | ✅ Active |
+| **iproute2** | Linux | iproute2, netlink | Linux networking fundamentals | ✅ Complete |
+| **iproute2-tc** | Linux | Traffic Control (TBF, netem) | Advanced traffic shaping and QoS | ✅ Complete |
 
-- [Docker](https://docs.docker.com/get-docker/)
-- [Containerlab](https://containerlab.dev/install/)
+## 🚀 Getting Started
 
-## 📂 Danh sách các bài Lab
+### Prerequisites
 
-| Lab Name | Vendor | Technologies | Status |
-| :--- | :--- | :--- | :--- |
-| [iproute2](./iproute2) | Linux | Linux Networking | ✅ Completed |
-| [iproute2-tc](./iproute2-tc) | Linux | Linux Traffic Control TBF | ✅ Completed |
-| apricot-2026-pcio | FRR | OSPF, ISIS, BGP | 🚧 In Progress |
-| apricot-2026-pcio | FRR, Linux | RPKI | 📅 Planned |
-| apricot-2026-pcio | FRR, Linux | RTBH | 📅 Planned |
+```bash
+# Install Docker
+curl -fsSL https://get.docker.com -o get-docker.sh && sudo sh get-docker.sh
+
+# Install Containerlab
+bash -c "$(curl -sL https://get.containerlab.dev)"
+```
+
+### Deploy a Lab
+
+```bash
+cd <lab-directory>
+sudo clab deploy -t <topology-file>.clab.yml
+```
+
+### Access Routers
+
+```bash
+docker exec -it clab-<lab-name>-<router-name> vtysh
+```
+
+### Destroy Lab
+
+```bash
+sudo clab destroy -t <topology-file>.clab.yml
+```
+
+## 📖 Documentation
+
+- Each lab directory contains its own **requirements.md** with step-by-step guides
+- Configuration files include detailed comments explaining each section
+- Lab diagrams (`.jpg` files) show network topology and IP addressing
+
+## 🛠 Repository Management
+
+### File Structure
+
+The `.gitignore` is configured to:
+- **Ignore**: Generated `clab-*/` directories, `*.sav`, `frr.conf` (runtime-generated), TLS certificates, metadata files
+- **Track**: Topology files, router configs, documentation, daemon configs, images
+
+This ensures clean version control with only source files committed.
+
+## 📝 License
+
+Educational use for NSRC workshops and networking practice.
+
+## 🔗 Resources
+
+- [Containerlab Documentation](https://containerlab.dev/)
+- [FRR Project](https://frrouting.org/)
+- [NSRC Workshop Materials](https://nsrc.org/workshops/)
+- [YouTube Channel - Network Thực Chiến](https://www.youtube.com/@NetworkThucChien)
