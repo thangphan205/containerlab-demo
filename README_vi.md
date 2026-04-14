@@ -1,3 +1,5 @@
+**Language / Ngôn ngữ:** [English](README.md) | [Tiếng Việt](README_vi.md)
+
 # Containerlab Practice & Labs 🚀
 
 Bộ sưu tập các bài lab mạng và demo sử dụng **Containerlab**, bao gồm định nghĩa topology, cấu hình router, và các môi trường thực hành.
@@ -61,6 +63,7 @@ sudo clab destroy -t <tập-tin-topology>.clab.yml
 ### Cấu Trúc File
 
 File `.gitignore` được cấu hình để:
+
 - **Bỏ qua**: Các thư mục `clab-*/` được tạo, `*.sav`, `frr.conf` (generated), chứng chỉ TLS, metadata files
 - **Theo dõi**: Topology files, router configs, tài liệu, daemon configs, hình ảnh
 

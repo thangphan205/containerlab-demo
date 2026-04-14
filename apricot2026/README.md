@@ -1,19 +1,22 @@
+**Language / Ngôn ngữ:** [English](README.md) | [Tiếng Việt](README_vi.md)
+
 # APRICOT 2026 PCIO Network Configuration - Step-by-Step Guide
 
 ## Lab Overview
 
 In this lab, you will configure a network with two autonomous systems (groups) that connect through a transit provider. Each group has its own internal routing protocol and peers with the transit provider using eBGP.
 
-### Network Architecture:
+### Network Architecture
 
 ```
 Group 1 (AS10)  <---> Transit Provider (AS121) <---> Group 2 (AS20)
   OSPF IGP          eBGP Peering              IS-IS IGP
 ```
 
-### Router Roles:
+### Router Roles
 
 **Group 1 (AS10) - OSPF IGP:**
+
 - **Router-C1**: Core router (Route Reflector)
 - **Router-B1**: Border router (connects to Transit Provider)
 - **Router-A1**: Access router
@@ -21,6 +24,7 @@ Group 1 (AS10)  <---> Transit Provider (AS121) <---> Group 2 (AS20)
 - **Router-Cust1**: Customer router (AS65001)
 
 **Group 2 (AS20) - IS-IS IGP:**
+
 - **Router-C2**: Core router (Route Reflector)
 - **Router-B2**: Border router (connects to Transit Provider)
 - **Router-A2**: Access router
@@ -28,13 +32,104 @@ Group 1 (AS10)  <---> Transit Provider (AS121) <---> Group 2 (AS20)
 - **Router-Cust2**: Customer router (AS65002)
 
 **Transit Provider (AS121):**
+
 - **Router-TR1**: Transit router (connects both groups)
+
+### Group 1 (AS10) - OSPF IGP
+
+#### Router-C1 (Core / Route Reflector)
+
+| Interface | IPv4 Address | IPv6 Address | Mục Đích |
+|-----------|--------------|--------------|---------|
+| lo | 100.68.1.2/32 | 2001:db8:1:2::1/128 | Loopback (Router ID) |
+| eth1 | 100.68.1.16/31 | 2001:db8:1:16::1/64 | Link to C1-B1 |
+| eth2 | 100.68.1.18/31 | 2001:db8:1:18::1/64 | Link to C1-A1 |
+| eth3 | 100.68.1.20/31 | 2001:db8:1:20::1/64 | Link to C1-P1 |
+
+#### Router-B1 (Border Router)
+
+| Interface | IPv4 Address | IPv6 Address | Mục Đích |
+|-----------|--------------|--------------|---------|
+| lo | 100.68.1.1/32 | 2001:db8:1:1::1/128 | Loopback (Router ID) |
+| eth1 | 100.68.1.17/31 | 2001:db8:1:17::1/64 | Link to B1-C1 |
+| eth2 | 100.121.1.1/31 | 2001:db8:121:1::1/64 | eBGP to Transit (TR1) |
+
+#### Router-A1 (Access Router)
+
+| Interface | IPv4 Address | IPv6 Address | Mục Đích |
+|-----------|--------------|--------------|---------|
+| lo | 100.68.1.4/32 | 2001:db8:1:4::1/128 | Loopback (Router ID) |
+| eth1 | 100.68.1.19/31 | 2001:db8:1:19::1/64 | Link to A1-C1 |
+
+#### Router-P1 (Peering Router)
+
+| Interface | IPv4 Address | IPv6 Address | Mục Đích |
+|-----------|--------------|--------------|---------|
+| lo | 100.68.1.3/32 | 2001:db8:1:3::1/128 | Loopback (Router ID) |
+| eth1 | 100.68.1.21/31 | 2001:db8:1:21::1/64 | Link to P1-C1 |
+
+---
+
+### Group 2 (AS20) - IS-IS IGP
+
+#### Router-C2 (Core / Route Reflector)
+
+| Interface | IPv4 Address | IPv6 Address | Mục Đích |
+|-----------|--------------|--------------|---------|
+| lo | 100.68.2.2/32 | 2001:db8:2:2::1/128 | Loopback (Router ID) |
+| eth1 | 100.68.2.16/31 | 2001:db8:2:16::1/64 | Link to C2-B2 |
+| eth2 | 100.68.2.18/31 | 2001:db8:2:18::1/64 | Link to C2-A2 |
+| eth3 | 100.68.2.20/31 | 2001:db8:2:20::1/64 | Link to C2-P2 |
+
+#### Router-B2 (Border Router)
+
+| Interface | IPv4 Address | IPv6 Address | Mục Đích |
+|-----------|--------------|--------------|---------|
+| lo | 100.68.2.1/32 | 2001:db8:2:1::1/128 | Loopback (Router ID) |
+| eth1 | 100.68.2.17/31 | 2001:db8:2:17::1/64 | Link to B2-C2 |
+| eth2 | 100.121.2.2/31 | 2001:db8:121:2::1/64 | eBGP to Transit (TR1) |
+
+#### Router-A2 (Access Router)
+
+| Interface | IPv4 Address | IPv6 Address | Mục Đích |
+|-----------|--------------|--------------|---------|
+| lo | 100.68.2.4/32 | 2001:db8:2:4::1/128 | Loopback (Router ID) |
+| eth1 | 100.68.2.19/31 | 2001:db8:2:19::1/64 | Link to A2-C2 |
+
+#### Router-P2 (Peering Router)
+
+| Interface | IPv4 Address | IPv6 Address | Mục Đích |
+|-----------|--------------|--------------|---------|
+| lo | 100.68.2.3/32 | 2001:db8:2:3::1/128 | Loopback (Router ID) |
+| eth1 | 100.68.2.21/31 | 2001:db8:2:21::1/64 | Link to P2-C2 |
+
+---
+
+### Transit Provider (AS121)
+
+#### Router-TR1 (Transit Router)
+
+| Interface | IPv4 Address | IPv6 Address | Mục Đích |
+|-----------|--------------|--------------|---------|
+| lo | 100.121.1.0/32 | 2001:db8:121:0::1/128 | Loopback (Router ID) |
+| eth1 | 100.121.1.0/31 | 2001:db8:121:1::2/64 | eBGP to B1 (Group 1) |
+| eth2 | 100.121.2.2/31 | 2001:db8:121:2::2/64 | eBGP to B2 (Group 2) |
+
+---
+
+## Lab Requirements
+
+1. **Configure OSPF for Group 1 (AS10)**: Establish an Interior Gateway Protocol (IGP) to ensure seamless connectivity between routers within the same AS.
+2. **Configure IS-IS for Group 2 (AS20)**: Deploy IS-IS as the IGP for both IPv4 and IPv6, implementing NET assignments and metric optimization.
+3. **Set up iBGP with Route Reflector**: Configure internal BGP (iBGP) for each group, using core routers as Route Reflectors to optimize routing tables.
+4. **eBGP Connectivity and Route Filtering**: Establish peering with the Transit Provider (AS121), configuring Prefix-lists and Route-maps to control route advertisement and reception.
 
 ---
 
 ## Phase 1: Configure OSPF for Group 1 (AS10)
 
-### Objective:
+### Objective
+
 Configure OSPF as the Interior Gateway Protocol for all routers in Group 1 to enable dynamic routing within the autonomous system.
 
 ### Step 1.1: Configure Loopback Interface (All Group1 Routers)
@@ -42,6 +137,7 @@ Configure OSPF as the Interior Gateway Protocol for all routers in Group 1 to en
 Each router needs a loopback interface that stays up regardless of link failures. This is used as the router ID and for iBGP peering.
 
 **On Router-C1:**
+
 ```
 interface lo
   ip address 100.68.1.2/32
@@ -51,6 +147,7 @@ interface lo
 ```
 
 **On Router-B1:**
+
 ```
 interface lo
   ip address 100.68.1.1/32
@@ -60,6 +157,7 @@ interface lo
 ```
 
 **On Router-A1:**
+
 ```
 interface lo
   ip address 100.68.1.4/32
@@ -69,6 +167,7 @@ interface lo
 ```
 
 **On Router-P1:**
+
 ```
 interface lo
   ip address 100.68.1.3/32
@@ -82,6 +181,7 @@ interface lo
 For each interface connecting to other OSPF routers, enable OSPF with a cost metric.
 
 **Example from Router-C1:**
+
 ```
 interface eth1
   ip address 100.68.1.16/31
@@ -105,6 +205,7 @@ interface eth3
 Create the OSPF routing process on each router. The router-id should match the loopback address.
 
 **On Router-C1:**
+
 ```
 router ospf
   router-id 100.68.1.2
@@ -120,6 +221,7 @@ router ospf
 ### Step 1.4: Verification Check
 
 Verify OSPF is working:
+
 ```
 show ip ospf neighbor              # Check adjacencies
 show ip ospf database              # Check database synchronization
@@ -131,12 +233,14 @@ ping 100.68.1.2 (from another router)  # Test connectivity to loopback
 
 ## Phase 2: Configure IS-IS for Group 2 (AS20)
 
-### Objective:
+### Objective
+
 Configure Intermediate System-to-Intermediate System (IS-IS) as the IGP for Group 2.
 
 ### Step 2.1: Configure Loopback Interfaces (All Group2 Routers)
 
 **On Router-C2:**
+
 ```
 interface lo
   ip address 100.68.2.2/32
@@ -147,6 +251,7 @@ interface lo
 ```
 
 **On Router-B2:**
+
 ```
 interface lo
   ip address 100.68.2.1/32
@@ -157,6 +262,7 @@ interface lo
 ```
 
 **On Router-A2:**
+
 ```
 interface lo
   ip address 100.68.2.4/32
@@ -167,6 +273,7 @@ interface lo
 ```
 
 **On Router-P2:**
+
 ```
 interface lo
   ip address 100.68.2.3/32
@@ -179,6 +286,7 @@ interface lo
 ### Step 2.2: Enable IS-IS on Link Interfaces
 
 **Example from Router-C2:**
+
 ```
 interface eth1
   ip address 100.68.2.16/31
@@ -201,6 +309,7 @@ interface eth2
 Create the IS-IS routing process with proper NET (Network Entity Title) format.
 
 **On Router-C2:**
+
 ```
 router isis AREA20
   net 49.0001.0020.0002.0002.00
@@ -218,6 +327,7 @@ router isis AREA20
 ```
 
 **Configuration for other routers:**
+
 - Router-B2: `net 49.0001.0020.0002.0001.00`
 - Router-A2: `net 49.0001.0020.0002.0004.00`
 - Router-P2: `net 49.0001.0020.0002.0003.00`
@@ -225,6 +335,7 @@ router isis AREA20
 ### Step 2.4: Verification Check
 
 Verify IS-IS is working:
+
 ```
 show isis neighbors            # Check adjacencies
 show isis database             # Check database
@@ -236,7 +347,8 @@ ping 100.68.2.2 (from another router)  # Test connectivity
 
 ## Phase 3: Configure iBGP Within Each Group
 
-### Objective:
+### Objective
+
 Set up internal BGP (iBGP) peering within each group using a Route Reflector architecture to reduce the number of full-mesh BGP connections.
 
 ### Step 3.1: iBGP on Group 1 (AS10)
@@ -244,6 +356,7 @@ Set up internal BGP (iBGP) peering within each group using a Route Reflector arc
 The Route Reflector (Router-C1) listens to all other routers' prefixes and reflects them back.
 
 **On Router-C1 (Route Reflector):**
+
 ```
 router bgp 10
   bgp router-id 100.68.1.2
@@ -279,6 +392,7 @@ router bgp 10
 ```
 
 **On Router-B1, Router-P1, Router-A1 (Clients):**
+
 ```
 router bgp 10
   bgp router-id 100.68.1.1  (use their respective loopback IPs)
@@ -301,10 +415,12 @@ router bgp 10
 **Follow the same pattern as Group 1, but with Group 2 address space and AS20:**
 
 **On Router-C2 (Route Reflector):**
+
 - Router-ID: 100.68.2.2
 - Neighbors: 100.68.2.1 (B2), 100.68.2.3 (P2), 100.68.2.4 (A2)
 
 **On Router-B2, Router-P2, Router-A2 (Clients):**
+
 - Only peer with Route Reflector (100.68.2.2)
 
 ### Step 3.3: Verification Check
@@ -321,7 +437,8 @@ show ip bgp                    # View BGP routing table
 
 ## Phase 4: Configure eBGP with Transit Provider
 
-### Objective:
+### Objective
+
 Set up external BGP (eBGP) peering with the transit provider to connect Group 1 and Group 2 and receive Internet routes.
 
 ### Step 4.1: Configure Prefix Lists for Route Filtering
@@ -329,6 +446,7 @@ Set up external BGP (eBGP) peering with the transit provider to connect Group 1 
 Prefix lists define which routes are allowed in or out of the eBGP session.
 
 **On Router-B1 (Group 1 Border Router):**
+
 ```
 ip prefix-list GROUP1-AGGREGATE permit 100.68.1.0/24
 ip prefix-list DEFAULT-ROUTEv4 permit 0.0.0.0/0
@@ -340,6 +458,7 @@ ipv6 prefix-list FULL-ROUTESv6 permit ::/0 le 128
 ```
 
 **On Router-B2 (Group 2 Border Router):**
+
 ```
 ip prefix-list GROUP2-AGGREGATE permit 100.68.2.0/24
 ip prefix-list DEFAULT-ROUTEv4 permit 0.0.0.0/0
@@ -355,6 +474,7 @@ ipv6 prefix-list FULL-ROUTESv6 permit ::/0 le 128
 Route-maps control which prefixes are sent to the transit provider. We only advertise our own aggregate.
 
 **On Router-B1:**
+
 ```
 route-map Transit-out permit 5
   description Send only GROUP1 aggregate to Transit Provider
@@ -366,6 +486,7 @@ route-map Transit-out permit 10
 ```
 
 **On Router-B2:**
+
 ```
 route-map Transit-out permit 5
   description Send only GROUP2 aggregate to Transit Provider
@@ -381,6 +502,7 @@ route-map Transit-out permit 10
 Inbound route-maps control which routes we accept from the transit provider. The default route is tagged with the "no-advertise" community to prevent it from spreading via iBGP.
 
 **On Router-B1:**
+
 ```
 route-map Transitv4-in permit 5
   description Do not propagate the default route by iBGP
@@ -409,6 +531,7 @@ route-map Transitv6-in permit 10
 
 **On Router-B1 (OSPF):**
 First, create a prefix-list and route-map for default route:
+
 ```
 route-map DEFAULT-ORIGv4 permit 10
   description Allow default route origination if exists in RIB
@@ -417,6 +540,7 @@ route-map DEFAULT-ORIGv4 permit 10
 ```
 
 Then update the OSPF process:
+
 ```
 router ospf
   router-id 100.68.1.1
@@ -428,6 +552,7 @@ router ospf
 ```
 
 **On Router-B2 (IS-IS):**
+
 ```
 ip prefix-list DEFAULT-ROUTEv4 permit 0.0.0.0/0
 ipv6 prefix-list DEFAULT-ROUTEv6 permit ::/0
@@ -443,6 +568,7 @@ route-map DEFAULT-ORIGv6 permit 10
 ```
 
 Update the IS-IS process:
+
 ```
 router isis AREA20
   net 49.0001.0020.0002.0001.00
@@ -462,6 +588,7 @@ router isis AREA20
 ### Step 4.5: Configure eBGP Neighbors and Route-Maps
 
 **On Router-B1:**
+
 ```
 router bgp 10
   bgp router-id 100.68.1.1
@@ -490,6 +617,7 @@ router bgp 10
 ```
 
 **On Router-B2:**
+
 ```
 router bgp 20
   bgp router-id 100.68.2.1
@@ -520,6 +648,7 @@ router bgp 20
 ### Step 4.6: Configure Transit Router (TR1)
 
 **On Router-TR1 (AS121):**
+
 ```
 ! Prefix lists
 ip prefix-list GROUP1-AGGREGATE permit 100.68.1.0/24
@@ -584,6 +713,7 @@ ip route 0.0.0.0/0 Null0
 ### Step 5.1: Verify IGP Routing
 
 **Check OSPF (Group 1):**
+
 ```
 show ip ospf neighbor
 show ip route ospf
@@ -591,6 +721,7 @@ show ip ospf database
 ```
 
 **Check IS-IS (Group 2):**
+
 ```
 show isis neighbor
 show ip route isis
@@ -678,6 +809,7 @@ traceroute 100.68.2.1
 ## Configuration Files Reference
 
 The generated configuration files are located in:
+
 - `group1-router-B1/group1-router-B1.conf`
 - `group1-router-C1/group1-router-C1.conf`
 - `group1-router-A1/group1-router-A1.conf`

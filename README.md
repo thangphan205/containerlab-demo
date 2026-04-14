@@ -1,3 +1,5 @@
+**Language / Ngôn ngữ:** [English](README.md) | [Tiếng Việt](README_vi.md)
+
 # Containerlab Practice & Labs 🚀
 
 A collection of network simulation labs and demonstrations using **Containerlab**, featuring topology definitions, router configurations, and practice environments.
@@ -61,6 +63,7 @@ sudo clab destroy -t <topology-file>.clab.yml
 ### File Structure
 
 The `.gitignore` is configured to:
+
 - **Ignore**: Generated `clab-*/` directories, `*.sav`, `frr.conf` (runtime-generated), TLS certificates, metadata files
 - **Track**: Topology files, router configs, documentation, daemon configs, images
 
