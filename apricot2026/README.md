@@ -13,6 +13,8 @@ Group 1 (AS10)  <---> Transit Provider (AS121) <---> Group 2 (AS20)
   OSPF IGP          eBGP Peering              IS-IS IGP
 ```
 
+![diagram](./apricot-2026-pcio.jpg)
+
 ### Router Roles
 
 **Group 1 (AS10) - OSPF IGP:**

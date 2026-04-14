@@ -13,6 +13,8 @@ Group 1 (AS10)  <---> Nhà cung cấp trung chuyển (AS121) <---> Group 2 (AS20
   OSPF IGP          eBGP Peering              IS-IS IGP
 ```
 
+![diagram](./apricot-2026-pcio.jpg)
+
 ### Vai Trò Router
 
 **Group 1 (AS10) - OSPF IGP:**
