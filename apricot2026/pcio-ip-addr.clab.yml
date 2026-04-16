@@ -1,0 +1,96 @@
+name: apricot-2026-pcio
+
+topology:
+  groups:
+    routers:
+      kind: linux
+      image: quay.io/frrouting/frr:10.5.1
+    hosts:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+
+  nodes:
+    router-A1:
+      group: routers
+      binds:
+        - group1-router-A1/daemons:/etc/frr/daemons
+        - group1-router-A1/group1-router-A1-ip-addr.conf:/etc/frr/frr.conf
+    router-B1:
+      group: routers
+      binds:
+        - group1-router-B1/daemons:/etc/frr/daemons
+        - group1-router-B1/group1-router-B1-ip-addr.conf:/etc/frr/frr.conf
+    router-C1:
+      group: routers
+      binds:
+        - group1-router-C1/daemons:/etc/frr/daemons
+        - group1-router-C1/group1-router-C1-ip-addr.conf:/etc/frr/frr.conf
+    router-P1:
+      group: routers
+      binds:
+        - group1-router-P1/daemons:/etc/frr/daemons
+        - group1-router-P1/group1-router-P1-ip-addr.conf:/etc/frr/frr.conf
+    router-Cust1:
+      group: routers
+      binds:
+        - group1-router-Cust1/daemons:/etc/frr/daemons
+        - group1-router-Cust1/group1-router-Cust1-ip-addr.conf:/etc/frr/frr.conf
+    server-SRV1:
+      group: hosts
+      exec:
+        - ip link set eth1 up
+        - ip addr add 100.68.1.30/30 dev eth1
+        - ip route add default via 100.68.1.29
+
+    router-A2:
+      group: routers
+      binds:
+        - group2-router-A2/daemons:/etc/frr/daemons
+        - group2-router-A2/group2-router-A2-ip-addr.conf:/etc/frr/frr.conf
+    router-B2:
+      group: routers
+      binds:
+        - group2-router-B2/daemons:/etc/frr/daemons
+        - group2-router-B2/group2-router-B2-ip-addr.conf:/etc/frr/frr.conf
+    router-C2:
+      group: routers
+      binds:
+        - group2-router-C2/daemons:/etc/frr/daemons
+        - group2-router-C2/group2-router-C2-ip-addr.conf:/etc/frr/frr.conf
+    router-P2:
+      group: routers
+      binds:
+        - group2-router-P2/daemons:/etc/frr/daemons
+        - group2-router-P2/group2-router-P2-ip-addr.conf:/etc/frr/frr.conf
+    router-Cust2:
+      group: routers
+      binds:
+        - group2-router-Cust2/daemons:/etc/frr/daemons
+        - group2-router-Cust2/group2-router-Cust2-ip-addr.conf:/etc/frr/frr.conf
+    server-SRV2:
+      group: hosts
+      exec:
+        - ip link set eth1 up
+        - ip addr add 100.68.2.30/30 dev eth1
+        - ip route add default via 100.68.2.29
+
+    router-TR1:
+      group: routers
+      binds:
+        - transit-router-TR1/daemons:/etc/frr/daemons
+        - transit-router-TR1/transit-router-TR1-ip-addr.conf:/etc/frr/frr.conf
+  links:
+    - endpoints: ["router-C1:eth1", "router-B1:eth1"]
+    - endpoints: ["router-C1:eth2", "router-P1:eth1"]
+    - endpoints: ["router-C1:eth3", "router-A1:eth1"]
+    - endpoints: ["router-C1:eth4", "server-SRV1:eth1"]
+    - endpoints: ["router-A1:eth2", "router-Cust1:eth1"]
+
+    - endpoints: ["router-C2:eth1", "router-B2:eth1"]
+    - endpoints: ["router-C2:eth2", "router-P2:eth1"]
+    - endpoints: ["router-C2:eth3", "router-A2:eth1"]
+    - endpoints: ["router-C2:eth4", "server-SRV2:eth1"]
+    - endpoints: ["router-A2:eth2", "router-Cust2:eth1"]
+
+    - endpoints: ["router-TR1:eth1", "router-B1:eth2"]
+    - endpoints: ["router-TR1:eth2", "router-B2:eth2"]
