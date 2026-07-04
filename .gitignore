@@ -102,3 +102,9 @@ yarn.lock
 
 # Docker/Container Runtime
 .docker/
+
+# Local draft content — bài soạn trước cho các tuần sau, chưa public
+bai-tap-ve-nha/_draft/
+
+# Lab skeleton configs are checked in on purpose (not runtime-generated)
+!bai-tap-ve-nha/**/configs/**/frr.conf

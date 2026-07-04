@@ -1,0 +1,43 @@
+name: static-route-lab
+
+topology:
+  nodes:
+    host-1:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+    r1:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - sysctl -w net.ipv4.ip_forward=1
+        - ip addr add 10.0.12.1/30 dev eth2
+    r2:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - sysctl -w net.ipv4.ip_forward=1
+        - ip addr add 10.0.12.2/30 dev eth1
+        - ip addr add 10.0.23.1/30 dev eth2
+    r3:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - sysctl -w net.ipv4.ip_forward=1
+        - ip addr add 10.0.23.2/30 dev eth1
+        - ip addr add 10.0.34.1/30 dev eth2
+    r4:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - sysctl -w net.ipv4.ip_forward=1
+        - ip addr add 10.0.34.2/30 dev eth1
+    host-2:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+
+  links:
+    - endpoints: ["host-1:eth1", "r1:eth1"]
+    - endpoints: ["r1:eth2", "r2:eth1"]
+    - endpoints: ["r2:eth2", "r3:eth1"]
+    - endpoints: ["r3:eth2", "r4:eth1"]
+    - endpoints: ["r4:eth2", "host-2:eth1"]

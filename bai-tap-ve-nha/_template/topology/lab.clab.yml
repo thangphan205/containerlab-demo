@@ -1,0 +1,13 @@
+name: lab-slug
+
+topology:
+  nodes:
+    node1:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+    node2:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+
+  links:
+    - endpoints: ["node1:eth1", "node2:eth1"]
