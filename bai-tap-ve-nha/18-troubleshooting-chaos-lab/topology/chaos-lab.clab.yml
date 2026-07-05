@@ -1,0 +1,51 @@
+name: chaos-lab
+
+topology:
+  groups:
+    routers:
+      kind: linux
+      image: quay.io/frrouting/frr:10.5.1
+    hosts:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+
+  nodes:
+    srv1:
+      group: hosts
+      exec:
+        - ip link set eth1 up
+        - ip addr add 10.1.1.10/24 dev eth1
+        - ip route replace default via 10.1.1.1 dev eth1
+    r1:
+      group: routers
+      binds:
+        - ../configs/r1/daemons:/etc/frr/daemons
+        - ../configs/r1/frr.conf:/etc/frr/frr.conf
+    r2:
+      group: routers
+      binds:
+        - ../configs/r2/daemons:/etc/frr/daemons
+        - ../configs/r2/frr.conf:/etc/frr/frr.conf
+    r3:
+      group: routers
+      binds:
+        - ../configs/r3/daemons:/etc/frr/daemons
+        - ../configs/r3/frr.conf:/etc/frr/frr.conf
+    r4:
+      group: routers
+      binds:
+        - ../configs/r4/daemons:/etc/frr/daemons
+        - ../configs/r4/frr.conf:/etc/frr/frr.conf
+    srv2:
+      group: hosts
+      exec:
+        - ip link set eth1 up
+        - ip addr add 10.4.4.10/24 dev eth1
+        - ip route replace default via 10.4.4.1 dev eth1
+
+  links:
+    - endpoints: ["srv1:eth1", "r1:eth1"]
+    - endpoints: ["r1:eth2", "r2:eth1"]
+    - endpoints: ["r2:eth2", "r3:eth1"]
+    - endpoints: ["r3:eth2", "r4:eth1"]
+    - endpoints: ["r4:eth2", "srv2:eth1"]

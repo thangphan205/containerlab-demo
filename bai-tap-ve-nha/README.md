@@ -1,55 +1,120 @@
 # 📚 Bài Tập Về Nhà — Network Thực Chiến
 
-Series bài tập về nhà dài hơi dành cho học viên đã có nền tảng CCNA, thực hành trực tiếp trên **containerlab**. Mỗi tuần ra 1 bài, không kèm lời giải sẵn — học viên tự làm, thảo luận trong Facebook group/comment, đáp án công bố sau ~1 tuần cùng video giải thích trên [Youtube - Network Thực Chiến](https://www.youtube.com/@NetworkThucChien).
+Series bài tập về nhà dài hơi dành cho học viên đã có nền tảng CCNA — tổng hợp các bài lab dựng bằng **containerlab**, bám sát cách triển khai thực tế ở môi trường enterprise (không phải lab lý thuyết thuần túy).
+
+**Không có lời giải nào là hoàn hảo.** Đáp án công bố sau mỗi tuần chỉ là một cách làm tham khảo — không phải chuẩn duy nhất. Giá trị thật nằm ở quá trình: tự deploy, tự bí, tự hỏi AI để gỡ, rồi đối chiếu lại với thực tế production. Kinh nghiệm triển khai thực sự đến từ chính quá trình đó, không phải từ việc chép đáp án.
+
+Mỗi tuần ra 1 bài, không kèm lời giải sẵn — học viên tự làm, thảo luận trong Facebook group/comment, đáp án tham khảo công bố sau ~1 tuần cùng video giải thích trên [Youtube - Network Thực Chiến](https://www.youtube.com/@NetworkThucChien).
 
 Toàn bộ nội dung **mã nguồn mở** (xem [LICENSE](../LICENSE)) — mọi người tự do dùng, sửa, đóng góp bài mới. Xem [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## Cách tham gia
 
-1. Đọc `lab-guide.md` trong thư mục tuần hiện tại — đọc kỹ Mục tiêu + Yêu cầu.
-2. Tự deploy topology bằng containerlab, làm theo checklist nhiệm vụ (không có bước giải sẵn).
-3. Đăng kết quả (ảnh, output lệnh verify) vào Facebook group/comment bài viết tuần đó.
-4. Sau 1 tuần: đáp án (`loi-giai.md`) + video giải thích được công bố.
+1. Chọn bất kỳ bài lab nào bạn muốn thực hành ở danh sách bên dưới và đọc `lab-guide.md` tương ứng.
+2. Tự deploy topology bằng containerlab, làm theo checklist nhiệm vụ (không có bước giải sẵn). Bí chỗ nào cứ hỏi AI (ChatGPT/Claude...) để hiểu sâu hơn, đừng chỉ xin nguyên cục config — tự gõ, tự test, tự sai mới nhớ lâu.
+3. Đăng kết quả (ảnh, output lệnh verify) vào Facebook group hoặc bình luận để cùng thảo luận.
+4. Mỗi bài lab đều có đáp án tham khảo (`loi-giai.md`) và video giải thích đi kèm (đối với các bài đã mở) để bạn đối chiếu sau khi tự làm.
 
-## Danh sách bài tập
+## Danh sách bài tập theo chủ đề
 
-| Tuần | Chủ đề | Arc | Trạng thái | Video |
-|:---:|:---|:---|:---|:---|
-| [00](./00-chuan-bi-server/lab-guide.md) | Chuẩn bị server | Arc 0 — Nền tảng | 🟢 Đang mở | — |
-| [01](./01-cai-dat-containerlab/lab-guide.md) | Cài đặt containerlab | Arc 0 — Nền tảng | 🟢 Đang mở | — |
-| [02](./02-ip-subnetting-thuc-chien/lab-guide.md) | IP subnetting thực chiến | Arc 1 — Networking nền tảng | 🟢 Đang mở | — |
-| [03](./03-static-route-multi-hop/lab-guide.md) | Static route multi-hop | Arc 1 — Networking nền tảng | 🟢 Đang mở | — |
-| [04](./04-ospf-multi-area/lab-guide.md) | OSPF multi-area | Arc 2 — Routing chuyên sâu | 🟢 Đang mở | — |
-| 05 | BGP eBGP cơ bản | Arc 2 — Routing chuyên sâu | ⏳ Sắp ra mắt | — |
-| 06 | BGP route-map & policy | Arc 2 — Routing chuyên sâu | ⏳ Sắp ra mắt | — |
-| 07 | VLAN trunking trên Linux bridge | Arc 1 — Networking nền tảng | ⏳ Sắp ra mắt | — |
-| 08 | Ansible cơ bản (push config nhiều router) | Arc 3 — Automation/NetDevOps | ⏳ Sắp ra mắt | — |
-| 09 | Python parsing (audit routing table) | Arc 3 — Automation/NetDevOps | ⏳ Sắp ra mắt | — |
-| 10 | systemd + journald | Arc 4 — System Ops & Observability | ⏳ Sắp ra mắt | — |
-| 11 | Prometheus + node_exporter | Arc 4 — System Ops & Observability | ⏳ Sắp ra mắt | — |
-| 12 | nftables firewall cơ bản | Arc 4 — System Ops & Observability | ⏳ Sắp ra mắt | — |
-| 13 | Troubleshooting chaos lab (OSPF) | Arc 5 — Troubleshooting chaos lab | ⏳ Sắp ra mắt | — |
-| 14 | VRRP + ECMP (Gateway HA) | Arc 1 — Networking nền tảng | 📋 Dự kiến | — |
-| 15 | Git workflow cho network config | Arc 3 — Automation/NetDevOps | 📋 Dự kiến | — |
-| 16 | BGP Local Preference + prefix-list | Arc 2 — Routing chuyên sâu | 📋 Dự kiến | — |
-| 17 | STP/RSTP/MST — chống loop Layer 2 | Arc 1 — Networking nền tảng | 📋 Dự kiến | — |
-| 18 | HSRP/GLBP (Gateway Redundancy kiểu Cisco, so với VRRP) | Arc 1 — Networking nền tảng | 📋 Dự kiến | — |
-| 19 | QoS & traffic shaping cơ bản (tc, DSCP marking) | Arc 1 — Networking nền tảng | 📋 Dự kiến | — |
-| 20 | Multi-vendor automation (NAPALM: Cisco/Juniper/Arista) | Arc 3 — Automation/NetDevOps | 📋 Dự kiến | — |
-| 21 | NetFlow/sFlow — giám sát lưu lượng mạng | Arc 4 — System Ops & Observability | 📋 Dự kiến | — |
-| 22 | Centralized logging (ELK) + Alertmanager | Arc 4 — System Ops & Observability | 📋 Dự kiến | — |
+> Các bài lab được phân loại theo từng **Arc (Chủ đề)** độc lập. Bạn có thể tự do lựa chọn bất kỳ bài lab nào phù hợp với nhu cầu học tập hoặc dự án thực tế của mình mà không cần tuân theo thứ tự tuyến tính.
 
-Các bài tiếp theo sẽ được bổ sung dần theo tiến độ và phản hồi từ học viên. Xem thêm các Arc dự kiến bên dưới.
+---
+
+### Arc 0 — Khởi đầu
+
+> Cài đặt containerlab và deploy lab đầu tiên. Yêu cầu trước: có 1 server Linux (Ubuntu 24.04, 4 vCPU/8GB RAM) đã cài Docker.
+
+| Mã bài | Tên bài lab | Trạng thái | Video |
+|:---:|:---|:---|:---|
+| [01](./01-cai-dat-containerlab/lab-guide.md) | Cài đặt containerlab + deploy topology đầu tiên | 🟢 Đang mở | — |
+
+---
+
+### Arc 1 — Networking nền tảng nâng cao
+
+> IP, định tuyến tĩnh, switching, gateway dự phòng (HA), NAT, DHCP — nền tảng mạng doanh nghiệp.
+
+| Mã bài | Tên bài lab | Trạng thái | Video |
+|:---:|:---|:---|:---|
+| [02](./02-ip-subnetting-thuc-chien/lab-guide.md) | IP subnetting thực chiến (chia subnet cho data center) | 🟢 Đang mở | — |
+| [03](./03-static-route-multi-hop/lab-guide.md) | Static route multi-hop (định tuyến tĩnh qua nhiều chặng) | 🟢 Đang mở | — |
+| [04](./04-linux-bridge-vlan/lab-guide.md) | VLAN trunking trên Linux bridge | 🟢 Đang mở | — |
+| 05 | STP/RSTP — chống loop Layer 2 (3 bridge tam giác) | ⏳ Sắp ra mắt | — |
+| 06 | VRRP + ECMP — Gateway HA (failover < 3 giây) | ⏳ Sắp ra mắt | — |
+| 07 | DHCP Server trên Linux (dnsmasq, cấp IP multi-subnet) | ⏳ Sắp ra mắt | — |
+| 08 | NAT/Masquerade trên Linux (nftables SNAT cho LAN) | ⏳ Sắp ra mắt | — |
+
+---
+
+### Arc 2 — Routing protocol chuyên sâu
+
+> OSPF, BGP, policy routing — các giao thức định tuyến động dùng trong enterprise & ISP.
+
+| Mã bài | Tên bài lab | Trạng thái | Video |
+|:---:|:---|:---|:---|
+| [09](./09-ospf-multi-area/lab-guide.md) | OSPF multi-area (chia vùng, ABR, route summarization) | 🟢 Đang mở | — |
+| [10](./10-bgp-ebgp-co-ban/lab-guide.md) | BGP eBGP cơ bản (peering giữa 2 AS) | 🟢 Đang mở | — |
+| [11](./11-bgp-route-map-policy/lab-guide.md) | BGP route-map & policy (lọc/ưu tiên route) | 🟢 Đang mở | — |
+| 12 | BGP Local Preference + prefix-list (inbound traffic engineering) | ⏳ Sắp ra mắt | — |
+| 13 | Policy-Based Routing — dual-WAN (route theo source IP) | ⏳ Sắp ra mắt | — |
+
+---
+
+### Arc 3 — Automation / NetDevOps
+
+> Ansible, Python, Git — tự động hóa cấu hình & vận hành mạng.
+
+| Mã bài | Tên bài lab | Trạng thái | Video |
+|:---:|:---|:---|:---|
+| [14](./14-ansible-co-ban/lab-guide.md) | Ansible cơ bản (push config nhiều router cùng lúc) | 🟢 Đang mở | — |
+| [15](./15-python-parsing-show-command/lab-guide.md) | Python parsing (audit routing table từ show command) | 🟢 Đang mở | — |
+| 16 | Git workflow cho network config (branch/merge/deploy) | ⏳ Sắp ra mắt | — |
+
+---
+
+### Arc 4 — Security & Observability
+
+> Firewall và giám sát bảo mật hệ thống mạng qua containerlab.
+
+| Mã bài | Tên bài lab | Trạng thái | Video |
+|:---:|:---|:---|:---|
+| [17](./17-nftables-firewall/lab-guide.md) | nftables firewall cơ bản (filter traffic giữa các subnet) | 🟢 Đang mở | — |
+
+---
+
+### Arc 5 — Troubleshooting chaos lab
+
+> Lab bị cấy lỗi sẵn — tự chẩn đoán & sửa theo phương pháp khoa học.
+
+| Mã bài | Tên bài lab | Trạng thái | Video |
+|:---:|:---|:---|:---|
+| [18](./18-troubleshooting-chaos-lab/lab-guide.md) | Troubleshooting chaos lab — OSPF (cấy lỗi area mismatch) | 🟢 Đang mở | — |
+| 19 | Troubleshooting chaos lab — BGP (cấy lỗi prefix-list) | ⏳ Sắp ra mắt | — |
+
+---
+
+### Arc 6 — Advanced Security & VPN
+
+> VPN kết nối site-to-site an toàn qua internet.
+
+| Mã bài | Tên bài lab | Trạng thái | Video |
+|:---:|:---|:---|:---|
+| 20 | WireGuard VPN site-to-site (tunnel qua "internet" mô phỏng) | ⏳ Sắp ra mắt | — |
+
+---
+
+Các bài tiếp theo sẽ được bổ sung dần theo tiến độ và phản hồi từ học viên.
 
 ## Các Arc trong series
 
-- **Arc 0 — Chuẩn bị nền tảng (System Ops):** Chuẩn bị server, cài Docker + containerlab.
-- **Arc 1 — Networking nền tảng nâng cao:** Subnetting, static routing, VLAN/bridge trên Linux, STP/RSTP/MST chống loop L2, HSRP/GLBP bên cạnh VRRP/ECMP (gateway redundancy), QoS/traffic shaping cơ bản, cấu hình bền vững (persistent config).
-- **Arc 2 — Routing protocol chuyên sâu:** OSPF, IS-IS, BGP (route-reflector, route-map, RPKI), ảo hóa định tuyến VRF.
-- **Arc 3 — Automation/NetDevOps:** Ansible/Netmiko/NAPALM, parsing output, đa dạng vendor (Cisco/Juniper/Arista) qua NAPALM driver abstraction, GitOps & CI/CD tự động verify cấu hình (Auto-grading).
-- **Arc 4 — System Operations & Observability:** systemd, logging tập trung (syslog/ELK), Prometheus + Alertmanager (alerting), NetFlow/sFlow (giám sát lưu lượng), nftables firewall & bảo mật Control Plane.
-- **Arc 5 — Troubleshooting chaos lab:** Lab bị cấy lỗi sẵn, tự chẩn đoán và sửa lỗi theo phương pháp khoa học.
-- **Arc 6 — Advanced Security & VPN (Dự kiến):** IPSec VPN, Wireguard, Control Plane Policing (CoPP), AAA (TACACS+/RADIUS) & 802.1X NAC, ACL/zone segmentation, DHCP snooping & Dynamic ARP Inspection.
+- **Arc 0 — Khởi đầu:** Cài containerlab, deploy topology đầu tiên.
+- **Arc 1 — Networking nền tảng nâng cao:** Subnetting, static routing, VLAN/bridge, STP/RSTP chống loop L2, VRRP/ECMP (gateway HA), DHCP server (dnsmasq), NAT/Masquerade (nftables).
+- **Arc 2 — Routing protocol chuyên sâu:** OSPF multi-area, BGP (eBGP, route-map, Local Preference, prefix-list), Policy-Based Routing (dual-WAN).
+- **Arc 3 — Automation/NetDevOps:** Ansible push config, Python parsing, Git workflow (branch/merge/deploy).
+- **Arc 4 — Security & Observability:** nftables firewall (filter traffic giữa subnet).
+- **Arc 5 — Troubleshooting chaos lab:** Lab cấy lỗi sẵn — OSPF (area mismatch) và BGP (prefix-list typo).
+- **Arc 6 — Advanced Security & VPN:** WireGuard VPN site-to-site.
 
 ## Lưu ý quan trọng khi học & thực hành
 

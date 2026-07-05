@@ -1,0 +1,32 @@
+name: vlan-lab
+
+topology:
+  nodes:
+    r1:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - sysctl -w net.ipv4.ip_forward=1
+    sw:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - ip link add name br0 type bridge vlan_filtering 1
+        - ip link set br0 up
+        - ip link set eth1 master br0
+        - ip link set eth2 master br0
+        - ip link set eth3 master br0
+        - ip link set eth1 up
+        - ip link set eth2 up
+        - ip link set eth3 up
+    host-a:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+    host-b:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+
+  links:
+    - endpoints: ["r1:eth1", "sw:eth1"]
+    - endpoints: ["sw:eth2", "host-a:eth1"]
+    - endpoints: ["sw:eth3", "host-b:eth1"]

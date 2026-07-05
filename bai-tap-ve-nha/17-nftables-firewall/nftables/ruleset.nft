@@ -1,0 +1,16 @@
+#!/usr/sbin/nft -f
+
+flush ruleset
+
+table inet filter {
+    chain forward {
+        type filter hook forward priority 0; policy drop;
+
+        ct state established,related counter accept
+        ip protocol icmp counter accept
+
+        # TODO: thêm rule cho phép TCP dport 8080 đi qua (nhớ thêm "counter"
+        # để đếm được số packet khớp). KHÔNG thêm rule cho port 2323 — port
+        # này phải bị policy "drop" mặc định chặn.
+    }
+}

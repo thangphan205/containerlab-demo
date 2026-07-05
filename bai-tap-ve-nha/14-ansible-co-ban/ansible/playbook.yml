@@ -1,0 +1,13 @@
+---
+- name: Push loopback config to FRR routers via Ansible
+  hosts: routers
+  gather_facts: false
+  tasks:
+    - name: Gán loopback IP qua vtysh
+      # TODO: dùng module ansible.builtin.command (hoặc shell) để chạy:
+      #   docker exec {{ inventory_hostname }} vtysh -c "configure terminal" -c "interface lo" -c "ip address {{ loopback_ip }}/32"
+      # Biến inventory_hostname và loopback_ip đã có sẵn từ inventory.ini.
+
+    - name: Verify loopback đã lên
+      # TODO: chạy docker exec {{ inventory_hostname }} vtysh -c "show ip route",
+      # register kết quả ra 1 biến, rồi in ra bằng module debug.

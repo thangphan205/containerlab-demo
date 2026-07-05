@@ -1,4 +1,4 @@
-# Bài 04: OSPF Multi-Area
+# Bài 09: OSPF Multi-Area
 
 **Arc 2 — Routing protocol chuyên sâu**
 
@@ -43,4 +43,4 @@ Chi tiết node/IP xem [`topology/ospf-lab.clab.yml`](./topology/ospf-lab.clab.y
 **Hạn nộp:** 1 tuần kể từ ngày đăng bài.
 
 ## Bài tiếp theo
-→ 05-bgp-ebgp-co-ban
+→ 10-bgp-ebgp-co-ban

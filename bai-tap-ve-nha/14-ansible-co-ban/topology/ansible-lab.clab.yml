@@ -1,0 +1,23 @@
+name: ansible-lab
+prefix: ""
+
+topology:
+  nodes:
+    r1:
+      kind: linux
+      image: quay.io/frrouting/frr:10.5.1
+      binds:
+        - ../configs/r1/daemons:/etc/frr/daemons
+        - ../configs/r1/frr.conf:/etc/frr/frr.conf
+    r2:
+      kind: linux
+      image: quay.io/frrouting/frr:10.5.1
+      binds:
+        - ../configs/r2/daemons:/etc/frr/daemons
+        - ../configs/r2/frr.conf:/etc/frr/frr.conf
+    r3:
+      kind: linux
+      image: quay.io/frrouting/frr:10.5.1
+      binds:
+        - ../configs/r3/daemons:/etc/frr/daemons
+        - ../configs/r3/frr.conf:/etc/frr/frr.conf
