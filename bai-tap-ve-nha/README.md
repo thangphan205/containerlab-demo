@@ -12,9 +12,8 @@ Toàn bộ nội dung **mã nguồn mở** (xem [LICENSE](../LICENSE)) — mọi
 
 1. Chọn bất kỳ bài lab nào bạn muốn thực hành ở danh sách bên dưới và đọc `lab-guide.md` tương ứng.
 2. Tự deploy topology bằng containerlab, làm theo checklist nhiệm vụ (không có bước giải sẵn). Bí chỗ nào cứ hỏi AI (ChatGPT/Claude...) để hiểu sâu hơn, đừng chỉ xin nguyên cục config — tự gõ, tự test, tự sai mới nhớ lâu.
-3. Đăng kết quả (ảnh, output lệnh verify) vào Facebook group hoặc bình luận để cùng thảo luận.
-4. Mỗi bài lab đều có đáp án tham khảo (`loi-giai.md`) và video giải thích đi kèm (đối với các bài đã mở) để bạn đối chiếu sau khi tự làm.
-
+3. Chia sẻ thành quả của mình hoặc thảo luận thêm ở group Facebook Network Thực Chiến: https://www.facebook.com/profile.php?id=61591373979991 .
+4. Đáp án tham khảo mình sẽ chuẩn bị sau.
 ## Danh sách bài tập theo chủ đề
 
 > Các bài lab được phân loại theo từng **Arc (Chủ đề)** độc lập. Bạn có thể tự do lựa chọn bất kỳ bài lab nào phù hợp với nhu cầu học tập hoặc dự án thực tế của mình mà không cần tuân theo thứ tự tuyến tính.
