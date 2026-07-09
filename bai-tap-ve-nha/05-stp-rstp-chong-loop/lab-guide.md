@@ -13,11 +13,16 @@ Hoàn thành [04-linux-bridge-vlan](../04-linux-bridge-vlan/lab-guide.md) — qu
 ## Sơ đồ topology
 3 switch (Linux bridge) nối thành tam giác, 2 host nối vào sw1 và sw2. Xem [`topology/stp-lab.clab.yml`](./topology/stp-lab.clab.yml).
 
-```
-host-a --- SW1 ======= SW2 --- host-b
-             \         /
-              \       /
-               SW3
+```mermaid
+graph TD
+    host-a[host-a<br>10.0.1.10/24] -- eth1 --- eth1(sw1)
+    host-b[host-b<br>10.0.1.20/24] -- eth1 --- eth3(sw2)
+    
+    subgraph Ring switch (Layer 2)
+        sw1 -- eth2 --- eth1(sw2)
+        sw2 -- eth2 --- eth1(sw3)
+        sw3 -- eth2 --- eth3(sw1)
+    end
 ```
 
 - `SW1`, `SW2`, `SW3`: mỗi node có 1 bridge `br0` với các interface đã enslave sẵn — **STP chưa bật** (`stp_state 0`).

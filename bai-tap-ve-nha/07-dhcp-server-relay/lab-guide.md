@@ -11,13 +11,16 @@
 Hoàn thành [02-ip-subnetting-thuc-chien](../02-ip-subnetting-thuc-chien/lab-guide.md) — hiểu subnet, gateway.
 
 ## Sơ đồ topology
-```
-host-a (DHCP client) ───── R1 (dnsmasq DHCP server, ip_forward=1) ───── host-b (DHCP client)
-                  eth1 (10.0.1.0/24)                           eth2 (10.0.2.0/24)
-                                          │
-                                     eth3 (10.0.0.0/24)
-                                          │
-                                    srv (10.0.0.10)
+```mermaid
+graph TD
+    host-a[host-a<br>DHCP Client] -- eth1 --- eth1(r1:eth1<br>10.0.1.1/24)
+    host-b[host-b<br>DHCP Client] -- eth1 --- eth2(r1:eth2<br>10.0.2.1/24)
+    
+    subgraph DHCP Server & Router
+        r1[r1<br>dnsmasq]
+    end
+    
+    r1 -- eth3 (10.0.0.1/24) --- eth1[srv<br>Static IP: 10.0.0.10/24]
 ```
 - `R1`: chạy `dnsmasq` cấp IP cho 2 subnet. DHCP pool và gateway **chưa cấu hình** — tự làm.
 - `host-a`, `host-b`: client DHCP, chưa có IP.

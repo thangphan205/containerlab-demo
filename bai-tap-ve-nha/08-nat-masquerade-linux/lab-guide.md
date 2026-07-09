@@ -11,10 +11,20 @@
 Hoàn thành [17-nftables-firewall](../17-nftables-firewall/lab-guide.md) — quen cú pháp `nftables` và table/chain/rule.
 
 ## Sơ đồ topology
-```
-host-lan1 (10.0.1.10) ───┐
-                          gw-nat (nftables, ip_forward=1) ─── server-pub (172.16.0.10)
-host-lan2 (10.0.2.10) ───┘
+```mermaid
+graph TD
+    subgraph Private LAN
+        host-lan1[host-lan1<br>10.0.1.10/24] -- eth1 --- eth1(gw-nat:eth1<br>10.0.1.1/24)
+        host-lan2[host-lan2<br>10.0.2.10/24] -- eth1 --- eth2(gw-nat:eth2<br>10.0.2.1/24)
+    end
+    
+    subgraph NAT Gateway
+        gw-nat[gw-nat<br>nftables SNAT/Masquerade]
+    end
+    
+    subgraph Public Internet
+        gw-nat -- eth3 (172.16.0.1/24) --- eth1[server-pub<br>172.16.0.10/24]
+    end
 ```
 
 - `gw-nat`: 3 interface — 2 phía LAN (`eth1`: `10.0.1.1/24`, `eth2`: `10.0.2.1/24`), 1 phía WAN (`eth3`: `172.16.0.1/24`).
