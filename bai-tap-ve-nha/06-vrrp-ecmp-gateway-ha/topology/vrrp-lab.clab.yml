@@ -1,0 +1,56 @@
+name: vrrp-lab
+
+topology:
+  groups:
+    routers:
+      kind: linux
+      image: quay.io/frrouting/frr:10.5.1
+    hosts:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+
+  nodes:
+    host-a:
+      group: hosts
+    host-b:
+      group: hosts
+    sw:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - ip link add name br0 type bridge
+        - ip link set br0 up
+        - ip link set eth1 master br0
+        - ip link set eth2 master br0
+        - ip link set eth3 master br0
+        - ip link set eth4 master br0
+        - ip link set eth1 up
+        - ip link set eth2 up
+        - ip link set eth3 up
+        - ip link set eth4 up
+    r1:
+      group: routers
+      binds:
+        - ../configs/r1/daemons:/etc/frr/daemons
+        - ../configs/r1/frr.conf:/etc/frr/frr.conf
+    r2:
+      group: routers
+      binds:
+        - ../configs/r2/daemons:/etc/frr/daemons
+        - ../configs/r2/frr.conf:/etc/frr/frr.conf
+    backbone:
+      group: routers
+      binds:
+        - ../configs/backbone/daemons:/etc/frr/daemons
+        - ../configs/backbone/frr.conf:/etc/frr/frr.conf
+
+  links:
+    # Hosts to switch
+    - endpoints: ["host-a:eth1", "sw:eth1"]
+    - endpoints: ["host-b:eth1", "sw:eth2"]
+    # Switch to routers (same LAN segment)
+    - endpoints: ["sw:eth3", "r1:eth1"]
+    - endpoints: ["sw:eth4", "r2:eth1"]
+    # Routers to backbone
+    - endpoints: ["r1:eth2", "backbone:eth1"]
+    - endpoints: ["r2:eth2", "backbone:eth2"]

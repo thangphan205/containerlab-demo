@@ -1,0 +1,30 @@
+name: nat-lab
+
+topology:
+  nodes:
+    host-lan1:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+    host-lan2:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+    gw-nat:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - sysctl -w net.ipv4.ip_forward=1
+        - ip addr add 10.0.1.1/24 dev eth1
+        - ip addr add 10.0.2.1/24 dev eth2
+        - ip addr add 172.16.0.1/24 dev eth3
+        - apk add --no-cache nftables
+    server-pub:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - ip addr add 172.16.0.10/24 dev eth1
+        - ip route replace default via 172.16.0.1 dev eth1
+
+  links:
+    - endpoints: ["host-lan1:eth1", "gw-nat:eth1"]
+    - endpoints: ["host-lan2:eth1", "gw-nat:eth2"]
+    - endpoints: ["gw-nat:eth3", "server-pub:eth1"]

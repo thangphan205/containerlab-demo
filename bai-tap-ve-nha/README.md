@@ -39,10 +39,10 @@ Toàn bộ nội dung **mã nguồn mở** (xem [LICENSE](../LICENSE)) — mọi
 | [02](./02-ip-subnetting-thuc-chien/lab-guide.md) | IP subnetting thực chiến (chia subnet cho data center) | 🟢 Đang mở | — |
 | [03](./03-static-route-multi-hop/lab-guide.md) | Static route multi-hop (định tuyến tĩnh qua nhiều chặng) | 🟢 Đang mở | — |
 | [04](./04-linux-bridge-vlan/lab-guide.md) | VLAN trunking trên Linux bridge | 🟢 Đang mở | — |
-| 05 | STP/RSTP — chống loop Layer 2 (3 bridge tam giác) | ⏳ Sắp ra mắt | — |
-| 06 | VRRP + ECMP — Gateway HA (failover < 3 giây) | ⏳ Sắp ra mắt | — |
-| 07 | DHCP Server trên Linux (dnsmasq, cấp IP multi-subnet) | ⏳ Sắp ra mắt | — |
-| 08 | NAT/Masquerade trên Linux (nftables SNAT cho LAN) | ⏳ Sắp ra mắt | — |
+| [05](./05-stp-rstp-chong-loop/lab-guide.md) | STP/RSTP — chống loop Layer 2 (3 bridge tam giác) | 🟢 Đang mở (Mới) | — |
+| [06](./06-vrrp-ecmp-gateway-ha/lab-guide.md) | VRRP + ECMP — Gateway HA (failover < 3 giây) | 🟢 Đang mở (Mới) | — |
+| [07](./07-dhcp-server-relay/lab-guide.md) | DHCP Server trên Linux (dnsmasq, cấp IP multi-subnet) | 🟢 Đang mở (Mới) | — |
+| [08](./08-nat-masquerade-linux/lab-guide.md) | NAT/Masquerade trên Linux (nftables SNAT cho LAN) | 🟢 Đang mở (Mới) | — |
 
 ---
 

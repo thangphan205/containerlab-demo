@@ -1,0 +1,21 @@
+#!/usr/sbin/nft -f
+
+flush ruleset
+
+table ip nat {
+    chain postrouting {
+        type nat hook postrouting priority srcnat; policy accept;
+
+        # TODO: thêm rule masquerade cho traffic đi ra interface WAN (eth3)
+        # Gợi ý: oifname "eth3" masquerade
+    }
+}
+
+table ip filter {
+    chain forward {
+        type filter hook forward priority filter; policy accept;
+
+        # Cho phép tất cả traffic forward (bài này tập trung NAT, không filter)
+        counter accept
+    }
+}

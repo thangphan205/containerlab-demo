@@ -46,4 +46,4 @@ Chi tiết xem [`topology/vlan-lab.clab.yml`](./topology/vlan-lab.clab.yml).
 **Hạn nộp:** 1 tuần kể từ ngày đăng bài.
 
 ## Bài tiếp theo
-→ Arc 3 (Automation/NetDevOps) — cập nhật sau.
+→ [05-stp-rstp-chong-loop](../05-stp-rstp-chong-loop/lab-guide.md): STP/RSTP chống loop Layer 2.

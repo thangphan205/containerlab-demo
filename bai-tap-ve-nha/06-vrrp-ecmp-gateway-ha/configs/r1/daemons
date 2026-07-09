@@ -1,0 +1,23 @@
+zebra=yes
+bgpd=no
+ospfd=yes
+ospf6d=no
+ripd=no
+ripngd=no
+isisd=no
+pimd=no
+ldpd=no
+nhrpd=no
+eigrpd=no
+babeld=no
+sharpd=no
+staticd=no
+pbrd=no
+bfdd=no
+fabricd=no
+vrrpd=yes
+
+vtysh_enable=yes
+zebra_options=" -s 90000000 --daemon -A 127.0.0.1"
+ospfd_options="  --daemon -A 127.0.0.1"
+vrrpd_options="  --daemon -A 127.0.0.1"

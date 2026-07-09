@@ -1,0 +1,53 @@
+name: stp-lab
+
+topology:
+  nodes:
+    sw1:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - ip link add name br0 type bridge stp_state 0
+        - ip link set br0 up
+        - ip link set eth1 master br0
+        - ip link set eth2 master br0
+        - ip link set eth3 master br0
+        - ip link set eth1 up
+        - ip link set eth2 up
+        - ip link set eth3 up
+    sw2:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - ip link add name br0 type bridge stp_state 0
+        - ip link set br0 up
+        - ip link set eth1 master br0
+        - ip link set eth2 master br0
+        - ip link set eth3 master br0
+        - ip link set eth1 up
+        - ip link set eth2 up
+        - ip link set eth3 up
+    sw3:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - ip link add name br0 type bridge stp_state 0
+        - ip link set br0 up
+        - ip link set eth1 master br0
+        - ip link set eth2 master br0
+        - ip link set eth1 up
+        - ip link set eth2 up
+    host-a:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+    host-b:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+
+  links:
+    # Host connections
+    - endpoints: ["host-a:eth1", "sw1:eth1"]
+    - endpoints: ["host-b:eth1", "sw2:eth3"]
+    # Triangle between switches
+    - endpoints: ["sw1:eth2", "sw2:eth1"]
+    - endpoints: ["sw2:eth2", "sw3:eth1"]
+    - endpoints: ["sw3:eth2", "sw1:eth3"]
