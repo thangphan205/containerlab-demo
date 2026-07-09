@@ -14,16 +14,16 @@ Hoàn thành [17-nftables-firewall](../17-nftables-firewall/lab-guide.md) — qu
 ```mermaid
 graph TD
     subgraph private_lan ["Private LAN"]
-        host-lan1[host-lan1<br>10.0.1.10/24] -- "eth1" --- gw-nat
-        host-lan2[host-lan2<br>10.0.2.10/24] -- "eth1" --- gw-nat
+        host-lan1["host-lan1<br>10.0.1.10/24"] -- "eth1" --- gw-nat
+        host-lan2["host-lan2<br>10.0.2.10/24"] -- "eth1" --- gw-nat
     end
     
     subgraph nat_gateway ["NAT Gateway"]
-        gw-nat[gw-nat<br>nftables SNAT/Masquerade<br>eth1: 10.0.1.1/24<br>eth2: 10.0.2.1/24<br>eth3: 172.16.0.1/24]
+        gw-nat["gw-nat<br>nftables SNAT/Masquerade<br>eth1: 10.0.1.1/24<br>eth2: 10.0.2.1/24<br>eth3: 172.16.0.1/24"]
     end
     
     subgraph public_internet ["Public Internet"]
-        gw-nat -- "eth3 <-> eth1" --- server-pub[server-pub<br>172.16.0.10/24]
+        gw-nat -- "eth3 <-> eth1" --- server-pub["server-pub<br>172.16.0.10/24"]
     end
 ```
 

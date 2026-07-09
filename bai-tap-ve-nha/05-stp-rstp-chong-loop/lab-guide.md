@@ -15,8 +15,8 @@ Hoàn thành [04-linux-bridge-vlan](../04-linux-bridge-vlan/lab-guide.md) — qu
 
 ```mermaid
 graph TD
-    host-a[host-a<br>10.0.1.10/24] -- "eth1" --- sw1[sw1]
-    host-b[host-b<br>10.0.1.20/24] -- "eth1" --- sw2[sw2]
+    host-a["host-a<br>10.0.1.10/24"] -- "eth1" --- sw1[sw1]
+    host-b["host-b<br>10.0.1.20/24"] -- "eth1" --- sw2[sw2]
     
     subgraph ring_switch ["Ring switch (Layer 2)"]
         sw1 -- "eth2 <-> eth1" --- sw2

@@ -14,14 +14,14 @@ Hoàn thành [09-ospf-multi-area](../09-ospf-multi-area/lab-guide.md) — quen O
 ```mermaid
 graph TD
     subgraph lan_segment ["LAN Segment (10.0.10.0/24)"]
-        host-a[host-a<br>10.0.10.100/24] -- "eth1" --- sw[sw]
-        host-b[host-b<br>10.0.10.101/24] -- "eth1" --- sw
-        sw -- "eth3" --- r1[r1<br>VRRP Master (pri 200)<br>Real IP: 10.0.10.2<br>VIP: 10.0.10.1]
-        sw -- "eth4" --- r2[r2<br>VRRP Backup (pri 100)<br>Real IP: 10.0.10.3<br>VIP: 10.0.10.1]
+        host-a["host-a<br>10.0.10.100/24"] -- "eth1" --- sw[sw]
+        host-b["host-b<br>10.0.10.101/24"] -- "eth1" --- sw
+        sw -- "eth3" --- r1["r1<br>VRRP Master (pri 200)<br>Real IP: 10.0.10.2<br>VIP: 10.0.10.1"]
+        sw -- "eth4" --- r2["r2<br>VRRP Backup (pri 100)<br>Real IP: 10.0.10.3<br>VIP: 10.0.10.1"]
     end
     
     subgraph wan_segment ["WAN / Backbone Segment"]
-        r1 -- "eth2 (10.0.12.1/24) <-> eth1" --- backbone[backbone<br>10.0.12.2/24]
+        r1 -- "eth2 (10.0.12.1/24) <-> eth1" --- backbone["backbone<br>10.0.12.2/24"]
         r2 -- "eth2 (10.0.13.1/24) <-> eth2" --- backbone
     end
 ```
