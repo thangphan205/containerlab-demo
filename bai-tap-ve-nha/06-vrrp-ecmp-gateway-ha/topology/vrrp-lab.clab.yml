@@ -44,6 +44,12 @@ topology:
         - ip link set dev vrrp-eth1-10 address 00:00:5e:00:01:0a
         - ip addr add 10.0.10.1/24 dev vrrp-eth1-10
         - ip link set dev vrrp-eth1-10 up
+        # eth1 và vrrp-eth1-10 cùng chung subnet 10.0.10.0/24 → kernel route selection có thể chọn nhầm
+        # route qua macvlan dù đang linkdown (Backup/protodown), làm traffic từ chính router (kể cả reply
+        # ping) bị rớt. Bật cờ này để kernel bỏ qua route của interface đang linkdown (khuyến nghị chính
+        # thức trong doc/user/vrrp.rst upstream FRR, mục Troubleshooting).
+        - sysctl -w net.ipv4.conf.eth1.ignore_routes_with_linkdown=1
+        - sysctl -w net.ipv4.conf.vrrp-eth1-10.ignore_routes_with_linkdown=1
     r2:
       group: routers
       binds:
@@ -54,6 +60,8 @@ topology:
         - ip link set dev vrrp-eth1-10 address 00:00:5e:00:01:0a
         - ip addr add 10.0.10.1/24 dev vrrp-eth1-10
         - ip link set dev vrrp-eth1-10 up
+        - sysctl -w net.ipv4.conf.eth1.ignore_routes_with_linkdown=1
+        - sysctl -w net.ipv4.conf.vrrp-eth1-10.ignore_routes_with_linkdown=1
     backbone:
       group: routers
       binds:

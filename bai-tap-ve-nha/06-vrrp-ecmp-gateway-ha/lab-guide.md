@@ -86,6 +86,7 @@ Xem [`topology/vrrp-lab.clab.yml`](./topology/vrrp-lab.clab.yml). OSPF đã cấ
 - **Preempt:** mặc định FRR VRRP bật preempt — khi R1 (priority cao hơn) khôi phục, nó tự giành lại Master. Tắt preempt bằng `vrrp 10 preempt` nếu muốn giữ backup đang chạy.
 - **Split-brain (cả 2 router đều Master):** thường do VRID hoặc VIP cấu hình lệch giữa R1/R2 (thành 2 nhóm VRRP khác nhau, không nghe advertisement của nhau), hoặc đứt liên kết đoạn LAN (R1↔SW hoặc R2↔SW) khiến advertisement multicast không tới bên kia dù cả 2 vẫn "sống". Kiểm tra `show run` đối chiếu VRID/VIP hai bên, và trạng thái link (`ip link show eth1`) trước khi kết luận là bug phần mềm.
 - **VIP không ping được dù `show vrrp` báo đúng Master:** ít khi do ARP cache trên host — VRRP dùng MAC ảo cố định (`00:00:5e:00:01:<vrid>`), không đổi giữa Master/Backup. Nghi ngờ trước: bảng FDB (CAM table) của switch/bridge chưa cập nhật port mới cho MAC ảo sau failover. Kiểm tra `bridge fdb show` trên `sw`.
+- **Đừng tự ping R1↔R2 (real IP, `10.0.10.2`/`10.0.10.3`) trực tiếp từ CLI router** để "test cho chắc" — dễ fail dù mọi thứ đều đúng. Router đang Master có 2 địa chỉ cùng subnet `10.0.10.0/24` (real IP trên `eth1` + VIP trên macvlan) → kernel routing có thể chọn nhầm macvlan để gửi đi, ping tự thân bị rớt dù traffic thật (từ host-a/host-b, đúng cách lab-guide hướng dẫn) hoàn toàn bình thường. Đây là giới hạn cố hữu của kiến trúc macvlan VRRP, không phải lỗi cấu hình — muốn test chính xác thì ép interface: `ping -I eth1 10.0.10.3`.
 
 ## So sánh `vrrpd` (FRR) và `keepalived`
 
