@@ -15,7 +15,7 @@ Hoàn thành [09-ospf-multi-area](../09-ospf-multi-area/lab-guide.md) — quen O
 ```mermaid
 graph TD
     subgraph wan_segment ["WAN / Backbone Segment"]
-        backbone["backbone<br>10.0.12.2/24"]
+        backbone["backbone<br>eth1: 10.0.12.2/30<br>eth2: 10.0.13.2/30"]
     end
 
     subgraph lan_segment ["LAN Segment (10.0.10.0/24)"]
@@ -26,8 +26,8 @@ graph TD
         host-b["host-b<br>10.0.10.101/24"]
     end
 
-    backbone -- "eth1 <-> eth2 (10.0.12.1/24)" --- r1
-    backbone -- "eth2 <-> eth2 (10.0.13.1/24)" --- r2
+    backbone -- "eth1 <-> eth2 (10.0.12.1/30)" --- r1
+    backbone -- "eth2 <-> eth2 (10.0.13.1/30)" --- r2
     r1 -- "eth1 <-> eth3" --- sw
     r2 -- "eth1 <-> eth4" --- sw
     sw -- "eth1 <-> eth1" --- host-a
