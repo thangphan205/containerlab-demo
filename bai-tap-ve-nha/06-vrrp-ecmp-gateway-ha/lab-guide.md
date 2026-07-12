@@ -58,8 +58,8 @@ Xem [`topology/vrrp-lab.clab.yml`](./topology/vrrp-lab.clab.yml). OSPF đã cấ
    - **Bắt buộc dùng VRID `10`** — không đổi số khác. Topology đã tạo sẵn macvlan `vrrp-eth1-10` (MAC `00:00:5e:00:01:0a`) giữ VIP lúc deploy; MAC này cứng theo VRID 10 (byte cuối `0a` = 10 hex). Cấu hình VRID khác sẽ không khớp macvlan có sẵn → `vrrpd` không tìm được interface, kẹt mãi ở `Initialize`, không lên Master/Backup được.
 4. Verify VRRP:
    - `show vrrp` trên cả 2 router — R1 phải là **Master**, R2 phải là **Backup**.
-   - Từ `host-a`, ping `10.0.10.1` (VIP) → thông.
-   - Từ `host-a`, ping `backbone` (`10.0.12.2` hoặc `10.0.13.2`) → thông (traffic đi qua R1 master).
+   - Từ `host-a`, ping `10.0.10.1` (VIP) → thông. **Lưu ý:** đây chỉ là check "VIP có được cấu hình đúng", KHÔNG dùng để demo failover — ping thẳng vào VIP luôn thành công dù router đang Backup hay đứt hẳn, vì Linux vẫn tự trả lời ICMP cho IP local dù interface đang `protodown`/`NO-CARRIER` (không phải bug của lab, là hành vi kernel). Muốn thấy outage thật, phải ping **xuyên qua** router (bước 5).
+   - Từ `host-a`, ping `backbone` (`10.0.12.2` hoặc `10.0.13.2`) → thông (traffic đi qua R1 master, đây mới là traffic forward thật qua router).
 5. **Test failover:** tắt interface LAN trên R1 (mô phỏng R1 chết):
    ```bash
    docker exec clab-vrrp-lab-r1 ip link set eth1 down
@@ -143,7 +143,7 @@ Kết quả: LAN→WAN luôn gom về 1 router (VRRP quyết định); WAN→LAN
 
 ### Kết quả kỳ vọng — đo hội tụ
 
-Với `ip link set eth1 down` (mất tín hiệu tức thời, không phải mất dần), FRR VRRP thường phát hiện và chuyển Master nhanh hơn nhiều so với "3-5 giây" ước lượng an toàn trong đề bài. Trên log `ping -D -i 0.2`, thường chỉ thấy **3-6 gói mất liên tiếp** (~0.6-1.2s). Con số "3-5 giây" là dead-interval lý thuyết (~3x advertisement interval mặc định 1s) cho trường hợp mất advertisement dần, không phải mất link tức thời.
+**Quan trọng: phải ping `backbone` (traffic forward qua router), KHÔNG ping VIP.** Ping thẳng VIP luôn thành công 0% loss bất kể failover, vì Linux vẫn tự trả lời ICMP cho IP cấu hình local trên interface dù đang `protodown`/`NO-CARRIER` — không phản ánh trạng thái forwarding thật. Test đo thực tế trên topology này (`ping -D -i 0.1 10.0.12.2` xuyên suốt lúc `ip link set eth1 down`): mất khoảng **45-50 gói liên tiếp (~4.5-5s)** — khớp với ước lượng "3-5 giây" trong đề bài (Master Down Interval ≈ 3x advertisement interval mặc định 1s, cộng thời gian OSPF/FDB hội tụ lại). Nếu đo ra loss gần 0 dù đã tắt hẳn `eth1`, gần như chắc chắn là đang lỡ ping nhầm VIP thay vì `backbone`.
 
 ### Kết quả kỳ vọng — gratuitous ARP / FDB
 

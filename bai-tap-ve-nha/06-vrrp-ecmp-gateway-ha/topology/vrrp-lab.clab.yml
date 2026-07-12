@@ -28,6 +28,10 @@ topology:
         - ip link set eth2 up
         - ip link set eth3 up
         - ip link set eth4 up
+        # Tắt multicast snooping — mặc định bridge Linux snoop multicast nhưng VRRP không gửi IGMP join,
+        # khiến advertisement (224.0.0.18) tới thất thường, có thể gây split-brain thoáng qua giữa R1/R2.
+        # (xem "Troubleshooting" trong doc/user/vrrp.rst upstream FRR)
+        - sh -c "echo 0 > /sys/devices/virtual/net/br0/bridge/multicast_snooping"
     r1:
       group: routers
       binds:
