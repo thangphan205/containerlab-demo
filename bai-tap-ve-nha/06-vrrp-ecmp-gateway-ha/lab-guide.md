@@ -55,6 +55,7 @@ Xem [`topology/vrrp-lab.clab.yml`](./topology/vrrp-lab.clab.yml). OSPF đã cấ
    ```
    - R1: priority `200` (master)
    - R2: priority `100` (backup)
+   - **Bắt buộc dùng VRID `10`** — không đổi số khác. Topology đã tạo sẵn macvlan `vrrp-eth1-10` (MAC `00:00:5e:00:01:0a`) giữ VIP lúc deploy; MAC này cứng theo VRID 10 (byte cuối `0a` = 10 hex). Cấu hình VRID khác sẽ không khớp macvlan có sẵn → `vrrpd` không tìm được interface, kẹt mãi ở `Initialize`, không lên Master/Backup được.
 4. Verify VRRP:
    - `show vrrp` trên cả 2 router — R1 phải là **Master**, R2 phải là **Backup**.
    - Từ `host-a`, ping `10.0.10.1` (VIP) → thông.
@@ -79,7 +80,8 @@ Xem [`topology/vrrp-lab.clab.yml`](./topology/vrrp-lab.clab.yml). OSPF đã cấ
    - [ ] Sau khi bật lại eth1 R1: `show vrrp` xác nhận R1 giành lại Master (preempt).
 
 ## Gợi ý
-- FRR VRRP (`vrrpd`) tự tạo macvlan sub-interface để giữ VIP — không cần tạo tay. Chỉ cần bật `vrrpd=yes` trong daemons (đã bật sẵn).
+- **FRR `vrrpd` tự nó KHÔNG tạo macvlan giữ VIP** (đây là hành vi thiết kế theo upstream FRR docs, không phải bug) — macvlan `vrrp-eth1-10` đã được topology tự tạo sẵn lúc deploy (xem `exec:` trong `topology/vrrp-lab.clab.yml`), bạn không cần tạo tay. Chỉ cần bật `vrrpd=yes` trong daemons (đã bật sẵn) và cấu hình `vrrp 10 ...` như bước 3.
+- Nếu `show vrrp` báo `VRRP interface (v4): None` mãi (không lên Master/Backup): kiểm tra macvlan có tồn tại không — `ip link show vrrp-eth1-10` trên R1/R2. Nếu thiếu, `vrrpd` sẽ log `Refusing to start Virtual Router: No VRRP interface` (bật `log stdout` + `debug vrrp` để thấy).
 - Nếu `show vrrp` báo lỗi hoặc trống, kiểm tra `vrrpd` đã chạy chưa: `ps aux | grep vrrpd`.
 - **Preempt:** mặc định FRR VRRP bật preempt — khi R1 (priority cao hơn) khôi phục, nó tự giành lại Master. Tắt preempt bằng `vrrp 10 preempt` nếu muốn giữ backup đang chạy.
 - **Split-brain (cả 2 router đều Master):** thường do VRID hoặc VIP cấu hình lệch giữa R1/R2 (thành 2 nhóm VRRP khác nhau, không nghe advertisement của nhau), hoặc đứt liên kết đoạn LAN (R1↔SW hoặc R2↔SW) khiến advertisement multicast không tới bên kia dù cả 2 vẫn "sống". Kiểm tra `show run` đối chiếu VRID/VIP hai bên, và trạng thái link (`ip link show eth1`) trước khi kết luận là bug phần mềm.
@@ -106,6 +108,8 @@ Bài này dùng `vrrpd` tích hợp sẵn trong FRR vì R1/R2 đã chạy OSPF t
 <summary>⚠️ Bấm để xem lời giải — chỉ mở sau khi đã tự làm hết các bước!</summary>
 
 ### Config VRRP hoàn chỉnh
+
+Điều kiện tiên quyết (đã có sẵn, không cần làm): macvlan `vrrp-eth1-10` (MAC `00:00:5e:00:01:0a`, mang VIP `10.0.10.1/24`) được topology tạo lúc deploy — FRR `vrrpd` **không tự tạo** macvlan này (xem `doc/user/vrrp.rst` upstream: "it does not create those system interfaces - they must be configured outside of FRR"). Nếu tự dựng topology tương tự từ đầu, đây là bước hay bị bỏ sót nhất khiến `show vrrp` kẹt mãi ở `Initialize`.
 
 **R1** (qua `vtysh`):
 ```

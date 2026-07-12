@@ -33,11 +33,23 @@ topology:
       binds:
         - ../configs/r1/daemons:/etc/frr/daemons
         - ../configs/r1/frr.conf:/etc/frr/frr.conf
+      exec:
+        # FRR vrrpd không tự tạo macvlan giữ VIP — phải tạo tay trước (xem doc/user/vrrp.rst upstream).
+        # addrgenmode random bị bỏ vì gây lỗi "Address family not supported" trên kernel host lab (chỉ cần cho IPv6 VRRP, lab này chỉ dùng IPv4).
+        - ip link add vrrp-eth1-10 link eth1 type macvlan mode bridge
+        - ip link set dev vrrp-eth1-10 address 00:00:5e:00:01:0a
+        - ip addr add 10.0.10.1/24 dev vrrp-eth1-10
+        - ip link set dev vrrp-eth1-10 up
     r2:
       group: routers
       binds:
         - ../configs/r2/daemons:/etc/frr/daemons
         - ../configs/r2/frr.conf:/etc/frr/frr.conf
+      exec:
+        - ip link add vrrp-eth1-10 link eth1 type macvlan mode bridge
+        - ip link set dev vrrp-eth1-10 address 00:00:5e:00:01:0a
+        - ip addr add 10.0.10.1/24 dev vrrp-eth1-10
+        - ip link set dev vrrp-eth1-10 up
     backbone:
       group: routers
       binds:
