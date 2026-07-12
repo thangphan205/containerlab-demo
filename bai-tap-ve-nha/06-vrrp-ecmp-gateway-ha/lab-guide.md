@@ -71,6 +71,21 @@ Xem [`topology/vrrp-lab.clab.yml`](./topology/vrrp-lab.clab.yml). OSPF đã cấ
 - Nếu `show vrrp` báo lỗi hoặc trống, kiểm tra `vrrpd` đã chạy chưa: `ps aux | grep vrrpd`.
 - **Preempt:** mặc định FRR VRRP bật preempt — khi R1 (priority cao hơn) khôi phục, nó tự giành lại Master. Tắt preempt bằng `vrrp 10 preempt` nếu muốn giữ backup đang chạy.
 
+## So sánh `vrrpd` (FRR) và `keepalived`
+
+Bài này dùng `vrrpd` tích hợp sẵn trong FRR vì R1/R2 đã chạy OSPF trên FRR — gộp control-plane routing và VRRP vào chung 1 daemon/config. Nhưng ngoài đời, **`keepalived`** mới là lựa chọn phổ biến hơn cho bài toán VIP failover, nhất là khi thiết bị không phải router thuần (LB pair, web/app/db server...).
+
+| | `vrrpd` (FRR) | `keepalived` |
+|---|---|---|
+| Vai trò | 1 daemon trong bộ FRR, dùng chung config/mgmt với `ospfd`/`bgpd` | Standalone — chỉ lo VRRP + healthcheck, không kèm routing suite |
+| VIP | Tự tạo macvlan sub-interface giữ VIP, quản state qua `protodown` | Gán VIP trực tiếp bằng `ip addr add` lên interface |
+| Config | Trong `frr.conf`, cú pháp `vrrp <vrid> ...` qua `vtysh` | File riêng `/etc/keepalived/keepalived.conf`, cú pháp `vrrp_instance` |
+| Healthcheck / hook | Yếu — không có cơ chế theo dõi tầng ứng dụng linh hoạt | Mạnh — `vrrp_script`/`track_script`, `notify_master/backup/fault` để gắn healthcheck app (vd: haproxy còn sống không mới giữ Master) |
+| Capability cần | `CAP_NET_ADMIN`/`CAP_NET_RAW` — image FRR chạy daemon dưới user non-root từng bị thiếu cap này, kẹt ở trạng thái `Initialize` mãi | Cũng cần 2 cap trên, nhưng đa số image chạy `keepalived` as root nên ít gặp vấn đề này |
+| Dùng khi | Thiết bị đã là router chạy FRR full stack (OSPF/BGP), muốn gộp VRRP vào cùng control-plane | Thiết bị không chạy routing suite (LB, app/db pair) — chỉ cần VIP failover + healthcheck app-level |
+
+**Thực tế triển khai:** phần lớn production dùng `keepalived` cho HA gateway/LB pair (kinh điển: `haproxy` + `keepalived`) nhờ hook script linh hoạt và track record lâu năm. `vrrpd` FRR chỉ đáng cân nhắc khi thiết bị đã là router FRR đang chạy OSPF/BGP sẵn — đúng như tình huống bài này.
+
 ## Thảo luận và hỏi đáp
 Bài tập này tự làm và tự xác minh kết quả. Nếu có thắc mắc hoặc cần trao đổi thêm, các bạn hãy đăng bài thảo luận trên group Facebook [Network Thực Chiến](https://www.facebook.com/profile.php?id=61591373979991).
 ## Bài tiếp theo

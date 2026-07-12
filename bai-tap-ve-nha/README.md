@@ -10,10 +10,10 @@ Toàn bộ nội dung **mã nguồn mở** (xem [LICENSE](../LICENSE)) — mọi
 
 ## Cách tham gia
 
-1. Chọn bất kỳ bài lab nào bạn muốn thực hành ở danh sách bên dưới và đọc `lab-guide.md` tương ứng.
-2. Tự deploy topology bằng containerlab, làm theo checklist nhiệm vụ (không có bước giải sẵn). Bí chỗ nào cứ hỏi AI (ChatGPT/Claude...) để hiểu sâu hơn, đừng chỉ xin nguyên cục config — tự gõ, tự test, tự sai mới nhớ lâu.
-3. Chia sẻ thành quả của mình hoặc thảo luận thêm ở group Facebook Network Thực Chiến: https://www.facebook.com/profile.php?id=61591373979991 .
-4. Đáp án tham khảo mình sẽ chuẩn bị sau.
+1. Chọn bất kỳ bài lab nào bạn muốn thực nghiệm ở Github và đọc lab-guide.md tương ứng. Các chủ đề lab mình sẽ soạn về triển khai hệ thống mạng và các dịch vụ Linux phổ biến.
+2. Tự deploy topology bằng containerlab, làm theo checklist nhiệm vụ (không có bước giải sẵn). Bí chỗ nào cứ hỏi AI (ChatGPT/Claude...) để hiểu sâu hơn, đừng chỉ xin nguyên cục config.
+3. Chia sẻ và thảo luận thêm ở group Facebook Network Thực Chiến: https://www.facebook.com/profile.php?id=61591373979991 .
+4. Đáp án tham khảo mình sẽ chuẩn bị dần, nếu bạn làm xong hãy cập nhật và đánh giá bài lab giúp mình ở Github.
 ## Danh sách bài tập theo chủ đề
 
 > Các bài lab được phân loại theo từng **Arc (Chủ đề)** độc lập. Bạn có thể tự do lựa chọn bất kỳ bài lab nào phù hợp với nhu cầu học tập hoặc dự án thực tế của mình mà không cần tuân theo thứ tự tuyến tính.
