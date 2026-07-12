@@ -23,21 +23,36 @@ Yêu cầu nghiệp vụ từ CTO:
 
 ## Sơ đồ topology
 ```
- pc-sales-1     pc-it-1              pc-sales-2
- (VLAN 10)     (VLAN 20)             (VLAN 10)
-     |             |                     |
-    eth1          eth2                  eth1
-     +--- sw-acc1 ---+                sw-acc2        <- switch access (tầng 1, tầng 2)
-           |eth3                        |eth2
-         trunk                        trunk
-           |eth1                        |eth2
-           +--------- sw-dist ----------+            <- switch distribution
-                        |eth3
-                      trunk
-                        |eth1
-                      dist-1                          <- gateway FRR (router-on-a-stick)
-                 eth1.10 = 172.16.10.1/24
-                 eth1.20 = 172.16.20.1/24
+        TẦNG 1                              TẦNG 2
+  pc-sales-1        pc-it-1              pc-sales-2
+  (VLAN 10)         (VLAN 20)            (VLAN 10)
+      | eth1            | eth1               | eth1
+      |  access,        |  access,            |  access,
+      |  untagged VID10 |  untagged VID20     |  untagged VID10
+      |                 |                     |
+  ====+=================+====             ====+====
+  eth1              eth2                   eth1
+  +---------------------------+          +-------------+
+  |          sw-acc1          |          |   sw-acc2   |   switch access
+  +---------------------------+          +-------------+
+              | eth3                        | eth2
+              |  trunk, tagged VID 10+20     |  trunk, tagged VID 10+20
+              |                              |
+              +------------+   +-------------+
+                           |   |
+                        eth1| |eth2
+                        +---------+
+                        | sw-dist |                          switch distribution
+                        +---------+
+                             | eth3
+                             |  trunk, tagged VID 10+20
+                             |
+                         eth1|
+                       +-----------+
+                       |  dist-1   |   gateway FRR (router-on-a-stick)
+                       +-----------+
+                       eth1.10 → 172.16.10.1/24 (VLAN 10 — Kinh doanh)
+                       eth1.20 → 172.16.20.1/24 (VLAN 20 — Kỹ thuật)
 ```
 
 Chi tiết xem [`topology/campus-lan-lab.clab.yml`](./topology/campus-lan-lab.clab.yml).
