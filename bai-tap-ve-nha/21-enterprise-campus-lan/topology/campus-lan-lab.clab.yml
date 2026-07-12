@@ -1,0 +1,77 @@
+name: campus-lan-lab
+prefix: ""
+
+topology:
+  groups:
+    routers:
+      kind: linux
+      image: quay.io/frrouting/frr:10.5.1
+    hosts:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+
+  nodes:
+    # ===== PC người dùng (học viên tự gán IP + default route) =====
+    pc-sales-1:
+      group: hosts
+    pc-sales-2:
+      group: hosts
+    pc-it-1:
+      group: hosts
+
+    # ===== Switch access/distribution (Linux bridge VLAN-aware) =====
+    # Bridge đã tạo sẵn + enslave port — CHƯA gán VLAN membership (việc của bạn).
+    sw-acc1:
+      group: hosts
+      exec:
+        - ip link add name br0 type bridge vlan_filtering 1
+        - ip link set br0 up
+        - ip link set eth1 master br0
+        - ip link set eth2 master br0
+        - ip link set eth3 master br0
+        - ip link set eth1 up
+        - ip link set eth2 up
+        - ip link set eth3 up
+    sw-acc2:
+      group: hosts
+      exec:
+        - ip link add name br0 type bridge vlan_filtering 1
+        - ip link set br0 up
+        - ip link set eth1 master br0
+        - ip link set eth2 master br0
+        - ip link set eth1 up
+        - ip link set eth2 up
+    sw-dist:
+      group: hosts
+      exec:
+        - ip link add name br0 type bridge vlan_filtering 1
+        - ip link set br0 up
+        - ip link set eth1 master br0
+        - ip link set eth2 master br0
+        - ip link set eth3 master br0
+        - ip link set eth1 up
+        - ip link set eth2 up
+        - ip link set eth3 up
+
+    # ===== Gateway L3 (FRR) — sub-interface 802.1Q tạo sẵn, IP trong frr.conf =====
+    dist-1:
+      group: routers
+      binds:
+        - ../configs/dist-1/daemons:/etc/frr/daemons
+        - ../configs/dist-1/frr.conf:/etc/frr/frr.conf
+      exec:
+        - ip link add link eth1 name eth1.10 type vlan id 10
+        - ip link add link eth1 name eth1.20 type vlan id 20
+        - ip link set eth1.10 up
+        - ip link set eth1.20 up
+
+  links:
+    # Access sw-acc1: eth1 = pc-sales-1 (VLAN 10), eth2 = pc-it-1 (VLAN 20), eth3 = trunk lên sw-dist
+    - endpoints: ["pc-sales-1:eth1", "sw-acc1:eth1"]
+    - endpoints: ["pc-it-1:eth1", "sw-acc1:eth2"]
+    - endpoints: ["sw-acc1:eth3", "sw-dist:eth1"]
+    # Access sw-acc2: eth1 = pc-sales-2 (VLAN 10), eth2 = trunk lên sw-dist
+    - endpoints: ["pc-sales-2:eth1", "sw-acc2:eth1"]
+    - endpoints: ["sw-acc2:eth2", "sw-dist:eth2"]
+    # Trunk sw-dist -> gateway dist-1
+    - endpoints: ["sw-dist:eth3", "dist-1:eth1"]

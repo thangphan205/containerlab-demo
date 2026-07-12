@@ -50,4 +50,4 @@ Giống hệt Bài 10. Tất cả 3 router đã cấu hình `router bgp`, eBGP s
 ## Thảo luận và hỏi đáp
 Bài tập này tự làm và tự xác minh kết quả. Nếu có thắc mắc hoặc cần trao đổi thêm, các bạn hãy đăng bài thảo luận trên group Facebook [Network Thực Chiến](https://www.facebook.com/profile.php?id=61591373979991).
 ## Bài tiếp theo
-→ 20-wireguard-vpn-site-to-site (Sắp ra mắt)
+→ [20-wireguard-vpn-site-to-site](../20-wireguard-vpn-site-to-site/lab-guide.md): WireGuard VPN site-to-site.

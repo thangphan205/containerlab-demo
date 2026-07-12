@@ -1,0 +1,38 @@
+name: wg-lab
+
+topology:
+  nodes:
+    host-a:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - ip addr add 192.168.1.10/24 dev eth1
+        - ip route replace default via 192.168.1.1 dev eth1
+    r-site-a:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - sysctl -w net.ipv4.ip_forward=1
+        - ip addr add 192.168.1.1/24 dev eth1
+        - ip addr add 203.0.113.1/24 dev eth2
+    isp:
+      kind: bridge
+    r-site-b:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - sysctl -w net.ipv4.ip_forward=1
+        - ip addr add 203.0.113.2/24 dev eth1
+        - ip addr add 192.168.2.1/24 dev eth2
+    host-b:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - ip addr add 192.168.2.10/24 dev eth1
+        - ip route replace default via 192.168.2.1 dev eth1
+
+  links:
+    - endpoints: ["host-a:eth1", "r-site-a:eth1"]
+    - endpoints: ["r-site-a:eth2", "isp:eth1"]
+    - endpoints: ["isp:eth2", "r-site-b:eth1"]
+    - endpoints: ["r-site-b:eth2", "host-b:eth1"]

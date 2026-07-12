@@ -99,7 +99,7 @@ Toàn bộ nội dung **mã nguồn mở** (xem [LICENSE](../LICENSE)) — mọi
 
 | Mã bài | Tên bài lab | Trạng thái | Video |
 |:---:|:---|:---|:---|
-| 20 | WireGuard VPN site-to-site (tunnel qua "internet" mô phỏng) | ⏳ Sắp ra mắt | — |
+| [20](./20-wireguard-vpn-site-to-site/lab-guide.md) | WireGuard VPN site-to-site (tunnel qua "internet" mô phỏng) | 🟢 Đang mở (Mới) | — |
 
 ---
 
@@ -109,7 +109,7 @@ Toàn bộ nội dung **mã nguồn mở** (xem [LICENSE](../LICENSE)) — mọi
 
 | Mã bài | Tên bài lab | Trạng thái | Video |
 |:---:|:---|:---|:---|
-| 21 | Dựng campus LAN cho trụ sở (VLAN access–distribution) | ⏳ Sắp ra mắt | — |
+| [21](./21-enterprise-campus-lan/lab-guide.md) | Dựng campus LAN cho trụ sở (VLAN access–distribution) | 🟢 Đang mở (Mới) | — |
 | 22 | Routing core OSPF + gateway HA (VRRP) | ⏳ Sắp ra mắt | — |
 | 23 | Kết nối chi nhánh qua WAN (eBGP) | ⏳ Sắp ra mắt | — |
 | 24 | Internet edge: NAT + firewall nftables | ⏳ Sắp ra mắt | — |
