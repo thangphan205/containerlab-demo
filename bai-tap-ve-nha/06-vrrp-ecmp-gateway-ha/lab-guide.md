@@ -1,3 +1,5 @@
+**Language / Ngôn ngữ:** [English](lab-guide_en.md) | [Tiếng Việt](lab-guide.md)
+
 # Bài 06: VRRP + ECMP — Gateway HA
 
 **Arc 1 — Networking nền tảng nâng cao**

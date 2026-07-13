@@ -1,3 +1,5 @@
+**Language / Ngôn ngữ:** [English](lab-guide_en.md) | [Tiếng Việt](lab-guide.md)
+
 # Bài 15: Python Parsing — Tự Động Audit Routing Table
 
 **Arc 3 — Automation/NetDevOps**

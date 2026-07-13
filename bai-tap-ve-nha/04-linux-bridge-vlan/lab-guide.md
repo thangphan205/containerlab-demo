@@ -1,3 +1,5 @@
+**Language / Ngôn ngữ:** [English](lab-guide_en.md) | [Tiếng Việt](lab-guide.md)
+
 # Bài 04: VLAN Trunking Trên Linux Bridge
 
 **Arc 1 — Networking nền tảng nâng cao**

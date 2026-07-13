@@ -20,7 +20,7 @@ This repository contains containerized network lab implementations with:
 | **apricot2026** | FRR | OSPF, IS-IS, BGP, Route-Maps | APRICOT 2026 PCIO networking lab with multi-AS design | ✅ Active |
 | **iproute2** | Linux | iproute2, netlink | Linux networking fundamentals | ✅ Complete |
 | **iproute2-tc** | Linux | Traffic Control (TBF, netem) | Advanced traffic shaping and QoS | ✅ Complete |
-| **[bai-tap-ve-nha](./bai-tap-ve-nha/README.md)** | FRR, Linux | OSPF, BGP, Automation, Sys Ops | Weekly homework series for Vietnamese students (Network Thực Chiến) | 🟢 Ongoing |
+| **[bai-tap-ve-nha](./bai-tap-ve-nha/README_en.md)** | FRR, Linux | OSPF, BGP, Automation, Sys Ops | Weekly hands-on network lab series (Network Thực Chiến) | 🟢 Ongoing |
 
 ## 🚀 Getting Started
 

@@ -1,3 +1,5 @@
+**Language / Ngôn ngữ:** [English](lab-guide_en.md) | [Tiếng Việt](lab-guide.md)
+
 # Bài 21: Dựng campus LAN cho trụ sở NTC (VLAN access–distribution)
 
 **Arc 7 — Triển khai mạng doanh nghiệp (dự án xuyên suốt)**

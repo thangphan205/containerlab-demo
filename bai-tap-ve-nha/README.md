@@ -1,3 +1,5 @@
+**Language / Ngôn ngữ:** [English](README_en.md) | [Tiếng Việt](README.md)
+
 # 📚 Bài Tập Về Nhà — Network Thực Chiến
 
 Series bài tập về nhà dài hơi dành cho học viên đã có nền tảng CCNA — tổng hợp các bài lab dựng bằng **containerlab**, bám sát cách triển khai thực tế ở môi trường enterprise (không phải lab lý thuyết thuần túy).

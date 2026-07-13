@@ -1,3 +1,5 @@
+**Language / Ngôn ngữ:** [English](lab-guide_en.md) | [Tiếng Việt](lab-guide.md)
+
 # Bài 03: Static Route Multi-Hop
 
 **Arc 1 — Networking nền tảng nâng cao**

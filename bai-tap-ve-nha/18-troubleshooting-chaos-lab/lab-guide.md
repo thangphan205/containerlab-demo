@@ -1,3 +1,5 @@
+**Language / Ngôn ngữ:** [English](lab-guide_en.md) | [Tiếng Việt](lab-guide.md)
+
 # Bài 18: Troubleshooting Chaos Lab
 
 **Arc 5 — Troubleshooting chaos lab**

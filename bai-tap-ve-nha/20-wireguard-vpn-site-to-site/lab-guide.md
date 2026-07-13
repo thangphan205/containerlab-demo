@@ -1,3 +1,5 @@
+**Language / Ngôn ngữ:** [English](lab-guide_en.md) | [Tiếng Việt](lab-guide.md)
+
 # Bài 20: WireGuard VPN Site-to-Site
 
 **Arc 6 — Advanced Security & VPN**

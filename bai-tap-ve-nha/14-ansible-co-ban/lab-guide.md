@@ -1,3 +1,5 @@
+**Language / Ngôn ngữ:** [English](lab-guide_en.md) | [Tiếng Việt](lab-guide.md)
+
 # Bài 14: Ansible Cơ Bản — Push Config Cho Nhiều Router
 
 **Arc 3 — Automation/NetDevOps**

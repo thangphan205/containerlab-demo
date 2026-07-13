@@ -1,3 +1,5 @@
+**Language / Ngôn ngữ:** [English](lab-guide_en.md) | [Tiếng Việt](lab-guide.md)
+
 # Bài 16: Git Workflow Cho Network Config
 
 **Arc 3 — Automation/NetDevOps**

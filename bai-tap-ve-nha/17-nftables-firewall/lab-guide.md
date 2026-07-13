@@ -1,3 +1,5 @@
+**Language / Ngôn ngữ:** [English](lab-guide_en.md) | [Tiếng Việt](lab-guide.md)
+
 # Bài 17: nftables — Firewall Cơ Bản Giữa 2 Subnet
 
 **Arc 4 — Security & Observability**

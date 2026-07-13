@@ -1,3 +1,5 @@
+**Language / Ngôn ngữ:** [English](lab-guide_en.md) | [Tiếng Việt](lab-guide.md)
+
 # Bài 12: BGP Local Preference + Prefix-List
 
 **Arc 2 — Routing protocol chuyên sâu**

@@ -1,3 +1,5 @@
+**Language / Ngôn ngữ:** [English](CONTRIBUTING_en.md) | [Tiếng Việt](CONTRIBUTING.md)
+
 # Đóng góp cho series Bài Tập Về Nhà
 
 Series này mở nguồn (MIT — xem [LICENSE](../LICENSE)). Mọi đóng góp từ cộng đồng đều hoan nghênh.

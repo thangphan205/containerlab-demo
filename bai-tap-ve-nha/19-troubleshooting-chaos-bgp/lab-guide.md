@@ -1,3 +1,5 @@
+**Language / Ngôn ngữ:** [English](lab-guide_en.md) | [Tiếng Việt](lab-guide.md)
+
 # Bài 19: Troubleshooting Chaos Lab — BGP
 
 **Arc 5 — Troubleshooting chaos lab**

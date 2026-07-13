@@ -1,3 +1,5 @@
+**Language / Ngôn ngữ:** [English](lab-guide_en.md) | [Tiếng Việt](lab-guide.md)
+
 # Bài 05: STP/RSTP — Chống Loop Layer 2
 
 **Arc 1 — Networking nền tảng nâng cao**

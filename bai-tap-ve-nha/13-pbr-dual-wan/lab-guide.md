@@ -1,3 +1,5 @@
+**Language / Ngôn ngữ:** [English](lab-guide_en.md) | [Tiếng Việt](lab-guide.md)
+
 # Bài 13: Policy-Based Routing (PBR) — Dual-WAN
 
 **Arc 2 — Routing protocol chuyên sâu**

@@ -1,3 +1,5 @@
+**Language / Ngôn ngữ:** [English](lab-guide_en.md) | [Tiếng Việt](lab-guide.md)
+
 # Bài 01: Cài Đặt Containerlab & Deploy Lab Đầu Tiên
 
 **Arc 0 — Chuẩn bị nền tảng (System Ops)**
