@@ -2,7 +2,7 @@
 
 # Bài 06: VRRP + ECMP — Gateway HA
 
-**Arc 1 — Networking nền tảng nâng cao**
+**Arc 1 — Networking nền tảng nâng cao** | 🎥 **Video hướng dẫn:** [YouTube - VRRP + ECMP Gateway HA](https://youtu.be/7SjFpp2h_aM)
 
 ## Mục tiêu
 - Cấu hình VRRP trên FRR: 2 router chia sẻ 1 Virtual IP (VIP) làm gateway cho LAN.

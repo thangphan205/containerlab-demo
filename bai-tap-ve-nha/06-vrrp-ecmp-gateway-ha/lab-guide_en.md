@@ -2,7 +2,7 @@
 
 # Lab 06: VRRP + ECMP — Gateway High Availability
 
-**Arc 1 — Advanced Networking Fundamentals**
+**Arc 1 — Advanced Networking Fundamentals** | 🎥 **Video Tutorial:** [YouTube - VRRP + ECMP Gateway HA](https://youtu.be/7SjFpp2h_aM)
 
 ## Objectives
 - Configure VRRP on FRR: 2 routers share 1 Virtual IP (VIP) as the active default gateway for LAN hosts.
