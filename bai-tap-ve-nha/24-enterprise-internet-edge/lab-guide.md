@@ -1,3 +1,5 @@
+**Language / Ngôn ngữ:** [English](lab-guide_en.md) | [Tiếng Việt](lab-guide.md)
+
 # Bài 24: Internet edge — NAT + firewall nftables cho toàn NTC
 
 **Arc 7 — Triển khai mạng doanh nghiệp (dự án xuyên suốt)**

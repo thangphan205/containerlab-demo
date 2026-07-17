@@ -1,3 +1,5 @@
+**Language / Ngôn ngữ:** [English](lab-guide_en.md) | [Tiếng Việt](lab-guide.md)
+
 # Bài 23: Kết nối chi nhánh Hà Nội qua WAN (eBGP)
 
 **Arc 7 — Triển khai mạng doanh nghiệp (dự án xuyên suốt)**

@@ -115,9 +115,9 @@ All content is **open source** (see [LICENSE](../LICENSE)) — feel free to use,
 | Lab ID | Lab Title | Status | Video |
 |:---:|:---|:---|:---|
 | [21](./21-enterprise-campus-lan/lab-guide_en.md) | HQ Campus LAN (Access–Distribution VLAN Architecture) | 🟢 Active | — |
-| 22 | Routing Core OSPF + Gateway HA (VRRP) | ⏳ Coming Soon | — |
-| 23 | Branch Office WAN Interconnect (eBGP) | ⏳ Coming Soon | — |
-| 24 | Enterprise Edge: NAT & nftables Stateful Firewall | ⏳ Coming Soon | — |
+| [22](./22-enterprise-routing-core-ha/lab-guide_en.md) | Routing Core OSPF + Gateway HA (VRRP) | 🟢 Active | — |
+| [23](./23-enterprise-wan-branch/lab-guide_en.md) | Branch Office WAN Interconnect (eBGP) | 🟢 Active | — |
+| [24](./24-enterprise-internet-edge/lab-guide_en.md) | Enterprise Edge: NAT & nftables Stateful Firewall | 🟢 Active | — |
 
 ---
 
