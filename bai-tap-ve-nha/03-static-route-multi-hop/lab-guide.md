@@ -15,9 +15,28 @@ Hoàn thành [02-ip-subnetting-thuc-chien](../02-ip-subnetting-thuc-chien/lab-gu
 ## Sơ đồ topology
 Chuỗi 4 router nối tiếp, 2 đầu có LAN với host. Xem [`topology/static-route-lab.clab.yml`](./topology/static-route-lab.clab.yml). IP các link point-to-point **đã được gán sẵn**, IP LAN 2 đầu và toàn bộ static route thì **chưa có** — tự cấu hình.
 
-```
-host-1 (10.0.1.0/24) -- R1 -- R2 -- R3 -- R4 -- host-2 (10.0.2.0/24)
-                       10.0.12.0/30  10.0.23.0/30  10.0.34.0/30  (đã gán sẵn trên link giữa router)
+```mermaid
+graph LR
+    subgraph lan1 ["LAN 1 (10.0.1.0/24)"]
+        host-1["host-1<br>(chưa gán IP)"]
+    end
+
+    subgraph routers ["Transit Routers & Links"]
+        r1["r1<br>eth1: LAN 1<br>eth2: 10.0.12.1/30"]
+        r2["r2<br>eth1: 10.0.12.2/30<br>eth2: 10.0.23.1/30"]
+        r3["r3<br>eth1: 10.0.23.2/30<br>eth2: 10.0.34.1/30"]
+        r4["r4<br>eth1: 10.0.34.2/30<br>eth2: LAN 2"]
+    end
+
+    subgraph lan2 ["LAN 2 (10.0.2.0/24)"]
+        host-2["host-2<br>(chưa gán IP)"]
+    end
+
+    host-1 -- "eth1 <-> eth1" --- r1
+    r1 -- "eth2 <-> eth1<br>(10.0.12.0/30)" --- r2
+    r2 -- "eth2 <-> eth1<br>(10.0.23.0/30)" --- r3
+    r3 -- "eth2 <-> eth1<br>(10.0.34.0/30)" --- r4
+    r4 -- "eth2 <-> eth1" --- host-2
 ```
 
 ## Đề bài / Yêu cầu
