@@ -46,7 +46,7 @@ All content is **open source** (see [LICENSE](../LICENSE)) — feel free to use,
 | [04](./04-linux-bridge-vlan/lab-guide_en.md) | VLAN Trunking on Linux Bridges | 🟢 Active | — |
 | [05](./05-stp-rstp-chong-loop/lab-guide_en.md) | STP/RSTP — Layer 2 Loop Prevention (Triangle Topology) | 🟢 Active | — |
 | [06](./06-vrrp-ecmp-gateway-ha/lab-guide_en.md) | VRRP + ECMP — Gateway High Availability (< 3s Failover) | 🟢 Active | [Watch video](https://youtu.be/7SjFpp2h_aM) |
-| [07](./07-dhcp-server-relay/lab-guide_en.md) | Linux DHCP Server & Relay (dnsmasq Multi-Subnet) | 🟢 Active | — |
+| [07](./07-dhcp-server-relay/lab-guide_en.md) | Linux DHCP Server (dnsmasq Multi-Subnet) | 🟢 Active | [Watch video](https://youtu.be/uJw78eOtZ58) |
 | [08](./08-nat-masquerade-linux/lab-guide_en.md) | Linux NAT/Masquerade (nftables Source NAT for LAN) | 🟢 Active | — |
 
 ---
