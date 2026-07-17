@@ -1,0 +1,161 @@
+name: internet-edge-lab
+prefix: ""
+
+topology:
+  groups:
+    routers:
+      kind: linux
+      image: quay.io/frrouting/frr:10.5.1
+    hosts:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+
+  nodes:
+    # ===== Lớp tuần 1–3 (bài 21–23) — đã cấu hình sẵn hoàn chỉnh =====
+    pc-sales-1:
+      group: hosts
+      exec:
+        - ip addr add 172.16.10.11/24 dev eth1
+        - ip route replace default via 172.16.10.1 dev eth1
+    pc-it-1:
+      group: hosts
+      exec:
+        - ip addr add 172.16.20.11/24 dev eth1
+        - ip route replace default via 172.16.20.1 dev eth1
+    sw-campus:
+      group: hosts
+      exec:
+        - ip link add name br0 type bridge vlan_filtering 1
+        - ip link set br0 up
+        - ip link set eth1 master br0
+        - ip link set eth2 master br0
+        - ip link set eth3 master br0
+        - ip link set eth4 master br0
+        - ip link set eth1 up
+        - ip link set eth2 up
+        - ip link set eth3 up
+        - ip link set eth4 up
+        - bridge vlan del dev eth1 vid 1
+        - bridge vlan del dev eth2 vid 1
+        - bridge vlan del dev eth3 vid 1
+        - bridge vlan del dev eth4 vid 1
+        - bridge vlan add dev eth1 vid 10 pvid untagged
+        - bridge vlan add dev eth2 vid 20 pvid untagged
+        - bridge vlan add dev eth3 vid 10
+        - bridge vlan add dev eth3 vid 20
+        - bridge vlan add dev eth4 vid 10
+        - bridge vlan add dev eth4 vid 20
+    dist-1:
+      group: routers
+      binds:
+        - ../configs/dist-1/daemons:/etc/frr/daemons
+        - ../configs/dist-1/frr.conf:/etc/frr/frr.conf
+      exec:
+        - ip link add link eth1 name eth1.10 type vlan id 10
+        - ip link add link eth1 name eth1.20 type vlan id 20
+        - ip link set eth1.10 up
+        - ip link set eth1.20 up
+        - sysctl -w net.ipv4.conf.all.arp_ignore=1
+        - ip link add vrrp4-10 link eth1.10 type macvlan mode bridge
+        - ip link set dev vrrp4-10 address 00:00:5e:00:01:0a
+        - ip addr add 172.16.10.1/32 dev vrrp4-10
+        - ip link set dev vrrp4-10 up
+        - ip link add vrrp4-20 link eth1.20 type macvlan mode bridge
+        - ip link set dev vrrp4-20 address 00:00:5e:00:01:14
+        - ip addr add 172.16.20.1/32 dev vrrp4-20
+        - ip link set dev vrrp4-20 up
+        # Xóa default route mgmt của containerlab — để default học qua OSPF/BGP được chọn (kernel distance 0 luôn thắng nếu còn)
+        - ip route del default dev eth0
+    dist-2:
+      group: routers
+      binds:
+        - ../configs/dist-2/daemons:/etc/frr/daemons
+        - ../configs/dist-2/frr.conf:/etc/frr/frr.conf
+      exec:
+        - ip link add link eth1 name eth1.10 type vlan id 10
+        - ip link add link eth1 name eth1.20 type vlan id 20
+        - ip link set eth1.10 up
+        - ip link set eth1.20 up
+        - sysctl -w net.ipv4.conf.all.arp_ignore=1
+        - ip link add vrrp4-10 link eth1.10 type macvlan mode bridge
+        - ip link set dev vrrp4-10 address 00:00:5e:00:01:0a
+        - ip addr add 172.16.10.1/32 dev vrrp4-10
+        - ip link set dev vrrp4-10 up
+        - ip link add vrrp4-20 link eth1.20 type macvlan mode bridge
+        - ip link set dev vrrp4-20 address 00:00:5e:00:01:14
+        - ip addr add 172.16.20.1/32 dev vrrp4-20
+        - ip link set dev vrrp4-20 up
+        # Xóa default route mgmt của containerlab — để default học qua OSPF/BGP được chọn (kernel distance 0 luôn thắng nếu còn)
+        - ip route del default dev eth0
+    core:
+      group: routers
+      binds:
+        - ../configs/core/daemons:/etc/frr/daemons
+        - ../configs/core/frr.conf:/etc/frr/frr.conf
+        - ../nftables/core-rules.nft:/etc/nftables/core-rules.nft
+      exec:
+        - apk add --no-cache nftables
+        - ip route del default dev eth0
+    srv-app:
+      group: hosts
+      exec:
+        - ip addr add 172.16.30.10/24 dev eth1
+        - ip route replace default via 172.16.30.1 dev eth1
+        # Listener port 22 (giả lập SSH) để test policy "chỉ Kỹ thuật được SSH server farm"
+        # (image multitool không có sẵn openssh — nc listener là đủ để test connect/drop)
+        - sh -c 'while true; do nc -l -p 22 >/dev/null 2>&1; done &'
+    br-rtr:
+      group: routers
+      binds:
+        - ../configs/br-rtr/daemons:/etc/frr/daemons
+        - ../configs/br-rtr/frr.conf:/etc/frr/frr.conf
+      exec:
+        # Xóa default route mgmt — br-rtr phải dùng default học qua BGP (default-originate từ HQ)
+        - ip route del default dev eth0
+    pc-branch:
+      group: hosts
+      exec:
+        - ip addr add 172.16.40.10/24 dev eth1
+        - ip route replace default via 172.16.40.1 dev eth1
+
+    # ===== Lớp tuần 4 — internet edge (việc của bạn: NAT + firewall) =====
+    # edge: router biên kiêm firewall — Linux thuần + nftables, không chạy FRR
+    # (route tĩnh là đủ ở biên: 1 summary route vào trong, 1 default ra ngoài).
+    edge:
+      group: hosts
+      binds:
+        - ../nftables/edge-rules.nft:/etc/nftables/edge-rules.nft
+      exec:
+        - sysctl -w net.ipv4.ip_forward=1
+        - apk add --no-cache nftables
+        - ip route del default dev eth0
+        - ip addr add 10.0.34.2/30 dev eth1
+        - ip addr add 203.0.113.2/30 dev eth2
+        # Summary route: 1 dòng gom toàn bộ dải nội bộ NTC (teaching point —
+        # biên không cần biết chi tiết từng /24, đó là việc của OSPF bên trong)
+        - ip route add 172.16.0.0/16 via 10.0.34.1 dev eth1
+        - ip route replace default via 203.0.113.1 dev eth2
+
+    # inet: "Internet" thu nhỏ — ISP gateway 203.0.113.1, "DNS Google" 8.8.8.8
+    # trên loopback, nginx sẵn có đóng vai 1 website ngoài internet.
+    inet:
+      group: hosts
+      exec:
+        - ip addr add 203.0.113.1/30 dev eth1
+        - ip addr add 8.8.8.8/32 dev lo
+
+  links:
+    # HQ campus (tuần 1-2)
+    - endpoints: ["pc-sales-1:eth1", "sw-campus:eth1"]
+    - endpoints: ["pc-it-1:eth1", "sw-campus:eth2"]
+    - endpoints: ["sw-campus:eth3", "dist-1:eth1"]
+    - endpoints: ["sw-campus:eth4", "dist-2:eth1"]
+    - endpoints: ["dist-1:eth2", "core:eth1"]
+    - endpoints: ["dist-2:eth2", "core:eth2"]
+    - endpoints: ["core:eth3", "srv-app:eth1"]
+    # WAN chi nhánh (tuần 3)
+    - endpoints: ["core:eth4", "br-rtr:eth1"]
+    - endpoints: ["br-rtr:eth2", "pc-branch:eth1"]
+    # Internet edge (tuần 4)
+    - endpoints: ["core:eth5", "edge:eth1"]
+    - endpoints: ["edge:eth2", "inet:eth1"]

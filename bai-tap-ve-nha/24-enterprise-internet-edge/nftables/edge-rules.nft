@@ -1,0 +1,46 @@
+#!/usr/sbin/nft -f
+# Firewall + NAT tại internet edge của NTC.
+# Nạp lại sau mỗi lần sửa:  docker exec edge nft -f /etc/nftables/edge-rules.nft
+# eth1 = hướng core (nội bộ 172.16.0.0/16), eth2 = hướng internet (203.0.113.2)
+
+flush ruleset
+
+table inet fw {
+    # Bảo vệ chính edge (multitool có sẵn nginx :80 — không được lộ ra internet).
+    # Chain này cấp sẵn, không cần sửa.
+    chain input {
+        type filter hook input priority 0; policy drop;
+        iifname != "eth2" accept
+        ct state established,related counter accept
+        ip protocol icmp counter accept
+    }
+
+    chain forward {
+        type filter hook forward priority 0; policy drop;
+
+        ct state established,related counter accept
+
+        # TODO 1: cho phép toàn dải nội bộ 172.16.0.0/16 đi ra internet (ra eth2).
+        # Nhớ thêm "counter" để chứng minh rule khớp packet khi verify.
+
+        # KHÔNG thêm rule chiều internet -> nội bộ: connection mới từ ngoài vào
+        # phải bị policy drop chặn (trừ DNAT ở phần Bonus).
+    }
+}
+
+table ip nat {
+    chain postrouting {
+        type nat hook postrouting priority 100;
+
+        # TODO 2: masquerade cho traffic nội bộ 172.16.0.0/16 đi ra eth2
+        # (source IP private -> 203.0.113.2 khi ra "internet").
+    }
+
+    chain prerouting {
+        type nat hook prerouting priority -100;
+
+        # BONUS (TODO 3): DNAT publish ERP ra internet —
+        # tcp dport 8080 đến 203.0.113.2 -> chuyển tới 172.16.30.10:80
+        # (kèm rule accept tương ứng ở chain forward phía trên).
+    }
+}

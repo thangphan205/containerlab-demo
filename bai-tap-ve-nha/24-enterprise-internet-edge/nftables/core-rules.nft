@@ -1,0 +1,28 @@
+#!/usr/sbin/nft -f
+# Phân vùng (zoning) nội bộ tại core của NTC.
+# Nạp lại sau mỗi lần sửa:  docker exec core nft -f /etc/nftables/core-rules.nft
+# Chain forward chỉ lọc traffic ĐI XUYÊN core (VLAN <-> server farm, LAN <-> WAN
+# <-> edge) — không ảnh hưởng OSPF/BGP của chính core (input/output).
+
+flush ruleset
+
+table inet zoning {
+    chain forward {
+        type filter hook forward priority 0; policy drop;
+
+        ct state established,related counter accept
+        ip protocol icmp counter accept    # giữ ping để troubleshooting
+
+        # TODO 1: mọi phòng ban + chi nhánh truy cập được ERP:
+        # đích 172.16.30.10 port 80 -> accept
+
+        # TODO 2: chỉ phòng Kỹ thuật (172.16.20.0/24) được SSH vào server farm
+        # (172.16.30.0/24 port 22). KHÔNG thêm rule SSH cho Kinh doanh —
+        # policy drop phải chặn (sẽ verify negative test).
+
+        # TODO 3: chi nhánh (172.16.40.0/24) truy cập được toàn bộ server farm.
+
+        # TODO 4: toàn dải nội bộ (172.16.0.0/16) đi internet — đích KHÔNG thuộc
+        # 172.16.0.0/16 -> accept (traffic sẽ tiếp tục bị edge kiểm soát lớp nữa).
+    }
+}

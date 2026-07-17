@@ -112,9 +112,9 @@ Toàn bộ nội dung **mã nguồn mở** (xem [LICENSE](../LICENSE)) — mọi
 | Mã bài | Tên bài lab | Trạng thái | Video |
 |:---:|:---|:---|:---|
 | [21](./21-enterprise-campus-lan/lab-guide.md) | Dựng campus LAN cho trụ sở (VLAN access–distribution) | 🟢 Đang mở (Mới) | — |
-| 22 | Routing core OSPF + gateway HA (VRRP) | ⏳ Sắp ra mắt | — |
-| 23 | Kết nối chi nhánh qua WAN (eBGP) | ⏳ Sắp ra mắt | — |
-| 24 | Internet edge: NAT + firewall nftables | ⏳ Sắp ra mắt | — |
+| [22](./22-enterprise-routing-core-ha/lab-guide.md) | Routing core OSPF + gateway HA (VRRP) | 🟢 Đang mở (Mới) | — |
+| [23](./23-enterprise-wan-branch/lab-guide.md) | Kết nối chi nhánh qua WAN (eBGP) | 🟢 Đang mở (Mới) | — |
+| [24](./24-enterprise-internet-edge/lab-guide.md) | Internet edge: NAT + firewall nftables | 🟢 Đang mở (Mới) | — |
 
 ---
 

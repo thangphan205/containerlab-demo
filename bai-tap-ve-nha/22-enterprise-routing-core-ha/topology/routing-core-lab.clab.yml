@@ -1,0 +1,113 @@
+name: routing-core-lab
+prefix: ""
+
+topology:
+  groups:
+    routers:
+      kind: linux
+      image: quay.io/frrouting/frr:10.5.1
+    hosts:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+
+  nodes:
+    # ===== Lớp tuần 1 (bài 21) — đã cấu hình sẵn, rút gọn còn 1 switch campus =====
+    pc-sales-1:
+      group: hosts
+      exec:
+        - ip addr add 172.16.10.11/24 dev eth1
+        - ip route replace default via 172.16.10.1 dev eth1
+    pc-it-1:
+      group: hosts
+      exec:
+        - ip addr add 172.16.20.11/24 dev eth1
+        - ip route replace default via 172.16.20.1 dev eth1
+    sw-campus:
+      group: hosts
+      exec:
+        - ip link add name br0 type bridge vlan_filtering 1
+        - ip link set br0 up
+        - ip link set eth1 master br0
+        - ip link set eth2 master br0
+        - ip link set eth3 master br0
+        - ip link set eth4 master br0
+        - ip link set eth1 up
+        - ip link set eth2 up
+        - ip link set eth3 up
+        - ip link set eth4 up
+        - bridge vlan del dev eth1 vid 1
+        - bridge vlan del dev eth2 vid 1
+        - bridge vlan del dev eth3 vid 1
+        - bridge vlan del dev eth4 vid 1
+        - bridge vlan add dev eth1 vid 10 pvid untagged
+        - bridge vlan add dev eth2 vid 20 pvid untagged
+        - bridge vlan add dev eth3 vid 10
+        - bridge vlan add dev eth3 vid 20
+        - bridge vlan add dev eth4 vid 10
+        - bridge vlan add dev eth4 vid 20
+
+    # ===== Lớp tuần 2 — gateway HA + routing core (việc của bạn: OSPF + VRRP trong frr.conf) =====
+    # FRR vrrpd yêu cầu macvlan device tạo sẵn với MAC ảo chuẩn VRRP
+    # (00:00:5e:00:01:<VRID hex>) — VIP gán trên macvlan, vrrpd tự bật/tắt theo state.
+    dist-1:
+      group: routers
+      binds:
+        - ../configs/dist-1/daemons:/etc/frr/daemons
+        - ../configs/dist-1/frr.conf:/etc/frr/frr.conf
+      exec:
+        - ip link add link eth1 name eth1.10 type vlan id 10
+        - ip link add link eth1 name eth1.20 type vlan id 20
+        - ip link set eth1.10 up
+        - ip link set eth1.20 up
+        - sysctl -w net.ipv4.conf.all.arp_ignore=1
+        - ip link add vrrp4-10 link eth1.10 type macvlan mode bridge
+        - ip link set dev vrrp4-10 address 00:00:5e:00:01:0a
+        - ip addr add 172.16.10.1/32 dev vrrp4-10
+        - ip link set dev vrrp4-10 up
+        - ip link add vrrp4-20 link eth1.20 type macvlan mode bridge
+        - ip link set dev vrrp4-20 address 00:00:5e:00:01:14
+        - ip addr add 172.16.20.1/32 dev vrrp4-20
+        - ip link set dev vrrp4-20 up
+    dist-2:
+      group: routers
+      binds:
+        - ../configs/dist-2/daemons:/etc/frr/daemons
+        - ../configs/dist-2/frr.conf:/etc/frr/frr.conf
+      exec:
+        - ip link add link eth1 name eth1.10 type vlan id 10
+        - ip link add link eth1 name eth1.20 type vlan id 20
+        - ip link set eth1.10 up
+        - ip link set eth1.20 up
+        - sysctl -w net.ipv4.conf.all.arp_ignore=1
+        - ip link add vrrp4-10 link eth1.10 type macvlan mode bridge
+        - ip link set dev vrrp4-10 address 00:00:5e:00:01:0a
+        - ip addr add 172.16.10.1/32 dev vrrp4-10
+        - ip link set dev vrrp4-10 up
+        - ip link add vrrp4-20 link eth1.20 type macvlan mode bridge
+        - ip link set dev vrrp4-20 address 00:00:5e:00:01:14
+        - ip addr add 172.16.20.1/32 dev vrrp4-20
+        - ip link set dev vrrp4-20 up
+    core:
+      group: routers
+      binds:
+        - ../configs/core/daemons:/etc/frr/daemons
+        - ../configs/core/frr.conf:/etc/frr/frr.conf
+
+    # ===== Server farm — ứng dụng ERP nội bộ (nginx có sẵn trong multitool) =====
+    srv-app:
+      group: hosts
+      exec:
+        - ip addr add 172.16.30.10/24 dev eth1
+        - ip route replace default via 172.16.30.1 dev eth1
+
+  links:
+    # Campus
+    - endpoints: ["pc-sales-1:eth1", "sw-campus:eth1"]
+    - endpoints: ["pc-it-1:eth1", "sw-campus:eth2"]
+    - endpoints: ["sw-campus:eth3", "dist-1:eth1"]
+    - endpoints: ["sw-campus:eth4", "dist-2:eth1"]
+    # Routing core (p2p /30)
+    - endpoints: ["dist-1:eth2", "core:eth1"]
+    - endpoints: ["dist-2:eth2", "core:eth2"]
+    # Server farm
+    - endpoints: ["core:eth3", "srv-app:eth1"]
