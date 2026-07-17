@@ -46,9 +46,9 @@ graph TD
         pc-it-1["pc-it-1<br>VLAN 20 (172.16.20.11)<br>gw: 172.16.20.1"]
     end
 
-    srv-app --- "eth1 <-> eth3" --- core
-    core --- "eth1 <-> eth2<br>(10.0.13.0/30)" --- dist-1
-    core --- "eth2 <-> eth2<br>(10.0.23.0/30)" --- dist-2
+    srv-app -- "eth1 <-> eth3" --- core
+    core -- "eth1 <-> eth2<br>(10.0.13.0/30)" --- dist-1
+    core -- "eth2 <-> eth2<br>(10.0.23.0/30)" --- dist-2
     dist-1 -- "eth1 (Trunk) <-> eth3" --- sw-campus
     dist-2 -- "eth1 (Trunk) <-> eth4" --- sw-campus
     sw-campus -- "eth1 <-> eth1" --- pc-sales-1

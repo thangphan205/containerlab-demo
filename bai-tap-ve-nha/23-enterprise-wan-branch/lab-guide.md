@@ -29,17 +29,17 @@ graph TD
         sw-campus["sw-campus (L2 Switch)"]
         pc-hq["pc-sales-1 (VLAN 10) & pc-it-1 (VLAN 20)"]
         
-        srv-app --- "eth1 <-> eth3" --- core
-        core --- "eth1,2 <-> eth2" --- dist-pair
-        dist-pair --- "eth3,4 <-> eth1" --- sw-campus
-        sw-campus --- "eth1,2 <-> eth1" --- pc-hq
+        srv-app -- "eth1 <-> eth3" --- core
+        core -- "eth1,2 <-> eth2" --- dist-pair
+        dist-pair -- "eth3,4 <-> eth1" --- sw-campus
+        sw-campus -- "eth1,2 <-> eth1" --- pc-hq
     end
 
     subgraph branch_site ["Chi Nhánh Hà Nội (AS 65020)"]
         br-rtr["br-rtr (AS 65020)<br>eth1: 10.0.35.2/30<br>eth2: 172.16.40.1/24"]
         pc-branch["pc-branch<br>172.16.40.10/24 (Subnet 172.16.40.0/24)"]
 
-        br-rtr --- "eth2 <-> eth1" --- pc-branch
+        br-rtr -- "eth2 <-> eth1" --- pc-branch
     end
 
     core -- "eth4 <-> eth1<br>Kênh Thuê Riêng WAN (10.0.35.0/30)<br>eBGP: AS 65010 <-> AS 65020" --- br-rtr
