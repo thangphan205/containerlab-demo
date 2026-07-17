@@ -24,37 +24,33 @@ Yêu cầu nghiệp vụ từ CTO:
 4. Chuẩn đánh địa chỉ đã được duyệt: Kinh doanh `172.16.10.0/24` (VLAN 10), Kỹ thuật `172.16.20.0/24` (VLAN 20), gateway mỗi phòng luôn là `.1`.
 
 ## Sơ đồ topology
-```
-        TẦNG 1                              TẦNG 2
-  pc-sales-1        pc-it-1              pc-sales-2
-  (VLAN 10)         (VLAN 20)            (VLAN 10)
-      | eth1            | eth1               | eth1
-      |  access,        |  access,            |  access,
-      |  untagged VID10 |  untagged VID20     |  untagged VID10
-      |                 |                     |
-  ====+=================+====             ====+====
-  eth1              eth2                   eth1
-  +---------------------------+          +-------------+
-  |          sw-acc1          |          |   sw-acc2   |   switch access
-  +---------------------------+          +-------------+
-              | eth3                        | eth2
-              |  trunk, tagged VID 10+20     |  trunk, tagged VID 10+20
-              |                              |
-              +------------+   +-------------+
-                           |   |
-                        eth1| |eth2
-                        +---------+
-                        | sw-dist |                          switch distribution
-                        +---------+
-                             | eth3
-                             |  trunk, tagged VID 10+20
-                             |
-                         eth1|
-                       +-----------+
-                       |  dist-1   |   gateway FRR (router-on-a-stick)
-                       +-----------+
-                       eth1.10 → 172.16.10.1/24 (VLAN 10 — Kinh doanh)
-                       eth1.20 → 172.16.20.1/24 (VLAN 20 — Kỹ thuật)
+```mermaid
+graph TD
+    subgraph gwy ["Lớp Gateway (L3 FRR Router-on-a-Stick)"]
+        dist-1["dist-1<br>eth1.10: 172.16.10.1/24 (VLAN 10 - Kinh doanh)<br>eth1.20: 172.16.20.1/24 (VLAN 20 - Kỹ thuật)"]
+    end
+
+    subgraph dist_layer ["Lớp Distribution (L2 Switch Trunk)"]
+        sw-dist["sw-dist<br>Linux Bridge VLAN-aware"]
+    end
+
+    subgraph access_layer ["Lớp Access (Switch Tầng 1 & Tầng 2)"]
+        sw-acc1["sw-acc1 (Tầng 1)<br>eth1: access VID 10<br>eth2: access VID 20<br>eth3: trunk VID 10,20"]
+        sw-acc2["sw-acc2 (Tầng 2)<br>eth1: access VID 10<br>eth2: trunk VID 10,20"]
+    end
+
+    subgraph hosts ["End Devices (PCs)"]
+        pc-sales-1["pc-sales-1 (Tầng 1)<br>VLAN 10 (172.16.10.0/24)"]
+        pc-it-1["pc-it-1 (Tầng 1)<br>VLAN 20 (172.16.20.0/24)"]
+        pc-sales-2["pc-sales-2 (Tầng 2)<br>VLAN 10 (172.16.10.0/24)"]
+    end
+
+    dist-1 -- "eth1 <-> eth3<br>(Trunk 802.1Q)" --- sw-dist
+    sw-dist -- "eth1 <-> eth3<br>(Trunk 802.1Q)" --- sw-acc1
+    sw-dist -- "eth2 <-> eth2<br>(Trunk 802.1Q)" --- sw-acc2
+    sw-acc1 -- "eth1 <-> eth1" --- pc-sales-1
+    sw-acc1 -- "eth2 <-> eth1" --- pc-it-1
+    sw-acc2 -- "eth1 <-> eth1" --- pc-sales-2
 ```
 
 Chi tiết xem [`topology/campus-lan-lab.clab.yml`](./topology/campus-lan-lab.clab.yml).

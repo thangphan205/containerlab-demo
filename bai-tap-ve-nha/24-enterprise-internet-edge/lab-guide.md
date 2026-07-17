@@ -21,14 +21,46 @@
 4. Cấm gõ static route thủ công trên dist/br-rtr — default route phải được **phát tán bằng giao thức định tuyến** từ core.
 
 ## Sơ đồ topology
-```
- [HQ + chi nhánh — như bài 23, đã cấu hình sẵn]
- pc-sales-1 / pc-it-1 - sw-campus - dist-1/dist-2 - core - srv-app (ERP)
- pc-branch - br-rtr --(eBGP)-------------------------/  |
-                                                        | eth5, 10.0.34.0/30
-                                                      edge      <- NAT + firewall (nftables, Linux thuần)
-                                                        | eth2, 203.0.113.0/30 ("public")
-                                                      inet      <- "Internet": ISP .1, lo 8.8.8.8, nginx
+```mermaid
+graph TD
+    subgraph internet ["Public Internet"]
+        inet["inet (ISP)<br>IP: 203.0.113.1/30 | DNS: 8.8.8.8"]
+    end
+
+    subgraph edge_layer ["Internet Edge"]
+        edge["edge (Linux Firewall)<br>eth2: 203.0.113.2/30 (Public IP)<br>eth1: 10.0.34.2/30<br>Cấu hình: NAT Masquerade + Edge Firewall (nftables)"]
+    end
+
+    subgraph core_layer ["Enterprise Core"]
+        core["core Router (FRR)<br>eth5: 10.0.34.1/30 (hướng Edge)<br>Phát tán Default Route (OSPF + BGP)<br>Core Zoning Firewall (nftables)"]
+    end
+
+    subgraph internal ["Hạ Tầng Nội Bộ NTC"]
+        subgraph srv_farm ["Server Farm"]
+            srv-app["srv-app (ERP Web)<br>172.16.30.10/24"]
+        end
+
+        subgraph hq_campus ["HQ Campus LAN"]
+            dist-pair["dist-1 & dist-2<br>VRRP Gateway HA"]
+            sw-campus["sw-campus"]
+            pc-hq["pc-sales-1 (VLAN 10)<br>pc-it-1 (VLAN 20)"]
+            
+            dist-pair --- sw-campus --- pc-hq
+        end
+
+        subgraph branch_site ["Chi Nhánh Hà Nội"]
+            br-rtr["br-rtr (AS 65020)<br>eBGP Peering"]
+            pc-branch["pc-branch<br>172.16.40.10/24"]
+
+            br-rtr --- pc-branch
+        end
+    end
+
+    inet -- "eth1 <-> eth2<br>(203.0.113.0/30)" --- edge
+    edge -- "eth1 <-> eth5<br>(10.0.34.0/30)" --- core
+    core -- "eth3 <-> eth1" --- srv-app
+    core -- "eth1,2 <-> eth2" --- dist-pair
+    core -- "eth4 <-> eth1<br>WAN eBGP" --- br-rtr
 ```
 
 Chi tiết xem [`topology/internet-edge-lab.clab.yml`](./topology/internet-edge-lab.clab.yml).

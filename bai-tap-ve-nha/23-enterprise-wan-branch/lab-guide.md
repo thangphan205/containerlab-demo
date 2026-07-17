@@ -20,18 +20,29 @@
 4. Địa chỉ chi nhánh đã duyệt: `172.16.40.0/24`, WAN link `10.0.35.0/30`.
 
 ## Sơ đồ topology
-```
- [HQ — như bài 22, đã cấu hình sẵn]
- pc-sales-1 / pc-it-1 - sw-campus - dist-1/dist-2 (VRRP)
-                                        \      /
-                                         core  --- srv-app (172.16.30.10, ERP)
-                                    AS 65010 |eth4
-                                             | 10.0.35.0/30  (kênh thuê riêng — eBGP)
-                                    AS 65020 |eth1
-                                          br-rtr
-                                             |eth2  172.16.40.0/24 (.1)
-                                             |
-                                         pc-branch (.10)
+```mermaid
+graph TD
+    subgraph hq_site ["Trụ Sở HQ (AS 65010)"]
+        srv-app["srv-app (ERP Web)<br>172.16.30.10/24"]
+        core["core Router (AS 65010)<br>eth3: 172.16.30.1/24 | eth4: 10.0.35.1/30<br>eBGP + OSPF Area 0"]
+        dist-pair["dist-1 & dist-2<br>VRRP Master/Backup + OSPF Area 0"]
+        sw-campus["sw-campus (L2 Switch)"]
+        pc-hq["pc-sales-1 (VLAN 10) & pc-it-1 (VLAN 20)"]
+        
+        srv-app --- "eth1 <-> eth3" --- core
+        core --- "eth1,2 <-> eth2" --- dist-pair
+        dist-pair --- "eth3,4 <-> eth1" --- sw-campus
+        sw-campus --- "eth1,2 <-> eth1" --- pc-hq
+    end
+
+    subgraph branch_site ["Chi Nhánh Hà Nội (AS 65020)"]
+        br-rtr["br-rtr (AS 65020)<br>eth1: 10.0.35.2/30<br>eth2: 172.16.40.1/24"]
+        pc-branch["pc-branch<br>172.16.40.10/24 (Subnet 172.16.40.0/24)"]
+
+        br-rtr --- "eth2 <-> eth1" --- pc-branch
+    end
+
+    core -- "eth4 <-> eth1<br>Kênh Thuê Riêng WAN (10.0.35.0/30)<br>eBGP: AS 65010 <-> AS 65020" --- br-rtr
 ```
 
 Chi tiết xem [`topology/wan-branch-lab.clab.yml`](./topology/wan-branch-lab.clab.yml).

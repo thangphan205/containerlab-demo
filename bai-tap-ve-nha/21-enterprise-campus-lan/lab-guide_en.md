@@ -24,37 +24,33 @@ Business Requirements from the CTO:
 4. Approved IP addressing standard: Sales `172.16.10.0/24` (VLAN 10), IT `172.16.20.0/24` (VLAN 20), gateway for each subnet is always `.1`.
 
 ## Topology Diagram
-```
-        FLOOR 1                             FLOOR 2
-  pc-sales-1        pc-it-1              pc-sales-2
-  (VLAN 10)         (VLAN 20)            (VLAN 10)
-      | eth1            | eth1               | eth1
-      |  access,        |  access,            |  access,
-      |  untagged VID10 |  untagged VID20     |  untagged VID10
-      |                 |                     |
-  ====+=================+====             ====+====
-  eth1              eth2                   eth1
-  +---------------------------+          +-------------+
-  |          sw-acc1          |          |   sw-acc2   |   Access Switches
-  +---------------------------+          +-------------+
-              | eth3                        | eth2
-              |  trunk, tagged VID 10+20     |  trunk, tagged VID 10+20
-              |                              |
-              +------------+   +-------------+
-                           |   |
-                        eth1| |eth2
-                        +---------+
-                        | sw-dist |                          Distribution Switch
-                        +---------+
-                             | eth3
-                             |  trunk, tagged VID 10+20
-                             |
-                         eth1|
-                       +-----------+
-                       |  dist-1   |   FRR Gateway (Router-on-a-Stick)
-                       +-----------+
-                       eth1.10 → 172.16.10.1/24 (VLAN 10 — Sales)
-                       eth1.20 → 172.16.20.1/24 (VLAN 20 — IT)
+```mermaid
+graph TD
+    subgraph gwy ["Gateway Layer (L3 FRR Router-on-a-Stick)"]
+        dist-1["dist-1<br>eth1.10: 172.16.10.1/24 (VLAN 10 - Sales)<br>eth1.20: 172.16.20.1/24 (VLAN 20 - IT)"]
+    end
+
+    subgraph dist_layer ["Distribution Layer (L2 Switch Trunk)"]
+        sw-dist["sw-dist<br>Linux Bridge VLAN-aware"]
+    end
+
+    subgraph access_layer ["Access Layer (Floor 1 & Floor 2 Switches)"]
+        sw-acc1["sw-acc1 (Floor 1)<br>eth1: access VID 10<br>eth2: access VID 20<br>eth3: trunk VID 10,20"]
+        sw-acc2["sw-acc2 (Floor 2)<br>eth1: access VID 10<br>eth2: trunk VID 10,20"]
+    end
+
+    subgraph hosts ["End Devices (PCs)"]
+        pc-sales-1["pc-sales-1 (Floor 1)<br>VLAN 10 (172.16.10.0/24)"]
+        pc-it-1["pc-it-1 (Floor 1)<br>VLAN 20 (172.16.20.0/24)"]
+        pc-sales-2["pc-sales-2 (Floor 2)<br>VLAN 10 (172.16.10.0/24)"]
+    end
+
+    dist-1 -- "eth1 <-> eth3<br>(802.1Q Trunk)" --- sw-dist
+    sw-dist -- "eth1 <-> eth3<br>(802.1Q Trunk)" --- sw-acc1
+    sw-dist -- "eth2 <-> eth2<br>(802.1Q Trunk)" --- sw-acc2
+    sw-acc1 -- "eth1 <-> eth1" --- pc-sales-1
+    sw-acc1 -- "eth2 <-> eth1" --- pc-it-1
+    sw-acc2 -- "eth1 <-> eth1" --- pc-sales-2
 ```
 
 See [`topology/campus-lan-lab.clab.yml`](./topology/campus-lan-lab.clab.yml).

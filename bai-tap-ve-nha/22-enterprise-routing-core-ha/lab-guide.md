@@ -22,23 +22,37 @@
 > Ghi chú topology: campus rút gọn còn 1 switch `sw-campus` (VLAN đã cấu hình sẵn — đúng nội dung bạn đã làm ở bài 21) để dành RAM cho lớp mới. Kỹ thuật không đổi.
 
 ## Sơ đồ topology
-```
- pc-sales-1 (VLAN 10, gw .1)      pc-it-1 (VLAN 20, gw .1)
-        |eth1                          |eth2
-        +---------- sw-campus ---------+
-             trunk /eth3      \eth4 trunk
-                  /            \
-             dist-1 <--VRRP--> dist-2
-         VIP VLAN10: 172.16.10.1 (dist-1 .2 master, dist-2 .3 backup)
-         VIP VLAN20: 172.16.20.1 (dist-2 master, dist-1 backup)
-                  \eth2        /eth2
-      10.0.13.0/30 \          / 10.0.23.0/30     <- OSPF area 0
-                    \        /
-                      core
-                        |eth3
-                 172.16.30.0/24 (.1)
-                        |
-                     srv-app (.10 — ERP, nginx)
+```mermaid
+graph TD
+    subgraph server_farm ["Server Farm (172.16.30.0/24)"]
+        srv-app["srv-app<br>172.16.30.10/24 (ERP App, Nginx)"]
+    end
+
+    subgraph core_layer ["Core Layer"]
+        core["core<br>Router ID: 10.255.0.3<br>eth1: 10.0.13.2/30 | eth2: 10.0.23.2/30<br>eth3: 172.16.30.1/24"]
+    end
+
+    subgraph dist_ha ["Distribution Gateway Pair (VRRP HA + OSPF Area 0)"]
+        dist-1["dist-1 (Router ID 10.255.0.1)<br>eth2: 10.0.13.1/30<br>VIP10 (Master): 172.16.10.1<br>VIP20 (Backup): 172.16.20.1"]
+        dist-2["dist-2 (Router ID 10.255.0.2)<br>eth2: 10.0.23.1/30<br>VIP10 (Backup): 172.16.10.1<br>VIP20 (Master): 172.16.20.1"]
+    end
+
+    subgraph campus ["Campus L2 Switch"]
+        sw-campus["sw-campus<br>VLAN 10 & 20 Trunking"]
+    end
+
+    subgraph clients ["End User PCs"]
+        pc-sales-1["pc-sales-1<br>VLAN 10 (172.16.10.11)<br>gw: 172.16.10.1"]
+        pc-it-1["pc-it-1<br>VLAN 20 (172.16.20.11)<br>gw: 172.16.20.1"]
+    end
+
+    srv-app --- "eth1 <-> eth3" --- core
+    core --- "eth1 <-> eth2<br>(10.0.13.0/30)" --- dist-1
+    core --- "eth2 <-> eth2<br>(10.0.23.0/30)" --- dist-2
+    dist-1 -- "eth1 (Trunk) <-> eth3" --- sw-campus
+    dist-2 -- "eth1 (Trunk) <-> eth4" --- sw-campus
+    sw-campus -- "eth1 <-> eth1" --- pc-sales-1
+    sw-campus -- "eth2 <-> eth1" --- pc-it-1
 ```
 
 Chi tiết xem [`topology/routing-core-lab.clab.yml`](./topology/routing-core-lab.clab.yml).
