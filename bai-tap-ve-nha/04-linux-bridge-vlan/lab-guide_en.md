@@ -13,9 +13,24 @@
 Completion of [02-ip-subnetting-thuc-chien](../02-ip-subnetting-thuc-chien/lab-guide_en.md) — familiarity with manual IP assignment inside containers via `docker exec`.
 
 ## Topology Diagram
-```
-host-a (VLAN 10) --- eth2 -- SW (Linux bridge, VLAN-aware) -- eth1 (trunk) --- R1 (router-on-a-stick)
-host-b (VLAN 20) --- eth3 -/
+```mermaid
+graph TD
+    subgraph router ["Gateway Layer (Router-on-a-Stick)"]
+        r1["r1<br>eth1.10: 10.10.10.1/24 (VLAN 10)<br>eth1.20: 10.10.20.1/24 (VLAN 20)"]
+    end
+
+    subgraph switch ["Switch Layer (VLAN-aware Linux Bridge)"]
+        sw["sw (Bridge br0)<br>eth1: Trunk (VID 10, 20 Tagged)<br>eth2: Access (VID 10 Untagged, PVID 10)<br>eth3: Access (VID 20 Untagged, PVID 20)"]
+    end
+
+    subgraph hosts ["End Devices Layer (Hosts)"]
+        host-a["host-a (VLAN 10)<br>eth1: 10.10.10.10/24<br>GW: 10.10.10.1"]
+        host-b["host-b (VLAN 20)<br>eth1: 10.10.20.10/24<br>GW: 10.10.20.1"]
+    end
+
+    host-a -- "eth1 <-> eth2<br>(Access VLAN 10)" --- sw
+    host-b -- "eth1 <-> eth3<br>(Access VLAN 20)" --- sw
+    sw -- "eth1 <-> eth1<br>(Trunk VLAN 10, 20 Tagged)" --- r1
 ```
 - `SW`: Pre-configured with a VLAN-aware Linux bridge (`br0`) with 3 enslaved interfaces — **VLANs have not yet been assigned to individual ports**.
 - `R1`: `ip_forward` enabled — **sub-interfaces have not yet been created**.

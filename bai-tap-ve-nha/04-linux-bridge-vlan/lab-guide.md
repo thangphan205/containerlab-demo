@@ -13,9 +13,24 @@
 Hoàn thành [02-ip-subnetting-thuc-chien](../02-ip-subnetting-thuc-chien/lab-guide.md) — quen thao tác gán IP thủ công qua `docker exec`.
 
 ## Sơ đồ topology
-```
-host-a (VLAN 10) --- eth2 -- SW (Linux bridge, VLAN-aware) -- eth1 (trunk) --- R1 (router-on-a-stick)
-host-b (VLAN 20) --- eth3 -/
+```mermaid
+graph TD
+    subgraph router ["Lớp Gateway (Router-on-a-Stick)"]
+        r1["r1<br>eth1.10: 10.10.10.1/24 (VLAN 10)<br>eth1.20: 10.10.20.1/24 (VLAN 20)"]
+    end
+
+    subgraph switch ["Lớp Switch (Linux Bridge VLAN-aware)"]
+        sw["sw (Bridge br0)<br>eth1: Trunk (VID 10, 20 Tagged)<br>eth2: Access (VID 10 Untagged, PVID 10)<br>eth3: Access (VID 20 Untagged, PVID 20)"]
+    end
+
+    subgraph hosts ["Lớp End Devices (Hosts)"]
+        host-a["host-a (VLAN 10)<br>eth1: 10.10.10.10/24<br>GW: 10.10.10.1"]
+        host-b["host-b (VLAN 20)<br>eth1: 10.10.20.10/24<br>GW: 10.10.20.1"]
+    end
+
+    host-a -- "eth1 <-> eth2<br>(Access VLAN 10)" --- sw
+    host-b -- "eth1 <-> eth3<br>(Access VLAN 20)" --- sw
+    sw -- "eth1 <-> eth1<br>(Trunk VLAN 10, 20 Tagged)" --- r1
 ```
 - `SW`: đã có sẵn 1 Linux bridge VLAN-aware (`br0`), 3 cổng đã enslave vào bridge — **chưa gán VLAN cho từng cổng**.
 - `R1`: đã bật `ip_forward` — **chưa có sub-interface VLAN nào**.
