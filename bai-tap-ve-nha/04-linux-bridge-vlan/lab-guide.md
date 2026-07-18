@@ -28,9 +28,9 @@ graph TD
         host-b["host-b (VLAN 20)<br>eth1: 10.10.20.10/24<br>GW: 10.10.20.1"]
     end
 
-    host-a -- "eth1 <-> eth2<br>(Access VLAN 10)" --- sw
-    host-b -- "eth1 <-> eth3<br>(Access VLAN 20)" --- sw
-    sw -- "eth1 <-> eth1<br>(Trunk VLAN 10, 20 Tagged)" --- r1
+    r1 -- "eth1 <-> eth1<br>(Trunk VLAN 10, 20 Tagged)" --- sw
+    sw -- "eth2 <-> eth1<br>(Access VLAN 10)" --- host-a
+    sw -- "eth3 <-> eth1<br>(Access VLAN 20)" --- host-b
 ```
 - `SW`: đã có sẵn 1 Linux bridge VLAN-aware (`br0`), 3 cổng đã enslave vào bridge — **chưa gán VLAN cho từng cổng**.
 - `R1`: đã bật `ip_forward` — **chưa có sub-interface VLAN nào**.
