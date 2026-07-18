@@ -58,6 +58,82 @@ See [`topology/vlan-lab.clab.yml`](./topology/vlan-lab.clab.yml).
 - If the `bridge` utility is missing inside `SW`, install `iproute2` package.
 - If inter-VLAN pings fail between `host-a` and `host-b`, verify that the trunk port (`eth1` on SW) is properly configured with tagged VIDs for both 10 and 20.
 
+<details>
+<summary><b>💡 Step-by-Step Solution Reference (Click to expand)</b></summary>
+
+### 1. Configure VLANs on Switch (`SW`)
+
+Remove default VID 1 and assign access/trunk VLAN settings on bridge `br0`:
+
+```bash
+docker exec -it clab-vlan-lab-sw sh
+
+# 1. Port eth1 (Trunk port to R1 - carries VLAN 10 and VLAN 20 tagged)
+bridge vlan del dev eth1 vid 1
+bridge vlan add dev eth1 vid 10
+bridge vlan add dev eth1 vid 20
+
+# 2. Port eth2 (Access port to host-a - VLAN 10 untagged, PVID 10)
+bridge vlan del dev eth2 vid 1
+bridge vlan add dev eth2 vid 10 pvid untagged
+
+# 3. Port eth3 (Access port to host-b - VLAN 20 untagged, PVID 20)
+bridge vlan del dev eth3 vid 1
+bridge vlan add dev eth3 vid 20 pvid untagged
+
+# Verify VLAN configuration
+bridge vlan show
+```
+
+### 2. Configure Router-on-a-Stick on Router (`R1`)
+
+Create 802.1Q sub-interfaces on `eth1` and assign gateway IP addresses:
+
+```bash
+docker exec -it clab-vlan-lab-r1 sh
+
+# Create VLAN 10 & 20 sub-interfaces
+ip link add link eth1 name eth1.10 type vlan id 10
+ip link add link eth1 name eth1.20 type vlan id 20
+
+# Assign IP addresses
+ip addr add 10.10.10.1/24 dev eth1.10
+ip addr add 10.10.20.1/24 dev eth1.20
+
+# Bring up interfaces
+ip link set eth1.10 up
+ip link set eth1.20 up
+
+# Verify sub-interface details
+ip -d link show eth1.10
+ip -d link show eth1.20
+```
+
+### 3. Assign IP & Default Routes on Hosts
+
+**On `host-a` (VLAN 10):**
+```bash
+docker exec -it clab-vlan-lab-host-a sh
+ip addr add 10.10.10.10/24 dev eth1
+ip route replace default via 10.10.10.1 dev eth1
+```
+
+**On `host-b` (VLAN 20):**
+```bash
+docker exec -it clab-vlan-lab-host-b sh
+ip addr add 10.10.20.10/24 dev eth1
+ip route replace default via 10.10.20.1 dev eth1
+```
+
+### 4. Verification
+
+From `host-a`, ping `host-b`:
+```bash
+docker exec -it clab-vlan-lab-host-a ping -c 4 10.10.20.10
+```
+
+</details>
+
 ## Discussion & Community Support
 This lab is self-guided. If you have questions or feedback, discuss them in the [Network Thực Chiến](https://www.facebook.com/profile.php?id=61591373979991) community.
 

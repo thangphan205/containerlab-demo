@@ -58,6 +58,82 @@ Chi tiết xem [`topology/vlan-lab.clab.yml`](./topology/vlan-lab.clab.yml).
 - Nếu thiếu lệnh `bridge`, cài thêm gói `iproute2` trong container `SW`.
 - Nếu `host-a` ping `host-b` không qua được, kiểm tra tag VLAN trên cổng trunk (`eth1` của SW) đã có đủ cả 2 VID chưa.
 
+<details>
+<summary><b>💡 Gợi ý lời giải từng bước (Bấm để xem)</b></summary>
+
+### 1. Cấu hình VLAN trên Switch (`SW`)
+
+Xóa VID 1 mặc định và gán VLAN cho từng cổng của bridge `br0`:
+
+```bash
+docker exec -it clab-vlan-lab-sw sh
+
+# 1. Cổng eth1 (Trunk port nối với R1 - mang VLAN 10 và VLAN 20 tagged)
+bridge vlan del dev eth1 vid 1
+bridge vlan add dev eth1 vid 10
+bridge vlan add dev eth1 vid 20
+
+# 2. Cổng eth2 (Access port nối với host-a - VLAN 10 untagged, PVID 10)
+bridge vlan del dev eth2 vid 1
+bridge vlan add dev eth2 vid 10 pvid untagged
+
+# 3. Cổng eth3 (Access port nối với host-b - VLAN 20 untagged, PVID 20)
+bridge vlan del dev eth3 vid 1
+bridge vlan add dev eth3 vid 20 pvid untagged
+
+# Kiểm tra lại cấu hình
+bridge vlan show
+```
+
+### 2. Cấu hình Router-on-a-Stick trên Router (`R1`)
+
+Tạo 2 sub-interface 802.1Q trên `eth1` và gán IP gateway:
+
+```bash
+docker exec -it clab-vlan-lab-r1 sh
+
+# Tạo sub-interface VLAN 10 & VLAN 20
+ip link add link eth1 name eth1.10 type vlan id 10
+ip link add link eth1 name eth1.20 type vlan id 20
+
+# Gán địa chỉ IP gateway
+ip addr add 10.10.10.1/24 dev eth1.10
+ip addr add 10.10.20.1/24 dev eth1.20
+
+# Bật interface
+ip link set eth1.10 up
+ip link set eth1.20 up
+
+# Kiểm tra sub-interface
+ip -d link show eth1.10
+ip -d link show eth1.20
+```
+
+### 3. Cấu hình IP và Default Gateway trên Hosts
+
+**Trên `host-a` (VLAN 10):**
+```bash
+docker exec -it clab-vlan-lab-host-a sh
+ip addr add 10.10.10.10/24 dev eth1
+ip route replace default via 10.10.10.1 dev eth1
+```
+
+**Trên `host-b` (VLAN 20):**
+```bash
+docker exec -it clab-vlan-lab-host-b sh
+ip addr add 10.10.20.10/24 dev eth1
+ip route replace default via 10.10.20.1 dev eth1
+```
+
+### 4. Kiểm tra liên lạc (Verify)
+
+Từ `host-a`, ping thử sang `host-b`:
+```bash
+docker exec -it clab-vlan-lab-host-a ping -c 4 10.10.20.10
+```
+
+</details>
+
 ## Thảo luận và hỏi đáp
 Bài tập này tự làm và tự xác minh kết quả. Nếu có thắc mắc hoặc cần trao đổi thêm, các bạn hãy đăng bài thảo luận trên group Facebook [Network Thực Chiến](https://www.facebook.com/profile.php?id=61591373979991).
 ## Bài tiếp theo
