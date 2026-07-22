@@ -2,7 +2,7 @@
 
 # Bài 04: VLAN Trunking Trên Linux Bridge
 
-**Arc 1 — Networking nền tảng nâng cao**
+**Arc 1 — Networking nền tảng nâng cao** | 🎥 **Video hướng dẫn:** [YouTube - VLAN Trunking Trên Linux Bridge](https://youtu.be/cag4fFk5uNc)
 
 ## Mục tiêu
 - Dịch khái niệm VLAN access port / trunk port (quen thuộc từ switch Cisco) sang Linux bridge (`bridge vlan`, VLAN-aware bridge).

@@ -43,7 +43,7 @@ All content is **open source** (see [LICENSE](../LICENSE)) — feel free to use,
 |:---:|:---|:---|:---|
 | [02](./02-ip-subnetting-thuc-chien/lab-guide_en.md) | Practical IP Subnetting (Data Center Subnet Design) | 🟢 Active | — |
 | [03](./03-static-route-multi-hop/lab-guide_en.md) | Multi-Hop Static Routing | 🟢 Active | — |
-| [04](./04-linux-bridge-vlan/lab-guide_en.md) | VLAN Trunking on Linux Bridges | 🟢 Active | — |
+| [04](./04-linux-bridge-vlan/lab-guide_en.md) | VLAN Trunking on Linux Bridges | 🟢 Active | [Watch video](https://youtu.be/cag4fFk5uNc) |
 | [05](./05-stp-rstp-chong-loop/lab-guide_en.md) | STP/RSTP — Layer 2 Loop Prevention (Triangle Topology) | 🟢 Active | — |
 | [06](./06-vrrp-ecmp-gateway-ha/lab-guide_en.md) | VRRP + ECMP — Gateway High Availability (< 3s Failover) | 🟢 Active | [Watch video](https://youtu.be/7SjFpp2h_aM) |
 | [07](./07-dhcp-server-relay/lab-guide_en.md) | Linux DHCP Server (dnsmasq Multi-Subnet) | 🟢 Active | [Watch video](https://youtu.be/uJw78eOtZ58) |

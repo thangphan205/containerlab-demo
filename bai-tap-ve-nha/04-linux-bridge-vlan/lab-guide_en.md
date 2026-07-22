@@ -2,7 +2,7 @@
 
 # Lab 04: VLAN Trunking on Linux Bridge
 
-**Arc 1 — Advanced Networking Fundamentals**
+**Arc 1 — Advanced Networking Fundamentals** | 🎥 **Video Tutorial:** [YouTube - VLAN Trunking on Linux Bridge](https://youtu.be/cag4fFk5uNc)
 
 ## Objectives
 - Translate standard enterprise switch VLAN concepts (Access ports / Trunk ports) to Linux bridge constructs (`bridge vlan`, VLAN-aware bridge).
