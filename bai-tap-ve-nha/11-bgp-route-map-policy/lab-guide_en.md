@@ -12,11 +12,41 @@
 Completion of [10-bgp-ebgp-co-ban](../10-bgp-ebgp-co-ban/lab-guide_en.md) — baseline eBGP peering concepts.
 
 ## Topology Diagram
+
+```mermaid
+graph TD
+    subgraph AS100 ["AS100 (Client Site A)"]
+        srv1["srv1<br>192.168.10.10/24<br>GW: 192.168.10.1"]
+        r-as100["r-as100 (Router AS100)<br>eth1: 192.168.10.1/24<br>eth2: 100.64.12.1/30 (Primary Transit)<br>eth3: 100.64.13.1/30 (Direct Backup)"]
+    end
+
+    subgraph AS200 ["AS200 (Transit Service Provider)"]
+        r-as200["r-as200 (Transit Router)<br>eth1: 100.64.12.2/30<br>eth2: 100.64.23.1/30"]
+    end
+
+    subgraph AS300 ["AS300 (Client Site B)"]
+        r-as300["r-as300 (Router AS300)<br>eth1: 100.64.23.2/30 (Primary Transit)<br>eth2: 100.64.13.2/30 (Direct Backup)<br>eth3: 192.168.30.1/24"]
+        srv3["srv3<br>192.168.30.10/24<br>GW: 192.168.30.1"]
+    end
+
+    srv1 -- "eth1 <-> eth1<br>(192.168.10.0/24)" --- r-as100
+    r-as100 -- "eth2 <-> eth1<br>Primary Transit Link (100.64.12.0/30)" --- r-as200
+    r-as200 -- "eth2 <-> eth1<br>Primary Transit Link (100.64.23.0/30)" --- r-as300
+    r-as100 -- "eth3 <-> eth2<br>Direct Backup Link (100.64.13.0/30)<br>AS-Path Prepend (Outbound)" --- r-as300
+    r-as300 -- "eth3 <-> eth1<br>(192.168.30.0/24)" --- srv3
 ```
-srv1 (AS100 LAN) --- r-as100 ======= r-as200 (transit) ======= r-as300 --- srv3 (AS300 LAN)
-                         \_______________ direct backup link _______________/
-```
-AS100 and AS300 are connected via **two paths**: via transit AS200 (2 AS hops), and a direct backup link (1 AS hop). See IP details in [`topology/bgp-policy-lab.clab.yml`](./topology/bgp-policy-lab.clab.yml).
+
+Detailed link and routing path breakdown:
+- **Primary Transit Path (via AS200)**:
+  - `r-as100` eth2 (`100.64.12.1/30`) ↔ `r-as200` eth1 (`100.64.12.2/30`).
+  - `r-as200` eth2 (`100.64.23.1/30`) ↔ `r-as300` eth1 (`100.64.23.2/30`).
+- **Direct Backup Link**:
+  - `r-as100` eth3 (`100.64.13.1/30`) ↔ `r-as300` eth2 (`100.64.13.2/30`).
+- **Internal Subnets (LAN)**:
+  - Site A (AS100): `srv1` (`192.168.10.10/24`) connected to `r-as100` eth1 (`192.168.10.1/24`).
+  - Site B (AS300): `srv3` (`192.168.30.10/24`) connected to `r-as300` eth3 (`192.168.30.1/24`).
+
+See IP details in [`topology/bgp-policy-lab.clab.yml`](./topology/bgp-policy-lab.clab.yml).
 
 **Baseline configuration is complete** (eBGP sessions are Established over both links).
 

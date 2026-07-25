@@ -13,10 +13,33 @@
 Hoàn thành [09-ospf-multi-area](../09-ospf-multi-area/lab-guide.md) — đã quen thao tác sửa `frr.conf` và `vtysh`.
 
 ## Sơ đồ topology
+
+```mermaid
+graph LR
+    subgraph AS100 ["AS100 (Autonomous System 100)"]
+        srv1["srv1<br>192.168.10.10/24<br>GW: 192.168.10.1"]
+        r-as100["r-as100 (BGP Router)<br>eth1: 192.168.10.1/24 (LAN)<br>eth2: 100.64.0.1/30 (eBGP Link)"]
+    end
+
+    subgraph AS200 ["AS200 (Autonomous System 200)"]
+        r-as200["r-as200 (BGP Router)<br>eth1: 100.64.0.2/30 (eBGP Link)<br>eth2: 192.168.20.1/24 (LAN)"]
+        srv2["srv2<br>192.168.20.10/24<br>GW: 192.168.20.1"]
+    end
+
+    srv1 -- "eth1 <-> eth1<br>(192.168.10.0/24)" --- r-as100
+    r-as100 -- "eth2 <-> eth1<br>eBGP Peering (100.64.0.0/30)<br>AS100 <-> AS200" --- r-as200
+    r-as200 -- "eth2 <-> eth1<br>(192.168.20.0/24)" --- srv2
 ```
-srv1 (AS100 LAN) --- r-as100 ======= r-as200 --- srv2 (AS200 LAN)
-                        eBGP AS100 <-> AS200
-```
+
+Chi tiết các kết nối và dải mạng:
+- **AS100**:
+  - **`srv1`**: Host nội bộ (`192.168.10.10/24`), Gateway `192.168.10.1`.
+  - **`r-as100`**: Router biên AS100. `eth1` (`192.168.10.1/24`) nối LAN, `eth2` (`100.64.0.1/30`) nối liên-AS.
+- **AS200**:
+  - **`r-as200`**: Router biên AS200. `eth1` (`100.64.0.2/30`) nối liên-AS, `eth2` (`192.168.20.1/24`) nối LAN.
+  - **`srv2`**: Host nội bộ (`192.168.20.10/24`), Gateway `192.168.20.1`.
+- **Link eBGP Inter-AS (`100.64.0.0/30`)**: Kết nối giữa `r-as100` eth2 (`100.64.0.1`) và `r-as200` eth1 (`100.64.0.2`).
+
 Chi tiết node/IP xem [`topology/bgp-lab.clab.yml`](./topology/bgp-lab.clab.yml). Interface đã có IP sẵn trong `configs/<router>/frr.conf`, phần `router bgp` để trống (`TODO`).
 
 ## Đề bài / Yêu cầu

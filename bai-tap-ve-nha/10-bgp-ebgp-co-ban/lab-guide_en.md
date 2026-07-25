@@ -13,10 +13,33 @@
 Completion of [09-ospf-multi-area](../09-ospf-multi-area/lab-guide_en.md) — editing `frr.conf` and `vtysh` CLI.
 
 ## Topology Diagram
+
+```mermaid
+graph LR
+    subgraph AS100 ["AS100 (Autonomous System 100)"]
+        srv1["srv1<br>192.168.10.10/24<br>GW: 192.168.10.1"]
+        r-as100["r-as100 (BGP Router)<br>eth1: 192.168.10.1/24 (LAN)<br>eth2: 100.64.0.1/30 (eBGP Link)"]
+    end
+
+    subgraph AS200 ["AS200 (Autonomous System 200)"]
+        r-as200["r-as200 (BGP Router)<br>eth1: 100.64.0.2/30 (eBGP Link)<br>eth2: 192.168.20.1/24 (LAN)"]
+        srv2["srv2<br>192.168.20.10/24<br>GW: 192.168.20.1"]
+    end
+
+    srv1 -- "eth1 <-> eth1<br>(192.168.10.0/24)" --- r-as100
+    r-as100 -- "eth2 <-> eth1<br>eBGP Peering (100.64.0.0/30)<br>AS100 <-> AS200" --- r-as200
+    r-as200 -- "eth2 <-> eth1<br>(192.168.20.0/24)" --- srv2
 ```
-srv1 (AS100 LAN) --- r-as100 ======= r-as200 --- srv2 (AS200 LAN)
-                        eBGP AS100 <-> AS200
-```
+
+Detailed link and subnet breakdown:
+- **AS100**:
+  - **`srv1`**: Internal LAN host (`192.168.10.10/24`), Gateway `192.168.10.1`.
+  - **`r-as100`**: Border router for AS100. `eth1` (`192.168.10.1/24`) connected to LAN, `eth2` (`100.64.0.1/30`) connected to inter-AS link.
+- **AS200**:
+  - **`r-as200`**: Border router for AS200. `eth1` (`100.64.0.2/30`) connected to inter-AS link, `eth2` (`192.168.20.1/24`) connected to LAN.
+  - **`srv2`**: Internal LAN host (`192.168.20.10/24`), Gateway `192.168.20.1`.
+- **eBGP Inter-AS Link (`100.64.0.0/30`)**: Interconnection between `r-as100` eth2 (`100.64.0.1`) and `r-as200` eth1 (`100.64.0.2`).
+
 Node details and IP addressing are in [`topology/bgp-lab.clab.yml`](./topology/bgp-lab.clab.yml). Interface IPs are pre-assigned in `configs/<router>/frr.conf`, with `router bgp` left as `TODO`.
 
 ## Tasks & Instructions
