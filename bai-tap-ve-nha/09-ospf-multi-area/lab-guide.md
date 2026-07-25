@@ -13,14 +13,49 @@
 Hoàn thành [03-static-route-multi-hop](../03-static-route-multi-hop/lab-guide.md) — hiểu khái niệm định tuyến multi-hop trước khi chuyển sang dynamic routing.
 
 ## Sơ đồ topology
+
+```mermaid
+graph LR
+    subgraph area1 ["OSPF Area 1"]
+        srv1["srv1<br>10.1.1.10/24<br>GW: 10.1.1.1"]
+        r1["r1 (Internal Router)<br>eth1: 10.1.1.1/24<br>eth2: 10.12.0.1/30"]
+    end
+
+    subgraph abr1 ["ABR (Area 1 / Area 0)"]
+        r2["r2 (Area Border Router)<br>eth1: 10.12.0.2/30 (Area 1)<br>eth2: 10.23.0.1/30 (Area 0)"]
+    end
+
+    subgraph abr2 ["ABR (Area 0 / Area 2)"]
+        r3["r3 (Area Border Router)<br>eth1: 10.23.0.2/30 (Area 0)<br>eth2: 10.34.0.1/30 (Area 2)"]
+    end
+
+    subgraph area2 ["OSPF Area 2"]
+        r4["r4 (Internal Router)<br>eth1: 10.34.0.2/30<br>eth2: 10.4.4.1/24"]
+        srv2["srv2<br>10.4.4.10/24<br>GW: 10.4.4.1"]
+    end
+
+    srv1 -- "eth1 <-> eth1<br>(10.1.1.0/24)" --- r1
+    r1 -- "eth2 <-> eth1<br>(10.12.0.0/30)" --- r2
+    r2 -- "eth2 <-> eth1<br>(10.23.0.0/30)" --- r3
+    r3 -- "eth2 <-> eth1<br>(10.34.0.0/30)" --- r4
+    r4 -- "eth2 <-> eth1<br>(10.4.4.0/24)" --- srv2
 ```
-srv1 --- R1 ======= R2 ======= R3 ======= R4 --- srv2
-       (area 1)  (area1|area0)(area0|area2) (area 2)
-```
-- R1: nội bộ area 1
-- R2: ABR giữa area 1 và area 0
-- R3: ABR giữa area 0 và area 2
-- R4: nội bộ area 2
+
+Chi tiết các kết nối và phân vùng OSPF Area:
+- **OSPF Area 1**:
+  - **`srv1` ↔ `r1`**: Link LAN Area 1 (`10.1.1.0/24`). `srv1` (`10.1.1.10/24`), `r1` eth1 (`10.1.1.1/24`).
+  - **`r1` ↔ `r2`**: Link P2P Area 1 (`10.12.0.0/30`). `r1` eth2 (`10.12.0.1/30`), `r2` eth1 (`10.12.0.2/30`).
+- **OSPF Area 0 (Backbone Area)**:
+  - **`r2` ↔ `r3`**: Link P2P Backbone (`10.23.0.0/30`). `r2` eth2 (`10.23.0.1/30`), `r3` eth1 (`10.23.0.2/30`).
+- **OSPF Area 2**:
+  - **`r3` ↔ `r4`**: Link P2P Area 2 (`10.34.0.0/30`). `r3` eth2 (`10.34.0.1/30`), `r4` eth1 (`10.34.0.2/30`).
+  - **`r4` ↔ `srv2`**: Link LAN Area 2 (`10.4.4.0/24`). `r4` eth2 (`10.4.4.1/24`), `srv2` (`10.4.4.10/24`).
+
+**Phân vai trò thiết bị**:
+- **`r1`**: Router nội bộ thuộc Area 1.
+- **`r2`**: ABR (Area Border Router) kết nối giữa Area 1 và Area 0.
+- **`r3`**: ABR (Area Border Router) kết nối giữa Area 0 và Area 2.
+- **`r4`**: Router nội bộ thuộc Area 2.
 
 Chi tiết node/IP xem [`topology/ospf-lab.clab.yml`](./topology/ospf-lab.clab.yml). Interface đã có sẵn IP trong `configs/<router>/frr.conf`, phần OSPF để trống (`TODO`) — tự cấu hình.
 

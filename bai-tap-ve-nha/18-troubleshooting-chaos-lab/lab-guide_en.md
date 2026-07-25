@@ -17,7 +17,45 @@ The lab environment below is **pre-configured completely** (no skeleton template
 
 > "srv1 cannot ping srv2, connectivity appears broken somewhere in the path."
 
-Topology mirrors Lab 09 (`srv1 -- R1 -- R2 -- R3 -- R4 -- srv2`, OSPF Area 1 — Area 0 — Area 2). See [`topology/chaos-lab.clab.yml`](./topology/chaos-lab.clab.yml).
+Topology mirrors Lab 09 (`srv1 -- R1 -- R2 -- R3 -- R4 -- srv2`, OSPF Area 1 — Area 0 — Area 2).
+
+## Network Topology
+
+```mermaid
+graph LR
+    subgraph area1 ["OSPF Area 1"]
+        srv1["srv1<br>10.1.1.10/24<br>GW: 10.1.1.1"]
+        r1["r1 (Router ID: 1.1.1.1)<br>eth1: 10.1.1.1/24<br>eth2: 10.12.0.1/30"]
+    end
+
+    subgraph abr1 ["ABR (Area 1 / Area 0)"]
+        r2["r2 (Router ID: 2.2.2.2)<br>eth1: 10.12.0.2/30 (Area 1)<br>eth2: 10.23.0.1/30 (Area 0)"]
+    end
+
+    subgraph abr2 ["ABR (Area 0 / Area 2)"]
+        r3["r3 (Router ID: 3.3.3.3)<br>eth1: 10.23.0.2/30<br>eth2: 10.34.0.1/30 (Area 2)"]
+    end
+
+    subgraph area2 ["OSPF Area 2"]
+        r4["r4 (Router ID: 4.4.4.4)<br>eth1: 10.34.0.2/30<br>eth2: 10.4.4.1/24"]
+        srv2["srv2<br>10.4.4.10/24<br>GW: 10.4.4.1"]
+    end
+
+    srv1 -- "eth1 <-> eth1<br>(10.1.1.0/24)" --- r1
+    r1 -- "eth2 <-> eth1<br>(10.12.0.0/30)" --- r2
+    r2 -- "eth2 <-> eth1<br>(10.23.0.0/30)" --- r3
+    r3 -- "eth2 <-> eth1<br>(10.34.0.0/30)" --- r4
+    r4 -- "eth2 <-> eth1<br>(10.4.4.0/24)" --- srv2
+```
+
+Detailed link and subnet breakdown:
+- **`srv1` ↔ `r1`**: LAN Link Area 1 (`10.1.1.0/24`). `srv1` (`10.1.1.10/24`), `r1` eth1 (`10.1.1.1/24`).
+- **`r1` ↔ `r2`**: P2P Link Area 1 (`10.12.0.0/30`). `r1` eth2 (`10.12.0.1/30`), `r2` eth1 (`10.12.0.2/30`).
+- **`r2` ↔ `r3`**: P2P Link Area 0 Backbone (`10.23.0.0/30`). `r2` eth2 (`10.23.0.1/30`), `r3` eth1 (`10.23.0.2/30`).
+- **`r3` ↔ `r4`**: P2P Link Area 2 (`10.34.0.0/30`). `r3` eth2 (`10.34.0.1/30`), `r4` eth1 (`10.34.0.2/30`).
+- **`r4` ↔ `srv2`**: LAN Link Area 2 (`10.4.4.0/24`). `r4` eth2 (`10.4.4.1/24`), `srv2` (`10.4.4.10/24`).
+
+See [`topology/chaos-lab.clab.yml`](./topology/chaos-lab.clab.yml).
 
 ## Tasks & Instructions
 

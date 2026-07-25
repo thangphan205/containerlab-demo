@@ -13,15 +13,41 @@
 Hoàn thành [17-nftables-firewall](../17-nftables-firewall/lab-guide.md) — quen thao tác trên Linux network stack.
 
 ## Sơ đồ topology
-```
-host-a (192.168.1.x) ── R-site-a ════[WireGuard tunnel]════ R-site-b ── host-b (192.168.2.x)
-                          (WAN: 203.0.113.1)   ISP    (WAN: 203.0.113.2)
-```
-- `R-site-a`, `R-site-b`: gateway mỗi site, nối nhau qua `isp` (bridge mô phỏng internet).
-- WireGuard tunnel: `wg0` interface, mạng tunnel `10.0.0.0/30`.
-- `host-a`, `host-b`: host nội bộ mỗi site, **chưa thông** với nhau trước khi có VPN.
 
-Xem [`topology/wg-lab.clab.yml`](./topology/wg-lab.clab.yml).
+```mermaid
+graph LR
+    subgraph site_a ["Site A (LAN: 192.168.1.0/24)"]
+        host-a["host-a<br>192.168.1.10/24<br>GW: 192.168.1.1"]
+        r-site-a["r-site-a (Gateway Site A)<br>eth1: 192.168.1.1/24 (LAN)<br>eth2: 203.0.113.1/24 (WAN)<br>wg0: 10.0.0.1/30 (Tunnel)"]
+    end
+
+    subgraph wan_cloud ["Internet Mô phỏng (WAN)"]
+        isp["isp (Bridge br0)<br>Subnet: 203.0.113.0/24"]
+    end
+
+    subgraph site_b ["Site B (LAN: 192.168.2.0/24)"]
+        r-site-b["r-site-b (Gateway Site B)<br>eth1: 203.0.113.2/24 (WAN)<br>eth2: 192.168.2.1/24 (LAN)<br>wg0: 10.0.0.2/30 (Tunnel)"]
+        host-b["host-b<br>192.168.2.10/24<br>GW: 192.168.2.1"]
+    end
+
+    host-a -- "eth1 <-> eth1<br>(192.168.1.0/24)" --- r-site-a
+    r-site-a -- "eth2 <-> eth1<br>(203.0.113.0/24)" --- isp
+    isp -- "eth2 <-> eth1<br>(203.0.113.0/24)" --- r-site-b
+    r-site-b -- "eth2 <-> eth1<br>(192.168.2.0/24)" --- host-b
+
+    r-site-a -.- |"🔒 WireGuard Site-to-Site Tunnel (wg0)<br>UDP Port 51820 | Subnet: 10.0.0.0/30"| r-site-b
+```
+
+Chi tiết các kết nối và dải mạng:
+- **Lớp Underlay (Mạng vật lý / Mô phỏng Internet)**:
+  - **Site A LAN (`192.168.1.0/24`)**: `host-a` (`192.168.1.10/24`) kết nối trực tiếp với `r-site-a` eth1 (`192.168.1.1/24`).
+  - **Mạng WAN Internet (`203.0.113.0/24`)**: `r-site-a` eth2 (`203.0.113.1/24`) và `r-site-b` eth1 (`203.0.113.2/24`) nối với nhau qua bridge `isp`.
+  - **Site B LAN (`192.168.2.0/24`)**: `r-site-b` eth2 (`192.168.2.1/24`) kết nối trực tiếp với `host-b` (`192.168.2.10/24`).
+- **Lớp Overlay (WireGuard VPN Tunnel)**:
+  - **Tunnel Interface (`wg0`)**: Dải mạng `10.0.0.0/30`. `r-site-a` (`10.0.0.1/30`) ↔ `r-site-b` (`10.0.0.2/30`).
+  - **Mã hóa**: Toàn bộ lưu lượng giữa LAN Site A và LAN Site B được mã hóa qua UDP port `51820` trên WAN.
+
+Chi tiết xem [`topology/wg-lab.clab.yml`](./topology/wg-lab.clab.yml).
 
 ## Đề bài / Yêu cầu
 

@@ -13,14 +13,49 @@
 Completion of [03-static-route-multi-hop](../03-static-route-multi-hop/lab-guide_en.md) — multi-hop routing principles prior to dynamic routing.
 
 ## Topology Diagram
+
+```mermaid
+graph LR
+    subgraph area1 ["OSPF Area 1"]
+        srv1["srv1<br>10.1.1.10/24<br>GW: 10.1.1.1"]
+        r1["r1 (Internal Router)<br>eth1: 10.1.1.1/24<br>eth2: 10.12.0.1/30"]
+    end
+
+    subgraph abr1 ["ABR (Area 1 / Area 0)"]
+        r2["r2 (Area Border Router)<br>eth1: 10.12.0.2/30 (Area 1)<br>eth2: 10.23.0.1/30 (Area 0)"]
+    end
+
+    subgraph abr2 ["ABR (Area 0 / Area 2)"]
+        r3["r3 (Area Border Router)<br>eth1: 10.23.0.2/30 (Area 0)<br>eth2: 10.34.0.1/30 (Area 2)"]
+    end
+
+    subgraph area2 ["OSPF Area 2"]
+        r4["r4 (Internal Router)<br>eth1: 10.34.0.2/30<br>eth2: 10.4.4.1/24"]
+        srv2["srv2<br>10.4.4.10/24<br>GW: 10.4.4.1"]
+    end
+
+    srv1 -- "eth1 <-> eth1<br>(10.1.1.0/24)" --- r1
+    r1 -- "eth2 <-> eth1<br>(10.12.0.0/30)" --- r2
+    r2 -- "eth2 <-> eth1<br>(10.23.0.0/30)" --- r3
+    r3 -- "eth2 <-> eth1<br>(10.34.0.0/30)" --- r4
+    r4 -- "eth2 <-> eth1<br>(10.4.4.0/24)" --- srv2
 ```
-srv1 --- R1 ======= R2 ======= R3 ======= R4 --- srv2
-       (Area 1)  (Area1|Area0)(Area0|Area2) (Area 2)
-```
-- `R1`: Internal router in Area 1.
-- `R2`: ABR between Area 1 and Area 0.
-- `R3`: ABR between Area 0 and Area 2.
-- `R4`: Internal router in Area 2.
+
+Detailed link and OSPF Area breakdown:
+- **OSPF Area 1**:
+  - **`srv1` ↔ `r1`**: LAN Link Area 1 (`10.1.1.0/24`). `srv1` (`10.1.1.10/24`), `r1` eth1 (`10.1.1.1/24`).
+  - **`r1` ↔ `r2`**: P2P Link Area 1 (`10.12.0.0/30`). `r1` eth2 (`10.12.0.1/30`), `r2` eth1 (`10.12.0.2/30`).
+- **OSPF Area 0 (Backbone Area)**:
+  - **`r2` ↔ `r3`**: P2P Link Backbone (`10.23.0.0/30`). `r2` eth2 (`10.23.0.1/30`), `r3` eth1 (`10.23.0.2/30`).
+- **OSPF Area 2**:
+  - **`r3` ↔ `r4`**: P2P Link Area 2 (`10.34.0.0/30`). `r3` eth2 (`10.34.0.1/30`), `r4` eth1 (`10.34.0.2/30`).
+  - **`r4` ↔ `srv2`**: LAN Link Area 2 (`10.4.4.0/24`). `r4` eth2 (`10.4.4.1/24`), `srv2` (`10.4.4.10/24`).
+
+**Router Roles**:
+- **`r1`**: Internal Router within Area 1.
+- **`r2`**: Area Border Router (ABR) connecting Area 1 and Area 0.
+- **`r3`**: Area Border Router (ABR) connecting Area 0 and Area 2.
+- **`r4`**: Internal Router within Area 2.
 
 Node details and IP addressing are in [`topology/ospf-lab.clab.yml`](./topology/ospf-lab.clab.yml). Interface IPs are pre-assigned in `configs/<router>/frr.conf`, with OSPF sections left as `TODO`.
 

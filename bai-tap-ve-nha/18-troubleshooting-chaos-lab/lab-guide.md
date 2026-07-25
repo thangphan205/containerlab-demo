@@ -17,7 +17,45 @@ Lab dưới đây **đã được cấu hình đầy đủ** (không phải skel
 
 > "srv1 không ping được srv2, mạng chắc bị đứt ở đâu đó."
 
-Topology giống hệt Bài 04 (`srv1 -- R1 -- R2 -- R3 -- R4 -- srv2`, OSPF area 1 — area 0 — area 2). Xem [`topology/chaos-lab.clab.yml`](./topology/chaos-lab.clab.yml).
+Topology tương tự Bài 09 (`srv1 -- R1 -- R2 -- R3 -- R4 -- srv2`, OSPF Area 1 — Area 0 — Area 2).
+
+## Sơ đồ topology
+
+```mermaid
+graph LR
+    subgraph area1 ["OSPF Area 1"]
+        srv1["srv1<br>10.1.1.10/24<br>GW: 10.1.1.1"]
+        r1["r1 (Router ID: 1.1.1.1)<br>eth1: 10.1.1.1/24<br>eth2: 10.12.0.1/30"]
+    end
+
+    subgraph abr1 ["ABR (Area 1 / Area 0)"]
+        r2["r2 (Router ID: 2.2.2.2)<br>eth1: 10.12.0.2/30 (Area 1)<br>eth2: 10.23.0.1/30 (Area 0)"]
+    end
+
+    subgraph abr2 ["ABR (Area 0 / Area 2)"]
+        r3["r3 (Router ID: 3.3.3.3)<br>eth1: 10.23.0.2/30<br>eth2: 10.34.0.1/30 (Area 2)"]
+    end
+
+    subgraph area2 ["OSPF Area 2"]
+        r4["r4 (Router ID: 4.4.4.4)<br>eth1: 10.34.0.2/30<br>eth2: 10.4.4.1/24"]
+        srv2["srv2<br>10.4.4.10/24<br>GW: 10.4.4.1"]
+    end
+
+    srv1 -- "eth1 <-> eth1<br>(10.1.1.0/24)" --- r1
+    r1 -- "eth2 <-> eth1<br>(10.12.0.0/30)" --- r2
+    r2 -- "eth2 <-> eth1<br>(10.23.0.0/30)" --- r3
+    r3 -- "eth2 <-> eth1<br>(10.34.0.0/30)" --- r4
+    r4 -- "eth2 <-> eth1<br>(10.4.4.0/24)" --- srv2
+```
+
+Chi tiết các kết nối và dải mạng:
+- **`srv1` ↔ `r1`**: Link LAN Area 1 (`10.1.1.0/24`). `srv1` (`10.1.1.10/24`), `r1` eth1 (`10.1.1.1/24`).
+- **`r1` ↔ `r2`**: Link P2P Area 1 (`10.12.0.0/30`). `r1` eth2 (`10.12.0.1/30`), `r2` eth1 (`10.12.0.2/30`).
+- **`r2` ↔ `r3`**: Link P2P Area 0 Backbone (`10.23.0.0/30`). `r2` eth2 (`10.23.0.1/30`), `r3` eth1 (`10.23.0.2/30`).
+- **`r3` ↔ `r4`**: Link P2P Area 2 (`10.34.0.0/30`). `r3` eth2 (`10.34.0.1/30`), `r4` eth1 (`10.34.0.2/30`).
+- **`r4` ↔ `srv2`**: Link LAN Area 2 (`10.4.4.0/24`). `r4` eth2 (`10.4.4.1/24`), `srv2` (`10.4.4.10/24`).
+
+Chi tiết xem [`topology/chaos-lab.clab.yml`](./topology/chaos-lab.clab.yml).
 
 ## Đề bài / Yêu cầu
 
