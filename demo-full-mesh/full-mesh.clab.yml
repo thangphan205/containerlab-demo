@@ -1,0 +1,47 @@
+---
+name: full-mesh
+
+mgmt:
+  network: full-mesh_mgmt
+  ipv4-subnet: 192.168.26.0/24
+
+topology:
+  nodes:
+    cisco1:
+      kind: cisco_iol
+      image: vrnetlab/cisco_iol:17.12.01
+      type: l2
+      mgmt-ipv4: 192.168.26.11
+      startup-config: ./config/cisco.config.partial
+
+    cisco2:
+      kind: cisco_iol
+      image: vrnetlab/cisco_iol:17.12.01
+      type: l2
+      mgmt-ipv4: 192.168.26.12
+      startup-config: ./config/cisco.config.partial
+
+    juniper1:
+      kind: juniper_crpd
+      image: crpd:26.2R1.7
+      mgmt-ipv4: 192.168.26.21
+      startup-config: ./config/juniper.conf
+
+    juniper2:
+      kind: juniper_crpd
+      image: crpd:26.2R1.7
+      mgmt-ipv4: 192.168.26.22
+      startup-config: ./config/juniper.conf
+
+  links:
+    # Cisco1 connections (3 links)
+    - endpoints: ["cisco1:eth1", "cisco2:eth1"]
+    - endpoints: ["cisco1:eth2", "juniper1:eth1"]
+    - endpoints: ["cisco1:eth3", "juniper2:eth1"]
+
+    # Cisco2 connections (2 remaining links)
+    - endpoints: ["cisco2:eth2", "juniper1:eth2"]
+    - endpoints: ["cisco2:eth3", "juniper2:eth2"]
+
+    # Juniper1 - Juniper2 connection (1 remaining link)
+    - endpoints: ["juniper1:eth3", "juniper2:eth3"]
