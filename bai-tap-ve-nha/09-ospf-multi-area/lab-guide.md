@@ -15,7 +15,7 @@ Hoàn thành [03-static-route-multi-hop](../03-static-route-multi-hop/lab-guide.
 ## Sơ đồ topology
 
 ```mermaid
-graph TB
+graph LR
     classDef area1 fill:#e6f7ff,stroke:#1890ff,stroke-width:2px;
     classDef area0 fill:#fff7e6,stroke:#fa8c16,stroke-width:2px;
     classDef area2 fill:#f6ffed,stroke:#52c41a,stroke-width:2px;
@@ -51,6 +51,8 @@ GW: 10.4.4.1`"]:::area2
 (10.1.1.0/24 Area 1)`" --- srv1
     r4 -- "`r4:eth2 <-> srv2:eth1
 (10.4.4.0/24 Area 2)`" --- srv2
+
+    srv1 ~~~ srv2
 ```
 
 Chi tiết các kết nối và phân vùng OSPF Area:
