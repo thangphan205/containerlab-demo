@@ -59,7 +59,7 @@ GW: 10.4.4.1`"]:::area2
     r4 -- "`r4:eth2 <-> srv2:eth1
 (10.4.4.0/24 Area 2)`" --- srv2
 
-    srv1 ~~~ srv2
+    srv1 ~~~~~ srv2
 ```
 
 Chi tiết các kết nối và dải mạng:
