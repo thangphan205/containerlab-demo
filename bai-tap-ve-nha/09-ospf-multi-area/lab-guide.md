@@ -24,17 +24,22 @@ graph LR
     end
 
     subgraph area0 ["OSPF Area 0 (Backbone)"]
-        direction LR
-        r2["r2 (Area Border Router)<br>eth1: 10.12.0.2/30 (Area 1)<br>eth2: 10.23.0.1/30 (Area 0)"]
-        r3["r3 (Area Border Router)<br>eth1: 10.23.0.2/30 (Area 0)<br>eth2: 10.34.0.1/30 (Area 2)"]
-        r2 -- "eth2 <-> eth1<br>(10.23.0.0/30)" --- r3
+        direction TB
+        backbone_info["<b>Backbone Transit Link</b><br>10.23.0.0/30"]
+        subgraph area0_routers [" "]
+            direction LR
+            r2["r2 (Area Border Router)<br>eth1: 10.12.0.2/30 (Area 1)<br>eth2: 10.23.0.1/30 (Area 0)"]
+            r3["r3 (Area Border Router)<br>eth1: 10.23.0.2/30 (Area 0)<br>eth2: 10.34.0.1/30 (Area 2)"]
+            r2 -- "eth2 <-> eth1<br>(10.23.0.0/30)" --- r3
+        end
+        backbone_info ~~~ area0_routers
     end
 
     subgraph area2 ["OSPF Area 2"]
         direction TB
-        r4["r4 (Internal Router)<br>eth1: 10.34.0.2/30<br>eth2: 10.4.4.1/24"]
         srv2["srv2<br>10.4.4.10/24<br>GW: 10.4.4.1"]
-        r4 -- "eth2 <-> eth1<br>(10.4.4.0/24)" --- srv2
+        r4["r4 (Internal Router)<br>eth1: 10.34.0.2/30<br>eth2: 10.4.4.1/24"]
+        srv2 -- "eth1 <-> eth2<br>(10.4.4.0/24)" --- r4
     end
 
     r1 -- "eth2 <-> eth1<br>(10.12.0.0/30)" --- r2
