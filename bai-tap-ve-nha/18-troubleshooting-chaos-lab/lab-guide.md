@@ -44,11 +44,11 @@ graph LR
             srv2["srv2 (Host)<br>10.4.4.10/24<br>GW: 10.4.4.1"]:::area2
         end
 
-        r1 -- "eth2 <-> eth1<br>(10.12.0.0/30 Area 1)" --- r2
-        r2 -- "eth2 <-> eth1<br>(10.23.0.0/30 Area 0 Backbone)" --- r3
-        r3 -- "eth2 <-> eth1<br>(10.34.0.0/30 Area 2)" --- r4
-        r1 -- "eth1 <-> eth1<br>(10.1.1.0/24 Area 1)" --- srv1
-        r4 -- "eth2 <-> eth1<br>(10.4.4.0/24 Area 2)" --- srv2
+        r1 -- "r1:eth2 <-> r2:eth1<br>(10.12.0.0/30 Area 1)" --- r2
+        r2 -- "r2:eth2 <-> r3:eth1<br>(10.23.0.0/30 Area 0 Backbone)" --- r3
+        r3 -- "r3:eth2 <-> r4:eth1<br>(10.34.0.0/30 Area 2)" --- r4
+        r1 -- "r1:eth1 <-> srv1:eth1<br>(10.1.1.0/24 Area 1)" --- srv1
+        r4 -- "r4:eth2 <-> srv2:eth1<br>(10.4.4.0/24 Area 2)" --- srv2
     end
 ```
 
