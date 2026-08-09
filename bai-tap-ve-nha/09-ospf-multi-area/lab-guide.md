@@ -20,26 +20,20 @@ graph TB
     classDef area0 fill:#fff7e6,stroke:#fa8c16,stroke-width:2px;
     classDef area2 fill:#f6ffed,stroke:#52c41a,stroke-width:2px;
 
-    subgraph area1 ["OSPF Area 1"]
-        r1["r1 (Internal Router)<br>eth1: 10.1.1.1/24<br>eth2: 10.12.0.1/30"]:::area1
-        srv1["srv1 (Host)<br>10.1.1.10/24<br>GW: 10.1.1.1"]:::area1
-        r1 -- "eth1 <-> eth1<br>(10.1.1.0/24 Area 1)" --- srv1
-    end
+    r1["r1 (Internal Router)<br>eth1: 10.1.1.1/24<br>eth2: 10.12.0.1/30"]:::area1
+    r2["r2 (Area Border Router)<br>eth1: 10.12.0.2/30 (Area 1)<br>eth2: 10.23.0.1/30 (Area 0)"]:::area0
+    r3["r3 (Area Border Router)<br>eth1: 10.23.0.2/30 (Area 0)<br>eth2: 10.34.0.1/30 (Area 2)"]:::area0
+    r4["r4 (Internal Router)<br>eth1: 10.34.0.2/30<br>eth2: 10.4.4.1/24"]:::area2
 
-    subgraph area0 ["OSPF Area 0 (Backbone)"]
-        r2["r2 (Area Border Router)<br>eth1: 10.12.0.2/30 (Area 1)<br>eth2: 10.23.0.1/30 (Area 0)"]:::area0
-        r3["r3 (Area Border Router)<br>eth1: 10.23.0.2/30 (Area 0)<br>eth2: 10.34.0.1/30 (Area 2)"]:::area0
-        r2 -- "eth2 <-> eth1<br>(10.23.0.0/30 Area 0 Backbone)" --- r3
-    end
+    srv1["srv1 (Host)<br>10.1.1.10/24<br>GW: 10.1.1.1"]:::area1
+    srv2["srv2 (Host)<br>10.4.4.10/24<br>GW: 10.4.4.1"]:::area2
 
-    subgraph area2 ["OSPF Area 2"]
-        r4["r4 (Internal Router)<br>eth1: 10.34.0.2/30<br>eth2: 10.4.4.1/24"]:::area2
-        srv2["srv2 (Host)<br>10.4.4.10/24<br>GW: 10.4.4.1"]:::area2
-        r4 -- "eth2 <-> eth1<br>(10.4.4.0/24 Area 2)" --- srv2
-    end
+    r1 -- "eth2 <-> eth1<br>(10.12.0.0/30 Area 1)" --- r2
+    r2 -- "eth2 <-> eth1<br>(10.23.0.0/30 Area 0 Backbone)" --- r3
+    r3 -- "eth2 <-> eth1<br>(10.34.0.0/30 Area 2)" --- r4
 
-    r1 -- "eth2 <-> eth1<br>(10.12.0.0/30)" --- r2
-    r3 -- "eth2 <-> eth1<br>(10.34.0.0/30)" --- r4
+    r1 -- "eth1 <-> eth1<br>(10.1.1.0/24 Area 1)" --- srv1
+    r4 -- "eth2 <-> eth1<br>(10.4.4.0/24 Area 2)" --- srv2
 ```
 
 Chi tiết các kết nối và phân vùng OSPF Area:
