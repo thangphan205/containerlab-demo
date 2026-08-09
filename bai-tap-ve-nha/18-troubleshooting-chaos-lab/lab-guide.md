@@ -27,17 +27,25 @@ graph TB
     classDef area0 fill:#fff7e6,stroke:#fa8c16,stroke-width:2px;
     classDef area2 fill:#f6ffed,stroke:#52c41a,stroke-width:2px;
 
-    r1["r1 (Router ID: 1.1.1.1)<br>eth1: 10.1.1.1/24<br>eth2: 10.12.0.1/30"]:::area1
-    r2["r2 (Router ID: 2.2.2.2)<br>eth1: 10.12.0.2/30 (Area 1)<br>eth2: 10.23.0.1/30 (Area 0)"]:::area0
-    r3["r3 (Router ID: 3.3.3.3)<br>eth1: 10.23.0.2/30 (Area 0)<br>eth2: 10.34.0.1/30 (Area 2)"]:::area0
-    r4["r4 (Router ID: 4.4.4.4)<br>eth1: 10.34.0.2/30<br>eth2: 10.4.4.1/24"]:::area2
+    subgraph core ["Chuỗi Router (Area 1 — Area 0 Backbone — Area 2)"]
+        direction LR
+        r1["r1 (Router ID: 1.1.1.1)<br>eth1: 10.1.1.1/24<br>eth2: 10.12.0.1/30"]:::area1
+        r2["r2 (Router ID: 2.2.2.2)<br>eth1: 10.12.0.2/30 (Area 1)<br>eth2: 10.23.0.1/30 (Area 0)"]:::area0
+        r3["r3 (Router ID: 3.3.3.3)<br>eth1: 10.23.0.2/30 (Area 0)<br>eth2: 10.34.0.1/30 (Area 2)"]:::area0
+        r4["r4 (Router ID: 4.4.4.4)<br>eth1: 10.34.0.2/30<br>eth2: 10.4.4.1/24"]:::area2
 
-    srv1["srv1 (Host)<br>10.1.1.10/24<br>GW: 10.1.1.1"]:::area1
-    srv2["srv2 (Host)<br>10.4.4.10/24<br>GW: 10.4.4.1"]:::area2
+        r1 -- "eth2 <-> eth1<br>(10.12.0.0/30 Area 1)" --- r2
+        r2 -- "eth2 <-> eth1<br>(10.23.0.0/30 Area 0 Backbone)" --- r3
+        r3 -- "eth2 <-> eth1<br>(10.34.0.0/30 Area 2)" --- r4
+    end
 
-    r1 -- "eth2 <-> eth1<br>(10.12.0.0/30 Area 1)" --- r2
-    r2 -- "eth2 <-> eth1<br>(10.23.0.0/30 Area 0 Backbone)" --- r3
-    r3 -- "eth2 <-> eth1<br>(10.34.0.0/30 Area 2)" --- r4
+    subgraph lan1 ["LAN Area 1 (10.1.1.0/24)"]
+        srv1["srv1 (Host)<br>10.1.1.10/24<br>GW: 10.1.1.1"]:::area1
+    end
+
+    subgraph lan2 ["LAN Area 2 (10.4.4.0/24)"]
+        srv2["srv2 (Host)<br>10.4.4.10/24<br>GW: 10.4.4.1"]:::area2
+    end
 
     r1 -- "eth1 <-> eth1<br>(10.1.1.0/24 Area 1)" --- srv1
     r4 -- "eth2 <-> eth1<br>(10.4.4.0/24 Area 2)" --- srv2
