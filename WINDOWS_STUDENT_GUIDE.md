@@ -17,7 +17,7 @@
 │       │                                                                │
 │       ▼                                                                │
 │  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │ WSL 2 (Ubuntu 22.04 LTS / 24.04 LTS)                             │  │
+│  │ WSL 2 (Ubuntu 24.04 LTS)                                         │  │
 │  │  │                                                               │  │
 │  │  ├─ Docker Engine (Quản lý các container ảo hóa)                 │  │
 │  │  └─ Containerlab (Tạo Network Namespaces, veth pair kết nối)     │  │
@@ -41,15 +41,15 @@
 
 ## 🛠️ PHẦN 1: BƯỚC CÀI ĐẶT CHI TIẾT (CÀI 1 LẦN DUY NHẤT)
 
-### 🔹 Bước 1: Cài đặt WSL 2 & Ubuntu từ Windows Terminal
+### 🔹 Bước 1: Cài đặt WSL 2 & Ubuntu 24.04 LTS từ Windows Terminal
 
 1. Tìm **PowerShell** hoặc **Command Prompt** trên Windows ➔ Nhấp chuột phải chọn **Run as Administrator** (Chạy với quyền Quản trị viên).
-2. Chạy câu lệnh sau để cài đặt WSL 2 cùng phân vùng **Ubuntu**:
+2. Chạy câu lệnh sau để cài đặt WSL 2 với hệ điều hành **Ubuntu 24.04 LTS**:
    ```powershell
-   wsl --install -d Ubuntu
+   wsl --install -d Ubuntu-24.04
    ```
 3. Sau khi lệnh thực thi xong, hãy **Khởi động lại máy tính (Restart)** nếu Windows yêu cầu.
-4. Sau khi khởi động lại, cửa sổ **Ubuntu** sẽ tự động mở ra.
+4. Sau khi khởi động lại, cửa sổ **Ubuntu 24.04** sẽ tự động mở ra.
    - Nhập **Username** mới (viết liền không dấu, ví dụ: `student` hoặc `devops`).
    - Nhập **Password** (lưu ý: khi gõ mật khẩu trên Linux sẽ **không hiển thị ký tự hay dấu ***, cứ gõ xong rồi bấm `Enter`).
 5. Cập nhật danh sách gói phần mềm hệ thống Ubuntu:
