@@ -93,7 +93,7 @@ All content is **open source** (see [LICENSE](../LICENSE)) — feel free to use,
 
 | Lab ID | Lab Title | Status | Video |
 |:---:|:---|:---|:---|
-| [18](./18-troubleshooting-chaos-lab/lab-guide_en.md) | Chaos Lab — OSPF Troubleshooting (Area Mismatch) | 🟢 Active | — |
+| [18](./18-troubleshooting-chaos-lab/lab-guide_en.md) | Chaos Lab — OSPF Troubleshooting (Area Mismatch) | 🟢 Active | [Watch video](https://youtu.be/M4Mzix0tP70) |
 | [19](./19-troubleshooting-chaos-bgp/lab-guide_en.md) | Chaos Lab — BGP Troubleshooting (Prefix-List Errors) | 🟢 Active | — |
 
 ---

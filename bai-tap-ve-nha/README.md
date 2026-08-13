@@ -90,7 +90,7 @@ Toàn bộ nội dung **mã nguồn mở** (xem [LICENSE](../LICENSE)) — mọi
 
 | Mã bài | Tên bài lab | Trạng thái | Video |
 |:---:|:---|:---|:---|
-| [18](./18-troubleshooting-chaos-lab/lab-guide.md) | Troubleshooting chaos lab — OSPF (cấy lỗi area mismatch) | 🟢 Đang mở | — |
+| [18](./18-troubleshooting-chaos-lab/lab-guide.md) | Troubleshooting chaos lab — OSPF (cấy lỗi area mismatch) | 🟢 Đang mở | [Xem video](https://youtu.be/M4Mzix0tP70) |
 | [19](./19-troubleshooting-chaos-bgp/lab-guide.md) | Troubleshooting chaos lab — BGP (cấy lỗi prefix-list) | 🟢 Đang mở (Mới) | — |
 
 ---

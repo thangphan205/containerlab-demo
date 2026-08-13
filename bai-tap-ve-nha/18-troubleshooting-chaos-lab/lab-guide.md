@@ -2,7 +2,7 @@
 
 # Bài 18: Troubleshooting Chaos Lab
 
-**Arc 5 — Troubleshooting chaos lab**
+**Arc 5 — Troubleshooting chaos lab** | 🎥 **Video hướng dẫn:** [YouTube - Troubleshooting Chaos Lab OSPF](https://youtu.be/M4Mzix0tP70)
 
 ## Mục tiêu
 - Rèn kỹ năng troubleshooting có phương pháp: thu hẹp phạm vi lỗi từng bước, không đoán mò.

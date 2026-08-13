@@ -2,7 +2,7 @@
 
 # Lab 18: Troubleshooting Chaos Lab — OSPF
 
-**Arc 5 — Troubleshooting Chaos Lab**
+**Arc 5 — Troubleshooting Chaos Lab** | 🎥 **Video Tutorial:** [YouTube - Troubleshooting Chaos Lab OSPF](https://youtu.be/M4Mzix0tP70)
 
 ## Objectives
 - Develop structured network troubleshooting skills: isolate failure domains systematically without random guessing.
