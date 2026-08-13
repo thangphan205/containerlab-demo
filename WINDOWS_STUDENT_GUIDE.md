@@ -175,8 +175,39 @@ Extension **Containerlab** (phát triển bởi `srl-labs` / Nokia) mang đến 
     - Chọn **SSH / Attach Shell** ➔ Mở ngay tab Terminal truy cập vào router/host mà không cần gõ lệnh `docker exec`.
     - Chọn **Capture Traffic** ➔ Tự động mở Wireshark bắt gói tin realtime trên giao diện mạng được chọn.
 
+### 4. Cài đặt Extension Remote Explorer (Quản lý WSL & SSH vào máy Ubuntu) 🖥️🌐
+
+Extension **Remote Explorer** (phát triển bởi Microsoft) giúp học viên dễ dàng quản lý, kết nối và mở các workspace trực tiếp từ giao diện đồ họa của VS Code / Antigravity IDE đến phân vùng WSL2 Ubuntu local hoặc bất kỳ máy chủ Ubuntu từ xa nào qua SSH.
+
+#### 🔹 Các bước cài đặt:
+1. Mở **VS Code** hoặc **Antigravity IDE**.
+2. Nhấn `Ctrl + Shift + X` (Windows/Linux) hoặc `Cmd + Shift + X` (macOS) để mở mục Extensions.
+3. Tìm kiếm từ khóa: **`Remote Explorer`** (hoặc cài đặt trọn bộ **`Remote Development`** do **Microsoft** phát hành).
+4. Nhấn nút **Install**.
+
+#### 🔹 Hướng dẫn kết nối đến phân vùng WSL Ubuntu 24.04 vừa tạo:
+1. Nhấp vào biểu tượng **Remote Explorer** (hình thanh màn hình máy tính kết nối mạng) ở thanh công cụ dọc ngoài cùng bên trái IDE.
+2. Tại menu thả xuống ở đầu bảng điều khiển Remote Explorer (Dropdown Menu), chọn mục **WSL Targets**.
+3. Bạn sẽ thấy danh sách phân vùng WSL đang chạy, bao gồm **`Ubuntu-24.04`**.
+4. Nhấp chuột vào biểu tượng **Connect to WSL in New Window** (hoặc nhấp chuột phải chọn Connect):
+   - Trình soạn thảo sẽ khởi tạo môi trường kết nối trực tiếp vào Ubuntu 24.04.
+   - Nhấn `Ctrl + O` (hoặc vào `File ➔ Open Folder...`) để chọn và mở ngay thư mục dự án lab trong Linux (ví dụ: `/home/student/kai-networks-demo`).
+
+#### 🔹 Hướng dẫn SSH vào máy Ubuntu (Máy chủ từ xa hoặc Máy ảo VM):
+1. Trong bảng điều khiển **Remote Explorer**, chuyển mục Dropdown sang **SSH Targets**.
+2. Nhấn vào biểu tượng dấu cộng **`+`** (**Add New SSH Host**).
+3. Nhập cú pháp kết nối SSH:
+   ```bash
+   ssh student@<dia-chi-ip-may-ubuntu>
+   # Ví dụ: ssh student@192.168.1.50 hoặc ssh student@10.0.0.5 -p 22
+   ```
+4. Chọn file cấu hình lưu SSH (mặc định chọn `C:\Users\<ten_user_windows>\.ssh\config`).
+5. Danh sách host vừa thêm sẽ xuất hiện trong mục **SSH Targets**.
+6. Nhấp chuột vào tên máy chủ chọn **Connect to Host in New Window** ➔ Chọn OS loại **Linux** ➔ Nhập mật khẩu tài khoản `student` khi được yêu cầu ➔ Bạn đã truy cập hoàn toàn vào máy Ubuntu từ xa qua giao diện IDE chuyên nghiệp.
+
 
 ---
+
 
 ## 🚀 PHẦN 3: BẮT ĐẦU THỰC HÀNH VỚI CONTAINERLAB
 
