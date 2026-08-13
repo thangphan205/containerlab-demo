@@ -191,7 +191,7 @@ Extension **Remote Explorer** (phát triển bởi Microsoft) giúp học viên 
 3. Bạn sẽ thấy danh sách phân vùng WSL đang chạy, bao gồm **`Ubuntu-24.04`**.
 4. Nhấp chuột vào biểu tượng **Connect to WSL in New Window** (hoặc nhấp chuột phải chọn Connect):
    - Trình soạn thảo sẽ khởi tạo môi trường kết nối trực tiếp vào Ubuntu 24.04.
-   - Nhấn `Ctrl + O` (hoặc vào `File ➔ Open Folder...`) để chọn và mở ngay thư mục dự án lab trong Linux (ví dụ: `/home/student/kai-networks-demo`).
+   - Nhấn `Ctrl + O` (hoặc vào `File ➔ Open Folder...`) để chọn và mở ngay thư mục dự án lab trong Linux (ví dụ: `/home/student/containerlab-demo`).
 
 #### 🔹 Hướng dẫn SSH vào máy Ubuntu (Máy chủ từ xa hoặc Máy ảo VM):
 1. Trong bảng điều khiển **Remote Explorer**, chuyển mục Dropdown sang **SSH Targets**.
@@ -211,39 +211,75 @@ Extension **Remote Explorer** (phát triển bởi Microsoft) giúp học viên 
 
 ## 🚀 PHẦN 3: BẮT ĐẦU THỰC HÀNH VỚI CONTAINERLAB
 
-### 1. Clone repository bài lab về WSL2
-*(Lưu ý: Nên clone repo vào thư mục nhà `~` trong Linux WSL2 để đạt hiệu năng đĩa cao nhất)*
+### 1. Clone repository bài lab về môi trường Ubuntu
+*(Lưu ý: Nên clone repo vào thư mục nhà `~` trong Linux Ubuntu để đạt hiệu năng đĩa và tốc độ cao nhất)*
+
+Mở Terminal của Ubuntu (hoặc dùng Terminal tích hợp sẵn trong VS Code / Antigravity IDE) và chạy các lệnh:
 
 ```bash
 cd ~
-git clone https://github.com/networkthucchien/kai-networks-demo.git
-cd kai-networks-demo
+git clone https://github.com/thangphan205/containerlab-demo.git
+cd containerlab-demo
 ```
 
-### 2. Triển khai lab (Deploy)
+---
+
+### 2. Mở thư mục dự án trong VS Code / Antigravity IDE
+Nếu đang làm việc từ terminal Ubuntu WSL2, gõ:
 ```bash
-sudo clab deploy -t <ten-file-lab>.clab.yml
+code .
 ```
+Giao diện trình soạn thảo sẽ kết nối trực tiếp vào phân vùng Ubuntu và mở thư mục `containerlab-demo`.
 
-### 3. Truy cập vào thiết bị (Router / Host)
-- **Truy cập vào Router FRR (giao diện vtysh)**:
+---
+
+### 3. Thực hành Deploy 1 bài lab trong thư mục `bai-tap-ve-nha` bằng Extension Containerlab (GUI)
+
+Học viên có thể triển khai bài lab bằng **Giao diện đồ họa Extension Containerlab** cực kỳ đơn giản theo các bước:
+
+1. **Mở bài tập cần thực hành**:
+   - Ở thanh quản lý file bên trái (Explorer), truy cập vào thư mục bài tập mong muốn, ví dụ:
+     `bai-tap-ve-nha ➔ 03-static-route-multi-hop ➔ topology ➔ static-route-lab.clab.yml`.
+2. **Xem sơ đồ Topology trực quan trước khi Deploy**:
+   - Nhấp chuột phải vào file `static-route-lab.clab.yml` chọn **Containerlab: View Topology** *(hoặc nhấp icon Containerlab Preview ở góc trên bên phải màn hình)*.
+   - Sơ đồ mạng đồ họa của bài lab sẽ mở ra cho bạn xem cấu trúc kết nối giữa các router và host.
+3. **Thực hiện Deploy bài lab qua GUI**:
+   - Nhấp chuột phải vào file `static-route-lab.clab.yml` trong thanh Explorer bên trái.
+   - Chọn lệnh **Containerlab: Deploy**.
+   - Extension sẽ tự động mở tab Terminal bên dưới và chạy lệnh deploy. Chờ trong giây lát cho đến khi bảng kết quả IP hiển thị thông báo bài lab đã sẵn sàng!
+
+> **Mẹo:** Bạn vẫn có thể dùng lệnh CLI truyền thống trong Terminal nếu muốn:
+> ```bash
+> sudo clab deploy -t bai-tap-ve-nha/03-static-route-multi-hop/topology/static-route-lab.clab.yml
+> ```
+
+---
+
+### 4. Truy cập & Thao tác với các thiết bị (Router / Host)
+
+- **Cách 1: Sử dụng Extension Sidebar (Nhanh nhất)**:
+  - Bấm vào biểu tượng **Containerlab** ở thanh công cụ ngoài cùng bên trái IDE.
+  - Mở rộng bài lab đang chạy ➔ Nhấp chuột phải vào tên Router (ví dụ `clab-static-route-lab-router1`) ➔ Chọn **SSH / Attach Shell**.
+  - IDE sẽ mở ngay một tab Terminal truy cập thẳng vào giao diện quản lý router (ví dụ `vtysh` của FRR).
+- **Cách 2: Sử dụng lệnh Docker CLI**:
   ```bash
-  docker exec -it clab-<ten-lab>-<ten-node> vtysh
-  ```
-- **Truy cập vào Linux Host / Container**:
-  ```bash
-  docker exec -it clab-<ten-lab>-<ten-node> bash
+  # Vào CLI router FRR
+  docker exec -it clab-static-route-lab-router1 vtysh
+
+  # Vào terminal Linux host
+  docker exec -it clab-static-route-lab-pc1 bash
   ```
 
-### 4. Kiểm tra trạng thái các node
-```bash
-sudo clab inspect -t <ten-file-lab>.clab.yml
-```
+---
 
-### 5. Dọn dẹp / Hủy bỏ lab (Destroy)
-```bash
-sudo clab destroy -t <ten-file-lab>.clab.yml
-```
+### 5. Bắt gói tin phân tích mạng (Wireshark)
+- Nhấp chuột phải vào interface nối giữa các router trong cây danh sách của Extension Containerlab ➔ Chọn **Capture Traffic**.
+- Wireshark sẽ tự động bật và hiển thị luồng gói tin bắt realtime.
+
+---
+
+### 6. Hủy bài lab (Destroy) sau khi làm xong
+- Nhấp chuột phải vào file `static-route-lab.clab.yml` chọn **Containerlab: Destroy** (hoặc chạy lệnh CLI `sudo clab destroy -t ...`).
 
 ---
 
@@ -290,4 +326,5 @@ sudo clab destroy -t <ten-file-lab>.clab.yml
 - 🌐 [Tài liệu chính thức Containerlab Installation](https://containerlab.dev/install/)
 - 📖 [Containerlab trên Windows (Tài liệu gốc)](https://containerlab.dev/windows/)
 - 🎥 [Kênh YouTube Network Thực Chiến](https://www.youtube.com/@NetworkThucChien)
-- 🐙 [GitHub Repository Demo Network Thực Chiến](https://github.com/networkthucchien/kai-networks-demo)
+- 🐙 [GitHub Repository Containerlab Demo](https://github.com/thangphan205/containerlab-demo)
+
