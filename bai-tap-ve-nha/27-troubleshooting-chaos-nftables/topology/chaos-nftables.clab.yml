@@ -1,0 +1,41 @@
+name: chaos-nftables-lab
+
+topology:
+  nodes:
+    host-lan:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - ip addr add 10.0.1.10/24 dev eth1
+        - ip link set eth1 up
+        - ip route replace default via 10.0.1.1 dev eth1
+    gw:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - ip addr add 10.0.1.1/24 dev eth1
+        - ip addr add 172.16.0.1/24 dev eth2
+        - ip link set eth1 up
+        - ip link set eth2 up
+        # BỊ LỖI: Tắt tính năng chuyển tiếp IP Forwarding ở mức kernel!
+        - sysctl -w net.ipv4.ip_forward=0
+        # Cài đặt nftables và nạp ruleset lỗi
+        - apk add --no-cache nftables
+        - mkdir -p /etc/nftables
+        - cp /tmp/ruleset.nft /etc/nftables/ruleset.nft
+        - nft -f /etc/nftables/ruleset.nft
+      binds:
+        # Bind ruleset lỗi từ config vào container
+        - ../nftables/ruleset.nft:/tmp/ruleset.nft
+    server-pub:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - ip addr add 172.16.0.10/24 dev eth1
+        - ip link set eth1 up
+        # nginx đã chạy sẵn trong image multitool (listen 80) — dùng test curl
+        - ip route replace default via 172.16.0.1 dev eth1
+
+  links:
+    - endpoints: ["host-lan:eth1", "gw:eth1"]
+    - endpoints: ["gw:eth2", "server-pub:eth1"]

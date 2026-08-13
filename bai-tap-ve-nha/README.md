@@ -81,6 +81,7 @@ Toàn bộ nội dung **mã nguồn mở** (xem [LICENSE](../LICENSE)) — mọi
 | Mã bài | Tên bài lab | Trạng thái | Video |
 |:---:|:---|:---|:---|
 | [17](./17-nftables-firewall/lab-guide.md) | nftables firewall cơ bản (filter traffic giữa các subnet) | 🟢 Đang mở | — |
+| [28](./28-ntp-time-sync/lab-guide.md) | Đồng bộ thời gian với NTP (chrony server & client) | 🟢 Đang mở (Mới) | — |
 
 ---
 
@@ -91,7 +92,10 @@ Toàn bộ nội dung **mã nguồn mở** (xem [LICENSE](../LICENSE)) — mọi
 | Mã bài | Tên bài lab | Trạng thái | Video |
 |:---:|:---|:---|:---|
 | [18](./18-troubleshooting-chaos-lab/lab-guide.md) | Troubleshooting chaos lab — OSPF (cấy lỗi area mismatch) | 🟢 Đang mở | [Xem video](https://youtu.be/M4Mzix0tP70) |
-| [19](./19-troubleshooting-chaos-bgp/lab-guide.md) | Troubleshooting chaos lab — BGP (cấy lỗi prefix-list) | 🟢 Đang mở (Mới) | — |
+| [19](./19-troubleshooting-chaos-bgp/lab-guide.md) | Troubleshooting chaos lab — BGP (cấy lỗi prefix-list) | 🟢 Đang mở | — |
+| [25](./25-troubleshooting-chaos-vlan/lab-guide.md) | Troubleshooting chaos lab — VLAN (cấu hình trunking & bridge filtering) | 🟢 Đang mở (Mới) | — |
+| [26](./26-troubleshooting-chaos-vrrp/lab-guide.md) | Troubleshooting chaos lab — VRRP (split-brain & OSPF) | 🟢 Đang mở (Mới) | — |
+| [27](./27-troubleshooting-chaos-nftables/lab-guide.md) | Troubleshooting chaos lab — Firewall & NAT (nftables) | 🟢 Đang mở (Mới) | — |
 
 ---
 
@@ -126,8 +130,8 @@ Các bài tiếp theo sẽ được bổ sung dần theo tiến độ và phản
 - **Arc 1 — Networking nền tảng nâng cao:** Subnetting, static routing, VLAN/bridge, STP/RSTP chống loop L2, VRRP/ECMP (gateway HA), DHCP server (dnsmasq), NAT/Masquerade (nftables).
 - **Arc 2 — Routing protocol chuyên sâu:** OSPF multi-area, BGP (eBGP, route-map, Local Preference, prefix-list), Policy-Based Routing (dual-WAN).
 - **Arc 3 — Automation/NetDevOps:** Ansible push config, Python parsing, Git workflow (branch/merge/deploy).
-- **Arc 4 — Security & Observability:** nftables firewall (filter traffic giữa subnet).
-- **Arc 5 — Troubleshooting chaos lab:** Lab cấy lỗi sẵn — OSPF (area mismatch) và BGP (prefix-list typo).
+- **Arc 4 — Security & Observability:** nftables firewall (filter traffic giữa subnet), đồng bộ thời gian với NTP (chrony).
+- **Arc 5 — Troubleshooting chaos lab:** Lab cấy lỗi sẵn — OSPF, BGP, VLAN, VRRP và nftables firewall/NAT.
 - **Arc 6 — Advanced Security & VPN:** WireGuard VPN site-to-site.
 - **Arc 7 — Triển khai mạng doanh nghiệp:** Dự án 4 tuần xây mạng công ty NTC từng lớp — campus VLAN, OSPF core + VRRP, eBGP WAN chi nhánh, NAT/nftables internet edge.
 

@@ -84,6 +84,7 @@ All content is **open source** (see [LICENSE](../LICENSE)) — feel free to use,
 | Lab ID | Lab Title | Status | Video |
 |:---:|:---|:---|:---|
 | [17](./17-nftables-firewall/lab-guide_en.md) | nftables Firewall Fundamentals (Inter-Subnet Filtering) | 🟢 Active | — |
+| [28](./28-ntp-time-sync/lab-guide.md) | Network Time Synchronization with NTP (chrony) | 🟢 Active (New) | — |
 
 ---
 
@@ -95,6 +96,9 @@ All content is **open source** (see [LICENSE](../LICENSE)) — feel free to use,
 |:---:|:---|:---|:---|
 | [18](./18-troubleshooting-chaos-lab/lab-guide_en.md) | Chaos Lab — OSPF Troubleshooting (Area Mismatch) | 🟢 Active | [Watch video](https://youtu.be/M4Mzix0tP70) |
 | [19](./19-troubleshooting-chaos-bgp/lab-guide_en.md) | Chaos Lab — BGP Troubleshooting (Prefix-List Errors) | 🟢 Active | — |
+| [25](./25-troubleshooting-chaos-vlan/lab-guide.md) | Chaos Lab — VLAN Troubleshooting (Trunking & Bridge Filtering) | 🟢 Active (New) | — |
+| [26](./26-troubleshooting-chaos-vrrp/lab-guide.md) | Chaos Lab — VRRP Troubleshooting (Split-Brain & Routing) | 🟢 Active (New) | — |
+| [27](./27-troubleshooting-chaos-nftables/lab-guide.md) | Chaos Lab — Firewall & NAT Troubleshooting (nftables) | 🟢 Active (New) | — |
 
 ---
 
@@ -127,8 +131,8 @@ All content is **open source** (see [LICENSE](../LICENSE)) — feel free to use,
 - **Arc 1 — Advanced Fundamentals:** Subnetting, static routes, VLANs, L2 RSTP loop prevention, VRRP/ECMP HA gateways, dnsmasq DHCP, nftables NAT/Masquerade.
 - **Arc 2 — Deep-Dive Routing Protocols:** OSPF multi-area, BGP (eBGP, route-maps, Local Preference, prefix-lists), Policy-Based Routing (dual-WAN).
 - **Arc 3 — Automation / NetDevOps:** Ansible multi-node config push, Python CLI output parsing, Git branching/merging pipelines.
-- **Arc 4 — Security & Observability:** nftables inter-subnet security policies.
-- **Arc 5 — Troubleshooting Chaos Labs:** Troubleshooting pre-faulted OSPF and BGP environments.
+- **Arc 4 — Security & Observability:** nftables inter-subnet security policies, NTP time synchronization (chrony).
+- **Arc 5 — Troubleshooting Chaos Labs:** Troubleshooting pre-faulted OSPF, BGP, VLAN, VRRP, and nftables environments.
 - **Arc 6 — Advanced Security & VPN:** WireGuard site-to-site VPN tunnels.
 - **Arc 7 — Enterprise Network Deployment:** End-to-end enterprise network buildout (NTC Enterprise project).
 

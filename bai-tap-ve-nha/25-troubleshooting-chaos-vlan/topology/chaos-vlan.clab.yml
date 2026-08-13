@@ -1,0 +1,47 @@
+name: chaos-vlan-lab
+
+topology:
+  nodes:
+    sw1:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - ip link add name br0 type bridge vlan_filtering 1
+        - ip link set br0 up
+        # Cổng eth1 nối host-a cho vào bridge
+        - ip link set eth1 master br0
+        - ip link set eth1 up
+        - bridge vlan add dev eth1 vid 10 pvid untagged
+        # Cổng eth2 nối sw2 (trunk link) - BỊ LỖI: quên không cho vào bridge br0!
+        - ip link set eth2 up
+    sw2:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - ip link add name br0 type bridge vlan_filtering 1
+        - ip link set br0 up
+        # Cổng eth1 nối sw1 (trunk link) cho vào bridge
+        - ip link set eth1 master br0
+        - ip link set eth1 up
+        # BỊ LỖI: quên cấu hình tagged VLAN 10 trên cổng trunk eth1 này!
+        # Cổng eth2 nối host-b cho vào bridge
+        - ip link set eth2 master br0
+        - ip link set eth2 up
+        - bridge vlan add dev eth2 vid 10 pvid untagged
+    host-a:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - ip addr add 10.0.10.10/24 dev eth1
+        - ip link set eth1 up
+    host-b:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - ip addr add 10.0.10.20/24 dev eth1
+        - ip link set eth1 up
+
+  links:
+    - endpoints: ["host-a:eth1", "sw1:eth1"]
+    - endpoints: ["sw1:eth2", "sw2:eth1"]
+    - endpoints: ["sw2:eth2", "host-b:eth1"]

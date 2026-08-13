@@ -1,0 +1,22 @@
+#!/usr/sbin/nft -f
+
+flush ruleset
+
+# BỊ LỖI: Thiếu quy tắc "ct state established,related accept" trong chain forward!
+table inet filter {
+    chain forward {
+        type filter hook forward priority 0; policy drop;
+
+        # Chỉ cho phép ping và HTTP đi qua (nhưng không có rule established phản hồi về)
+        ip protocol icmp accept
+        tcp dport 80 accept
+    }
+}
+
+# BỊ LỖI: Masquerade nhầm cổng eth1 (LAN interface) thay vì eth2 (WAN interface)!
+table ip nat {
+    chain postrouting {
+        type nat hook postrouting priority 100; policy accept;
+        oifname "eth1" masquerade
+    }
+}

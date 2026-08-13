@@ -1,0 +1,77 @@
+name: chaos-vrrp-lab
+
+topology:
+  groups:
+    routers:
+      kind: linux
+      image: quay.io/frrouting/frr:10.5.1
+    hosts:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+
+  nodes:
+    host-a:
+      group: hosts
+      exec:
+        - ip addr add 10.0.10.100/24 dev eth1
+        - ip route replace default via 10.0.10.1 dev eth1
+    host-b:
+      group: hosts
+      exec:
+        - ip addr add 10.0.10.101/24 dev eth1
+        - ip route replace default via 10.0.10.1 dev eth1
+    sw:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - ip link add name br0 type bridge
+        - ip link set br0 up
+        - ip link set eth1 master br0
+        - ip link set eth2 master br0
+        - ip link set eth3 master br0
+        - ip link set eth4 master br0
+        - ip link set eth1 up
+        - ip link set eth2 up
+        - ip link set eth3 up
+        - ip link set eth4 up
+    r1:
+      group: routers
+      binds:
+        - ../configs/r1/daemons:/etc/frr/daemons
+        - ../configs/r1/frr.conf:/etc/frr/frr.conf
+      exec:
+        # FRR vrrpd không tự tạo macvlan giữ VIP — phải tạo tay trước (xem doc/user/vrrp.rst upstream).
+        # r1 dùng đúng VRID 10 nên chỉ cần 1 macvlan.
+        - ip link add vrrp-eth1-10 link eth1 type macvlan mode bridge
+        - ip link set dev vrrp-eth1-10 address 00:00:5e:00:01:0a
+        - ip addr add 10.0.10.1/24 dev vrrp-eth1-10
+        - ip link set dev vrrp-eth1-10 up
+    r2:
+      group: routers
+      binds:
+        - ../configs/r2/daemons:/etc/frr/daemons
+        - ../configs/r2/frr.conf:/etc/frr/frr.conf
+      exec:
+        # r2 khởi đầu bị bug VRID 20 + VIP sai (kịch bản troubleshooting) — cần macvlan cho cả VRID 20 (lỗi ban đầu, để tái hiện split-brain)
+        # lẫn VRID 10 (đúng, dùng sau khi học viên sửa bug).
+        - ip link add vrrp-eth1-20 link eth1 type macvlan mode bridge
+        - ip link set dev vrrp-eth1-20 address 00:00:5e:00:01:14
+        - ip addr add 10.0.10.100/24 dev vrrp-eth1-20
+        - ip link set dev vrrp-eth1-20 up
+        - ip link add vrrp-eth1-10 link eth1 type macvlan mode bridge
+        - ip link set dev vrrp-eth1-10 address 00:00:5e:00:01:0a
+        - ip addr add 10.0.10.1/24 dev vrrp-eth1-10
+        - ip link set dev vrrp-eth1-10 up
+    backbone:
+      group: routers
+      binds:
+        - ../configs/backbone/daemons:/etc/frr/daemons
+        - ../configs/backbone/frr.conf:/etc/frr/frr.conf
+
+  links:
+    - endpoints: ["host-a:eth1", "sw:eth1"]
+    - endpoints: ["host-b:eth1", "sw:eth2"]
+    - endpoints: ["sw:eth3", "r1:eth1"]
+    - endpoints: ["sw:eth4", "r2:eth1"]
+    - endpoints: ["r1:eth2", "backbone:eth1"]
+    - endpoints: ["r2:eth2", "backbone:eth2"]
