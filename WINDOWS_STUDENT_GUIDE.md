@@ -50,7 +50,7 @@
    ```
 3. Sau khi lệnh thực thi xong, hãy **Khởi động lại máy tính (Restart)** nếu Windows yêu cầu.
 4. Sau khi khởi động lại, cửa sổ **Ubuntu 24.04** sẽ tự động mở ra.
-   - Nhập **Username** mới (viết liền không dấu, ví dụ: `student` hoặc `devops`).
+   - Nhập **Username** mới (viết liền không dấu, ví dụ: `student` hoặc `ubuntu`).
    - Nhập **Password** (lưu ý: khi gõ mật khẩu trên Linux sẽ **không hiển thị ký tự hay dấu ***, cứ gõ xong rồi bấm `Enter`).
 5. Cập nhật danh sách gói phần mềm hệ thống Ubuntu:
    ```bash
