@@ -129,16 +129,52 @@ Nếu cả 2 lệnh trên đều hiển thị thông tin phiên bản (ví dụ:
 - Tải từ **Microsoft Store** (gõ tìm `Windows Terminal`).
 - Cho phép mở nhiều tab (Ubuntu, PowerShell) trong cùng một cửa sổ với giao diện hiện đại.
 
-### 2. Visual Studio Code (VS Code) + Extension WSL
-1. Tải và cài đặt [VS Code trên Windows](https://code.visualstudio.com/).
-2. Mở VS Code, nhấn `Ctrl + Shift + X` (mục Extensions), tìm và cài đặt extension tên **WSL** (do Microsoft phát triển).
+### 2. Visual Studio Code (VS Code) / Antigravity IDE + Extension WSL
+1. Tải và cài đặt [VS Code trên Windows](https://code.visualstudio.com/) hoặc sử dụng **Antigravity IDE**.
+2. Mở VS Code / Antigravity IDE, nhấn `Ctrl + Shift + X` (mục Extensions), tìm và cài đặt extension tên **WSL** (do Microsoft phát triển).
 3. Mỗi khi muốn mở một dự án lab trong WSL2:
    - Trong cửa sổ terminal Ubuntu WSL2, di chuyển vào thư mục lab (ví dụ: `cd ~/containerlab-demo`).
    - Gõ lệnh:
      ```bash
      code .
      ```
-   - VS Code trên Windows sẽ tự động kết nối trực tiếp vào phân vùng Ubuntu WSL2, giúp bạn sửa file `.clab.yml` và cấu hình router vô cùng thuận tiện.
+   - Trình soạn thảo sẽ tự động kết nối trực tiếp vào phân vùng Ubuntu WSL2, giúp bạn sửa file `.clab.yml` và cấu hình router vô cùng thuận tiện.
+
+### 3. Cài đặt Extension Containerlab trong VS Code & Antigravity IDE 🔌
+
+Extension **Containerlab** (phát triển bởi `srl-labs` / Nokia) mang đến trải nghiệm đồ họa tuyệt vời và vô cùng tiện lợi trực tiếp ngay trong trình soạn thảo:
+
+#### 🔹 Các bước cài đặt:
+1. Mở **VS Code** hoặc **Antigravity IDE**.
+2. Mở trình quản lý Extensions bằng cách nhấn `Ctrl + Shift + X` (Windows/Linux) hoặc `Cmd + Shift + X` (macOS).
+3. Nhập từ khóa tìm kiếm: **`containerlab`** (chọn extension do **`srl-labs`** phát hành).
+4. Nhấn nút **Install**.
+   > *Lưu ý trên máy Windows chạy WSL2:* Khi bạn mở project trong môi trường WSL, hãy nhấn nút **Install in WSL: Ubuntu** (nếu hiển thị) để extension hoạt động đầy đủ tính năng trong phân vùng Linux.
+
+#### 🔹 Các tính năng nổi bật & Cách sử dụng:
+
+- **1. Gợi ý cú pháp tự động (IntelliSense & Syntax Highlighting)**:
+  - Tự động gợi ý các thẻ chuẩn của Containerlab (`topology`, `kinds`, `nodes`, `links`, `endpoints`, `env`...) giúp học viên viết file topology chuẩn xác, không bị lỗi thụt lùi dòng (indentation) YAML.
+
+- **2. Xem sơ đồ Topology tương tác trực quan (Interactive Topology Viewer)**:
+  - Mở bất kỳ file topology `.clab.yml` nào.
+  - Nhấp chuột phải vào nội dung file chọn **Containerlab: View Topology** hoặc bấm biểu tượng **Sơ đồ mạng (Containerlab Preview)** ở góc trên bên phải màn hình biên tập.
+  - Trình soạn thảo sẽ mở một sơ đồ mạng dạng đồ họa tương tác: hiển thị các node, đường nối interface, cho phép kéo thả bố cục và thu phóng sơ đồ lab trực quan.
+
+- **3. Thao tác Deploy / Destroy trực tiếp qua giao diện (GUI Context Menu)**:
+  - Nhấp chuột phải vào file `.clab.yml` ở thanh quản lý file bên trái (Explorer).
+  - Chọn các lệnh thực thi nhanh:
+    - **Containerlab: Deploy** ➔ Khởi chạy bài lab.
+    - **Containerlab: Destroy** ➔ Hủy và dọn dẹp bài lab.
+    - **Containerlab: Inspect** ➔ Xem bảng thông tin địa chỉ IP và trạng thái container.
+
+- **4. Quản lý Node & Bắt gói tin Wireshark trực tiếp từ Sidebar**:
+  - Nhấp vào biểu tượng **Containerlab** ở thanh công cụ ngoài cùng bên trái IDE.
+  - Danh sách các bài lab và từng node/interface đang hoạt động sẽ hiện ra.
+  - Nhấp chuột phải vào node bất kỳ:
+    - Chọn **SSH / Attach Shell** ➔ Mở ngay tab Terminal truy cập vào router/host mà không cần gõ lệnh `docker exec`.
+    - Chọn **Capture Traffic** ➔ Tự động mở Wireshark bắt gói tin realtime trên giao diện mạng được chọn.
+
 
 ---
 
