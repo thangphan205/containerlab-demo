@@ -24,15 +24,16 @@ Repository này chứa các bài lab mạng containerized với:
 
 ## 🚀 Bắt Đầu
 
-### Yêu Cầu Hệ Thống
+### Yêu Cầu Hệ Thống & Cài Đặt
 
-```bash
-# Cài đặt Docker
-curl -fsSL https://get.docker.com -o get-docker.sh && sudo sh get-docker.sh
+- 🐧 **Linux (Native)**:
+  ```bash
+  # Cài đặt tự động trọn gói (Docker + Containerlab)
+  curl -sL https://containerlab.dev/setup | sudo -E bash -s "all"
+  ```
+- 🖥️ **Windows (Windows 10/11)**:
+  - Xem hướng dẫn chi tiết từng bước dành cho học viên dùng máy Windows tại [**WINDOWS_STUDENT_GUIDE.md**](./WINDOWS_STUDENT_GUIDE.md) (Sử dụng WSL 2 + Docker Engine + Containerlab).
 
-# Cài đặt Containerlab
-bash -c "$(curl -sL https://get.containerlab.dev)"
-```
 
 ### Triển Khai Một Bài Lab
 
