@@ -1,0 +1,54 @@
+name: chaos-ntp2-lab
+prefix: ""
+
+topology:
+  nodes:
+    sw:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - ip link add name br0 type bridge
+        - ip link set br0 up
+        - ip link set eth1 master br0
+        - ip link set eth2 master br0
+        - ip link set eth3 master br0
+        - ip link set eth1 up
+        - ip link set eth2 up
+        - ip link set eth3 up
+    dns:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      binds:
+        - ../configs/dnsmasq.conf:/tmp/dnsmasq.conf
+      exec:
+        - apk add --no-cache dnsmasq
+        - ip addr add 10.0.6.53/24 dev eth1
+        - cp /tmp/dnsmasq.conf /etc/dnsmasq.conf
+        - dnsmasq --conf-file=/etc/dnsmasq.conf
+    ntp:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      binds:
+        - ../configs/chrony-server.conf:/tmp/chrony.conf
+      exec:
+        - apk add --no-cache chrony
+        - ip addr add 10.0.6.123/24 dev eth1
+        - cp /tmp/chrony.conf /etc/chrony/chrony.conf
+        - chronyd -x
+    client:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      binds:
+        - ../configs/chrony-client.conf:/tmp/chrony.conf
+      exec:
+        - apk add --no-cache chrony
+        - ip addr add 10.0.6.10/24 dev eth1
+        # DNS nội bộ (record ntp.corp.local nằm ở đây)
+        - sh -c 'echo "nameserver 10.0.6.53" > /etc/resolv.conf'
+        - cp /tmp/chrony.conf /etc/chrony/chrony.conf
+        - chronyd -x
+
+  links:
+    - endpoints: ["client:eth1", "sw:eth1"]
+    - endpoints: ["dns:eth1", "sw:eth2"]
+    - endpoints: ["ntp:eth1", "sw:eth3"]

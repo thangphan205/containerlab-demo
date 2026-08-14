@@ -1,0 +1,66 @@
+name: chaos-ibgp-lab
+prefix: ""
+
+topology:
+  groups:
+    routers:
+      kind: linux
+      image: quay.io/frrouting/frr:10.5.1
+    hosts:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+
+  nodes:
+    core:
+      group: routers
+      binds:
+        - ../configs/core/daemons:/etc/frr/daemons
+        - ../configs/core/frr.conf:/etc/frr/frr.conf
+      exec:
+        - ip route del default dev eth0
+    b1:
+      group: routers
+      binds:
+        - ../configs/b1/daemons:/etc/frr/daemons
+        - ../configs/b1/frr.conf:/etc/frr/frr.conf
+      exec:
+        - ip route del default dev eth0
+    b2:
+      group: routers
+      binds:
+        - ../configs/b2/daemons:/etc/frr/daemons
+        - ../configs/b2/frr.conf:/etc/frr/frr.conf
+      exec:
+        - ip route del default dev eth0
+    isp-a:
+      group: routers
+      binds:
+        - ../configs/isp-a/daemons:/etc/frr/daemons
+        - ../configs/isp-a/frr.conf:/etc/frr/frr.conf
+      exec:
+        - ip route del default dev eth0
+    isp-b:
+      group: routers
+      binds:
+        - ../configs/isp-b/daemons:/etc/frr/daemons
+        - ../configs/isp-b/frr.conf:/etc/frr/frr.conf
+      exec:
+        - ip route del default dev eth0
+    host-lan:
+      group: hosts
+      exec:
+        - ip addr add 10.30.1.10/24 dev eth1
+        - ip route replace default via 10.30.1.1 dev eth1
+    srv-inet:
+      group: hosts
+      exec:
+        - ip addr add 198.51.100.10/24 dev eth1
+        - ip route replace default via 198.51.100.1 dev eth1
+
+  links:
+    - endpoints: ["host-lan:eth1", "core:eth1"]
+    - endpoints: ["core:eth2", "b1:eth1"]
+    - endpoints: ["core:eth3", "b2:eth1"]
+    - endpoints: ["b1:eth2", "isp-a:eth1"]
+    - endpoints: ["b2:eth2", "isp-b:eth1"]
+    - endpoints: ["isp-a:eth2", "srv-inet:eth1"]

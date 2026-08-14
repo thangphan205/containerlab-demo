@@ -1,0 +1,34 @@
+name: chaos-tls-lab
+prefix: ""
+
+topology:
+  nodes:
+    web:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      binds:
+        - ../nginx/tls.conf:/tmp/tls.conf
+        - ../configs/gen-certs.sh:/tmp/gen-certs.sh
+        - ../configs/renew-cert.sh:/usr/local/bin/renew-cert.sh
+        - ../certs-out:/certs-out
+      exec:
+        - ip addr add 10.0.9.80/24 dev eth1
+        - mkdir -p /usr/share/nginx/html
+        - sh -c 'echo "<h1>NTC portal (HTTPS) OK</h1>" > /usr/share/nginx/html/index.html'
+        # Dựng PKI nội bộ (root CA -> issuing CA -> leaf cert) lúc deploy
+        - sh /tmp/gen-certs.sh
+        # Nạp config HTTPS "sau đợt siết chuẩn TLS" của team security
+        # (nginx đã chạy sẵn trong image multitool — reload để áp config)
+        - cp /tmp/tls.conf /etc/nginx/nginx.conf
+        - nginx -s reload
+    client:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      binds:
+        - ../certs-out:/certs-out
+      exec:
+        - ip addr add 10.0.9.10/24 dev eth1
+        - sh -c 'echo "10.0.9.80 portal.local" >> /etc/hosts'
+
+  links:
+    - endpoints: ["client:eth1", "web:eth1"]

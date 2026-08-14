@@ -1,0 +1,42 @@
+name: chaos-webserver-lab
+prefix: ""
+
+topology:
+  nodes:
+    gw:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      binds:
+        - ../nftables/ruleset.nft:/tmp/ruleset.nft
+      exec:
+        - sysctl -w net.ipv4.ip_forward=1
+        - ip addr add 10.0.1.1/24 dev eth1
+        - ip addr add 10.0.2.1/24 dev eth2
+        - apk add --no-cache nftables
+        - mkdir -p /etc/nftables
+        - cp /tmp/ruleset.nft /etc/nftables/ruleset.nft
+        - nft -f /etc/nftables/ruleset.nft
+    web:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      binds:
+        - ../nginx/nginx.conf:/tmp/nginx.conf
+      exec:
+        - ip addr add 10.0.2.80/24 dev eth1
+        - ip route replace default via 10.0.2.1 dev eth1
+        - mkdir -p /usr/share/nginx/html
+        - sh -c 'echo "<h1>internal-portal OK</h1>" > /usr/share/nginx/html/index.html'
+        # Nạp config nginx do team app cung cấp sau đợt deploy mới
+        # (nginx đã chạy sẵn trong image multitool — reload để áp config)
+        - cp /tmp/nginx.conf /etc/nginx/nginx.conf
+        - nginx -s reload
+    client:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - ip addr add 10.0.1.10/24 dev eth1
+        - ip route replace default via 10.0.1.1 dev eth1
+
+  links:
+    - endpoints: ["client:eth1", "gw:eth1"]
+    - endpoints: ["gw:eth2", "web:eth1"]

@@ -1,0 +1,53 @@
+name: chaos-ospf-adj-lab
+prefix: ""
+
+topology:
+  groups:
+    routers:
+      kind: linux
+      image: quay.io/frrouting/frr:10.5.1
+    hosts:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+
+  nodes:
+    r1:
+      group: routers
+      binds:
+        - ../configs/r1/daemons:/etc/frr/daemons
+        - ../configs/r1/frr.conf:/etc/frr/frr.conf
+      exec:
+        # Hạ MTU link WAN xuống 1400 theo yêu cầu tương thích thiết bị truyền dẫn mới
+        - ip link set eth2 mtu 1400
+    r2:
+      group: routers
+      binds:
+        - ../configs/r2/daemons:/etc/frr/daemons
+        - ../configs/r2/frr.conf:/etc/frr/frr.conf
+    r3:
+      group: routers
+      binds:
+        - ../configs/r3/daemons:/etc/frr/daemons
+        - ../configs/r3/frr.conf:/etc/frr/frr.conf
+    host-hq:
+      group: hosts
+      exec:
+        - ip addr add 10.10.1.10/24 dev eth1
+        - ip route replace default via 10.10.1.1 dev eth1
+    host-cn1:
+      group: hosts
+      exec:
+        - ip addr add 10.20.1.10/24 dev eth1
+        - ip route replace default via 10.20.1.1 dev eth1
+    host-cn2:
+      group: hosts
+      exec:
+        - ip addr add 10.20.2.10/24 dev eth1
+        - ip route replace default via 10.20.2.1 dev eth1
+
+  links:
+    - endpoints: ["host-hq:eth1", "r1:eth1"]
+    - endpoints: ["r1:eth2", "r2:eth1"]
+    - endpoints: ["r2:eth2", "r3:eth1"]
+    - endpoints: ["r3:eth2", "host-cn1:eth1"]
+    - endpoints: ["r3:eth3", "host-cn2:eth1"]

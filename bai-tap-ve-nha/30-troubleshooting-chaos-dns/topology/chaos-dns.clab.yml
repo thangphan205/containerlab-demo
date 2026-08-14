@@ -1,0 +1,45 @@
+name: chaos-dns-lab
+prefix: ""
+
+topology:
+  nodes:
+    sw:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - ip link add name br0 type bridge
+        - ip link set br0 up
+        - ip link set eth1 master br0
+        - ip link set eth2 master br0
+        - ip link set eth3 master br0
+        - ip link set eth1 up
+        - ip link set eth2 up
+        - ip link set eth3 up
+    dns:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      binds:
+        - ../configs/dnsmasq.conf:/tmp/dnsmasq.conf
+      exec:
+        - apk add --no-cache dnsmasq
+        - ip addr add 10.0.5.53/24 dev eth1
+        - cp /tmp/dnsmasq.conf /etc/dnsmasq.conf
+        - dnsmasq --conf-file=/etc/dnsmasq.conf
+    web:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        # nginx đã chạy sẵn trong image multitool (listen 80/443)
+        - ip addr add 10.0.5.80/24 dev eth1
+    client:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - ip addr add 10.0.5.10/24 dev eth1
+        # Trỏ DNS nội bộ (thay resolver mặc định của Docker)
+        - sh -c 'echo "nameserver 10.0.5.53" > /etc/resolv.conf'
+
+  links:
+    - endpoints: ["client:eth1", "sw:eth1"]
+    - endpoints: ["dns:eth1", "sw:eth2"]
+    - endpoints: ["web:eth1", "sw:eth3"]

@@ -1,0 +1,76 @@
+name: chaos-pbr-lab
+prefix: ""
+
+topology:
+  groups:
+    hosts:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+
+  nodes:
+    gw:
+      group: hosts
+      binds:
+        - ../nftables/ruleset.nft:/tmp/ruleset.nft
+      exec:
+        # Địa chỉ 2 LAN phòng ban + 2 circuit WAN
+        - ip addr add 10.40.1.1/24 dev eth1
+        - ip addr add 10.40.2.1/24 dev eth2
+        - ip addr add 203.0.113.1/30 dev eth3
+        - ip addr add 203.0.113.5/30 dev eth4
+        - ip link set eth1 up
+        - ip link set eth2 up
+        - ip link set eth3 up
+        - ip link set eth4 up
+        - sysctl -w net.ipv4.ip_forward=1
+        # NAT ra internet
+        - apk add --no-cache nftables
+        - mkdir -p /etc/nftables
+        - cp /tmp/ruleset.nft /etc/nftables/ruleset.nft
+        - nft -f /etc/nftables/ruleset.nft
+        # Định tuyến: mặc định toàn hệ thống đi circuit A
+        - ip route del default dev eth0
+        - ip route add default via 203.0.113.2 dev eth3
+        # Policy routing: bảng riêng cho từng phòng ban
+        - ip route add default via 203.0.113.2 dev eth3 table 100
+        - ip route add default via 203.0.113.6 dev eth4 table 201
+        - ip rule add from 10.40.1.0/24 lookup 100 priority 100
+        - ip rule add from 10.40.2.0/24 lookup 200 priority 110
+        # Cách ly tạm dải phòng Kỹ thuật (sự cố máy nhiễm mã độc)
+        - ip rule add from 10.40.2.0/24 unreachable priority 90
+    isp:
+      group: hosts
+      exec:
+        - ip addr add 203.0.113.2/30 dev eth1
+        - ip addr add 203.0.113.6/30 dev eth2
+        - ip addr add 198.51.100.1/24 dev eth3
+        - ip link set eth1 up
+        - ip link set eth2 up
+        - ip link set eth3 up
+        - sysctl -w net.ipv4.ip_forward=1
+    host-kd:
+      group: hosts
+      exec:
+        - ip addr add 10.40.1.10/24 dev eth1
+        - ip link set eth1 up
+        - ip route replace default via 10.40.1.1 dev eth1
+    host-kt:
+      group: hosts
+      exec:
+        - ip addr add 10.40.2.10/24 dev eth1
+        - ip link set eth1 up
+        - ip route replace default via 10.40.2.1 dev eth1
+    srv-web:
+      group: hosts
+      exec:
+        # nginx đã chạy sẵn trong image multitool (listen 80)
+        - ip addr add 198.51.100.10/24 dev eth1
+        - ip link set eth1 up
+        - ip route replace default via 198.51.100.1 dev eth1
+
+  links:
+    - endpoints: ["host-kd:eth1", "gw:eth1"]
+    - endpoints: ["host-kt:eth1", "gw:eth2"]
+    - endpoints: ["gw:eth3", "isp:eth1"]
+    - endpoints: ["gw:eth4", "isp:eth2"]
+    - endpoints: ["isp:eth3", "srv-web:eth1"]

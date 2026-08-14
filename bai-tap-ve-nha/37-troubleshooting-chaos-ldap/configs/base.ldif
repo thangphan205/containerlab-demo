@@ -1,0 +1,34 @@
+# base.ldif — cây thư mục nội bộ NTC
+dn: dc=ntc,dc=vn
+objectClass: dcObject
+objectClass: organization
+o: NTC
+dc: ntc
+
+dn: ou=people,dc=ntc,dc=vn
+objectClass: organizationalUnit
+ou: people
+
+dn: uid=an.nguyen,ou=people,dc=ntc,dc=vn
+objectClass: inetOrgPerson
+uid: an.nguyen
+cn: Nguyen Van An
+sn: Nguyen
+mail: an.nguyen@ntc.vn
+userPassword: An@2026
+
+dn: uid=binh.tran,ou=people,dc=ntc,dc=vn
+objectClass: inetOrgPerson
+uid: binh.tran
+cn: Tran Thanh Binh
+sn: Tran
+mail: binh.tran@ntc.vn
+userPassword: Binh@2026
+
+dn: uid=chi.le,ou=people,dc=ntc,dc=vn
+objectClass: inetOrgPerson
+uid: chi.le
+cn: Le Kim Chi
+sn: Le
+mail: chi.le@ntc.vn
+userPassword: Chi@2026

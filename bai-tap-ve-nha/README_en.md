@@ -48,6 +48,8 @@ All content is **open source** (see [LICENSE](../LICENSE)) — feel free to use,
 | [06](./06-vrrp-ecmp-gateway-ha/lab-guide_en.md) | VRRP + ECMP — Gateway High Availability (< 3s Failover) | 🟢 Active | [Watch video](https://youtu.be/7SjFpp2h_aM) |
 | [07](./07-dhcp-server-relay/lab-guide_en.md) | Linux DHCP Server (dnsmasq Multi-Subnet) | 🟢 Active | [Watch video](https://youtu.be/uJw78eOtZ58) |
 | [08](./08-nat-masquerade-linux/lab-guide_en.md) | Linux NAT/Masquerade (nftables Source NAT for LAN) | 🟢 Active | — |
+| [34](./34-keepalived-vip-ha/lab-guide.md) | keepalived + haproxy — VIP HA for LB Pair | 🟢 Active (New) | — |
+| [35](./35-dhcp-isc-vs-kea/lab-guide.md) | Deploy DHCP Server — ISC DHCP (Legacy) vs Kea DHCP (Modern) | 🟢 Active (New) | — |
 
 ---
 
@@ -96,9 +98,25 @@ All content is **open source** (see [LICENSE](../LICENSE)) — feel free to use,
 |:---:|:---|:---|:---|
 | [18](./18-troubleshooting-chaos-lab/lab-guide_en.md) | Chaos Lab — OSPF Troubleshooting (Area Mismatch) | 🟢 Active | [Watch video](https://youtu.be/M4Mzix0tP70) |
 | [19](./19-troubleshooting-chaos-bgp/lab-guide_en.md) | Chaos Lab — BGP Troubleshooting (Prefix-List Errors) | 🟢 Active | — |
-| [25](./25-troubleshooting-chaos-vlan/lab-guide.md) | Chaos Lab — VLAN Troubleshooting (Trunking & Bridge Filtering) | 🟢 Active (New) | — |
-| [26](./26-troubleshooting-chaos-vrrp/lab-guide.md) | Chaos Lab — VRRP Troubleshooting (Split-Brain & Routing) | 🟢 Active (New) | — |
-| [27](./27-troubleshooting-chaos-nftables/lab-guide.md) | Chaos Lab — Firewall & NAT Troubleshooting (nftables) | 🟢 Active (New) | — |
+| [25](./25-troubleshooting-chaos-vlan/lab-guide.md) | Chaos Lab — VLAN Troubleshooting (Trunking & Bridge Filtering) | 🟢 Active | — |
+| [26](./26-troubleshooting-chaos-vrrp/lab-guide.md) | Chaos Lab — VRRP Troubleshooting (Split-Brain & Routing) | 🟢 Active | — |
+| [27](./27-troubleshooting-chaos-nftables/lab-guide.md) | Chaos Lab — Firewall & NAT Troubleshooting (nftables) | 🟢 Active | — |
+| [29](./29-troubleshooting-chaos-dhcp/lab-guide.md) | Chaos Lab — DHCP Server & Relay Troubleshooting | 🟢 Active (New) | — |
+| [30](./30-troubleshooting-chaos-dns/lab-guide.md) | Chaos Lab — Internal DNS Troubleshooting (dnsmasq) | 🟢 Active (New) | — |
+| [31](./31-troubleshooting-chaos-ntp/lab-guide.md) | Chaos Lab — NTP Troubleshooting (chrony) | 🟢 Active (New) | — |
+| [32](./32-troubleshooting-chaos-webserver/lab-guide.md) | Chaos Lab — Webserver Access Troubleshooting | 🟢 Active (New) | — |
+| [33](./33-troubleshooting-chaos-routing-redistribute/lab-guide.md) | Chaos Lab — OSPF ↔ BGP Route Redistribution Troubleshooting | 🟢 Active (New) | — |
+| [36](./36-troubleshooting-chaos-tls/lab-guide.md) | Chaos Lab — TLS/HTTPS Troubleshooting (nginx + Internal PKI) | 🟢 Active (New) | — |
+| [37](./37-troubleshooting-chaos-ldap/lab-guide.md) | Chaos Lab — OpenLDAP Troubleshooting | 🟢 Active (New) | — |
+| [38](./38-troubleshooting-chaos-dns-2/lab-guide.md) | Chaos Lab — 2-Tier DNS (Forwarder → Authoritative) | 🟢 Active (New) | — |
+| [39](./39-troubleshooting-chaos-ntp-2/lab-guide.md) | Chaos Lab — NTP × DNS Cross-Service Troubleshooting | 🟢 Active (New) | — |
+| [40](./40-troubleshooting-chaos-nginx-2/lab-guide.md) | Chaos Lab — nginx Reverse Proxy / Load Balancer Troubleshooting | 🟢 Active (New) | — |
+| [41](./41-troubleshooting-chaos-ospf-adjacency/lab-guide.md) | Chaos Lab — OSPF Multi-Area: Adjacency & LSDB (3 Faults) | 🟢 Active (New) | — |
+| [42](./42-troubleshooting-chaos-ibgp-nexthop/lab-guide.md) | Chaos Lab — iBGP Dual-Homed (Next-Hop, Loopback Peering, Local-Pref) | 🟢 Active (New) | — |
+| [43](./43-troubleshooting-chaos-routing-loop/lab-guide.md) | Chaos Lab — Routing Loop & Blackhole (Default Route, AD) | 🟢 Active (New) | — |
+| [44](./44-troubleshooting-chaos-pbr-datapath/lab-guide.md) | Chaos Lab — Linux Dual-WAN Policy Routing (ip rule, NAT) | 🟢 Active (New) | — |
+| [45](./45-troubleshooting-chaos-ospf-full-no-ping/lab-guide.md) | Chaos Lab — OSPF State Full But Cannot Ping (CCNA Level) | 🟢 Active (New) | — |
+| [46](./46-wireshark-ping-ok-web-fail/lab-guide.md) | Ping OK But Web Fails? Wireshark Troubleshooting | 🟢 Active (New) | — |
 
 ---
 
@@ -128,11 +146,11 @@ All content is **open source** (see [LICENSE](../LICENSE)) — feel free to use,
 ## Series Arc Overview
 
 - **Arc 0 — Getting Started:** Containerlab setup and first topology deployment.
-- **Arc 1 — Advanced Fundamentals:** Subnetting, static routes, VLANs, L2 RSTP loop prevention, VRRP/ECMP HA gateways, dnsmasq DHCP, nftables NAT/Masquerade.
+- **Arc 1 — Advanced Fundamentals:** Subnetting, static routes, VLANs, L2 RSTP loop prevention, VRRP/ECMP HA gateways, dnsmasq DHCP, ISC vs Kea DHCP, nftables NAT/Masquerade, keepalived + haproxy VIP HA.
 - **Arc 2 — Deep-Dive Routing Protocols:** OSPF multi-area, BGP (eBGP, route-maps, Local Preference, prefix-lists), Policy-Based Routing (dual-WAN).
 - **Arc 3 — Automation / NetDevOps:** Ansible multi-node config push, Python CLI output parsing, Git branching/merging pipelines.
 - **Arc 4 — Security & Observability:** nftables inter-subnet security policies, NTP time synchronization (chrony).
-- **Arc 5 — Troubleshooting Chaos Labs:** Troubleshooting pre-faulted OSPF, BGP, VLAN, VRRP, and nftables environments.
+- **Arc 5 — Troubleshooting Chaos Labs:** Troubleshooting pre-faulted OSPF, BGP, VLAN, VRRP, nftables, DHCP, DNS, NTP, Webserver, TLS/HTTPS, OpenLDAP, OSPF↔BGP redistribution, iBGP nexthop, routing loops & blackholes, dual-WAN PBR, OSPF Full no ping, Wireshark packet capture & analysis.
 - **Arc 6 — Advanced Security & VPN:** WireGuard site-to-site VPN tunnels.
 - **Arc 7 — Enterprise Network Deployment:** End-to-end enterprise network buildout (NTC Enterprise project).
 

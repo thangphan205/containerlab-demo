@@ -45,6 +45,8 @@ Toàn bộ nội dung **mã nguồn mở** (xem [LICENSE](../LICENSE)) — mọi
 | [06](./06-vrrp-ecmp-gateway-ha/lab-guide.md) | VRRP + ECMP — Gateway HA (failover < 3 giây) | 🟢 Đang mở (Mới) | [Xem video](https://youtu.be/7SjFpp2h_aM) |
 | [07](./07-dhcp-server-relay/lab-guide.md) | DHCP Server trên Linux (dnsmasq, cấp IP multi-subnet) | 🟢 Đang mở (Mới) | [Xem video](https://youtu.be/uJw78eOtZ58) |
 | [08](./08-nat-masquerade-linux/lab-guide.md) | NAT/Masquerade trên Linux (nftables SNAT cho LAN) | 🟢 Đang mở (Mới) | — |
+| [34](./34-keepalived-vip-ha/lab-guide.md) | keepalived + haproxy — VIP HA cho LB Pair | 🟢 Đang mở (Mới) | — |
+| [35](./35-dhcp-isc-vs-kea/lab-guide.md) | Triển khai DHCP Server — ISC DHCP (cũ) vs Kea DHCP (mới) | 🟢 Đang mở (Mới) | — |
 
 ---
 
@@ -93,9 +95,25 @@ Toàn bộ nội dung **mã nguồn mở** (xem [LICENSE](../LICENSE)) — mọi
 |:---:|:---|:---|:---|
 | [18](./18-troubleshooting-chaos-lab/lab-guide.md) | Troubleshooting chaos lab — OSPF (cấy lỗi area mismatch) | 🟢 Đang mở | [Xem video](https://youtu.be/M4Mzix0tP70) |
 | [19](./19-troubleshooting-chaos-bgp/lab-guide.md) | Troubleshooting chaos lab — BGP (cấy lỗi prefix-list) | 🟢 Đang mở | — |
-| [25](./25-troubleshooting-chaos-vlan/lab-guide.md) | Troubleshooting chaos lab — VLAN (cấu hình trunking & bridge filtering) | 🟢 Đang mở (Mới) | — |
-| [26](./26-troubleshooting-chaos-vrrp/lab-guide.md) | Troubleshooting chaos lab — VRRP (split-brain & OSPF) | 🟢 Đang mở (Mới) | — |
-| [27](./27-troubleshooting-chaos-nftables/lab-guide.md) | Troubleshooting chaos lab — Firewall & NAT (nftables) | 🟢 Đang mở (Mới) | — |
+| [25](./25-troubleshooting-chaos-vlan/lab-guide.md) | Troubleshooting chaos lab — VLAN (cấu hình trunking & bridge filtering) | 🟢 Đang mở | — |
+| [26](./26-troubleshooting-chaos-vrrp/lab-guide.md) | Troubleshooting chaos lab — VRRP (split-brain & OSPF) | 🟢 Đang mở | — |
+| [27](./27-troubleshooting-chaos-nftables/lab-guide.md) | Troubleshooting chaos lab — Firewall & NAT (nftables) | 🟢 Đang mở | — |
+| [29](./29-troubleshooting-chaos-dhcp/lab-guide.md) | Troubleshooting chaos lab — DHCP Server & Relay | 🟢 Đang mở (Mới) | — |
+| [30](./30-troubleshooting-chaos-dns/lab-guide.md) | Troubleshooting chaos lab — DNS Nội Bộ (dnsmasq) | 🟢 Đang mở (Mới) | — |
+| [31](./31-troubleshooting-chaos-ntp/lab-guide.md) | Troubleshooting chaos lab — NTP (chrony) | 🟢 Đang mở (Mới) | — |
+| [32](./32-troubleshooting-chaos-webserver/lab-guide.md) | Troubleshooting chaos lab — Truy Cập Webserver | 🟢 Đang mở (Mới) | — |
+| [33](./33-troubleshooting-chaos-routing-redistribute/lab-guide.md) | Troubleshooting chaos lab — Routing OSPF ↔ BGP Redistribute | 🟢 Đang mở (Mới) | — |
+| [36](./36-troubleshooting-chaos-tls/lab-guide.md) | Troubleshooting chaos lab — TLS/HTTPS (nginx + PKI nội bộ) | 🟢 Đang mở (Mới) | — |
+| [37](./37-troubleshooting-chaos-ldap/lab-guide.md) | Troubleshooting chaos lab — OpenLDAP | 🟢 Đang mở (Mới) | — |
+| [38](./38-troubleshooting-chaos-dns-2/lab-guide.md) | Troubleshooting chaos lab — DNS 2 tầng (forwarder → authoritative) | 🟢 Đang mở (Mới) | — |
+| [39](./39-troubleshooting-chaos-ntp-2/lab-guide.md) | Troubleshooting chaos lab — NTP × DNS cross-service | 🟢 Đang mở (Mới) | — |
+| [40](./40-troubleshooting-chaos-nginx-2/lab-guide.md) | Troubleshooting chaos lab — nginx Reverse Proxy / Load Balancer | 🟢 Đang mở (Mới) | — |
+| [41](./41-troubleshooting-chaos-ospf-adjacency/lab-guide.md) | Troubleshooting chaos lab — OSPF multi-area: adjacency & LSDB (3 lỗi) | 🟢 Đang mở (Mới) | — |
+| [42](./42-troubleshooting-chaos-ibgp-nexthop/lab-guide.md) | Troubleshooting chaos lab — iBGP dual-homed (next-hop, loopback peering, local-pref) | 🟢 Đang mở (Mới) | — |
+| [43](./43-troubleshooting-chaos-routing-loop/lab-guide.md) | Troubleshooting chaos lab — Routing loop & blackhole (default route, AD) | 🟢 Đang mở (Mới) | — |
+| [44](./44-troubleshooting-chaos-pbr-datapath/lab-guide.md) | Troubleshooting chaos lab — Dual-WAN policy routing trên Linux (ip rule, NAT) | 🟢 Đang mở (Mới) | — |
+| [45](./45-troubleshooting-chaos-ospf-full-no-ping/lab-guide.md) | Troubleshooting chaos lab — OSPF Full hết nhưng không ping được (mức CCNA) | 🟢 Đang mở (Mới) | — |
+| [46](./46-wireshark-ping-ok-web-fail/lab-guide.md) | Ping OK nhưng Web không vào? Dùng Wireshark tìm thủ phạm | 🟢 Đang mở (Mới) | — |
 
 ---
 
@@ -127,11 +145,11 @@ Các bài tiếp theo sẽ được bổ sung dần theo tiến độ và phản
 ## Các Arc trong series
 
 - **Arc 0 — Khởi đầu:** Cài containerlab, deploy topology đầu tiên.
-- **Arc 1 — Networking nền tảng nâng cao:** Subnetting, static routing, VLAN/bridge, STP/RSTP chống loop L2, VRRP/ECMP (gateway HA), DHCP server (dnsmasq), NAT/Masquerade (nftables).
+- **Arc 1 — Networking nền tảng nâng cao:** Subnetting, static routing, VLAN/bridge, STP/RSTP chống loop L2, VRRP/ECMP (gateway HA), DHCP server (dnsmasq, ISC vs Kea), NAT/Masquerade (nftables), keepalived + haproxy VIP HA.
 - **Arc 2 — Routing protocol chuyên sâu:** OSPF multi-area, BGP (eBGP, route-map, Local Preference, prefix-list), Policy-Based Routing (dual-WAN).
 - **Arc 3 — Automation/NetDevOps:** Ansible push config, Python parsing, Git workflow (branch/merge/deploy).
 - **Arc 4 — Security & Observability:** nftables firewall (filter traffic giữa subnet), đồng bộ thời gian với NTP (chrony).
-- **Arc 5 — Troubleshooting chaos lab:** Lab cấy lỗi sẵn — OSPF, BGP, VLAN, VRRP và nftables firewall/NAT.
+- **Arc 5 — Troubleshooting chaos lab:** Lab cấy lỗi sẵn — OSPF, BGP, VLAN, VRRP, nftables firewall/NAT, DHCP, DNS, NTP, Webserver, TLS/HTTPS, OpenLDAP, OSPF↔BGP redistribute, iBGP nexthop, routing loop & blackhole, dual-WAN PBR, OSPF Full no ping, Wireshark packet capture & analysis.
 - **Arc 6 — Advanced Security & VPN:** WireGuard VPN site-to-site.
 - **Arc 7 — Triển khai mạng doanh nghiệp:** Dự án 4 tuần xây mạng công ty NTC từng lớp — campus VLAN, OSPF core + VRRP, eBGP WAN chi nhánh, NAT/nftables internet edge.
 
@@ -156,6 +174,6 @@ Series tập trung vào core networking/automation trên nền FRR + Linux conta
 ## 💬 Đóng góp ý kiến & Hợp tác
 
 Nếu bạn có bất kỳ đóng góp ý kiến nào về lộ trình, phát hiện lỗi cấu hình (bug) khi thực hành, hoặc muốn đề xuất thêm các bài lab thực chiến mới:
-- Xem chi tiết hướng dẫn đóng góp tại [CONTRIBUTING.md](file:///Users/thangpa/projects/containerlab-demo/bai-tap-ve-nha/CONTRIBUTING.md).
+- Xem chi tiết hướng dẫn đóng góp tại [CONTRIBUTING.md](./CONTRIBUTING.md).
 - Mở **Issue** hoặc tạo **Pull Request** trực tiếp trên repository này.
 - Tham gia thảo luận, chia sẻ quá trình làm bài và nhận phản hồi tại Facebook group / cộng đồng **Network Thực Chiến**.

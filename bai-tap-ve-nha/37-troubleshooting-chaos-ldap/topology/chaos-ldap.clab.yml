@@ -1,0 +1,46 @@
+name: chaos-ldap-lab
+prefix: ""
+
+topology:
+  nodes:
+    sw:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - ip link add name br0 type bridge
+        - ip link set br0 up
+        - ip link set eth1 master br0
+        - ip link set eth2 master br0
+        - ip link set eth1 up
+        - ip link set eth2 up
+    ldap:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      binds:
+        - ../configs/slapd.conf:/tmp/slapd.conf
+        - ../configs/base.ldif:/tmp/base.ldif
+        - ../configs/start-slapd.sh:/tmp/start-slapd.sh
+      exec:
+        - ip addr add 10.0.7.89/24 dev eth1
+        - apk add --no-cache openldap openldap-back-mdb openldap-clients
+        - mkdir -p /var/lib/openldap/openldap-data /run/openldap
+        - cp /tmp/slapd.conf /etc/openldap/slapd.conf
+        - cp /tmp/start-slapd.sh /etc/openldap/start-slapd.sh
+        # Nạp sẵn cây thư mục dc=ntc,dc=vn (offline, trước khi start slapd)
+        - slapadd -f /etc/openldap/slapd.conf -l /tmp/base.ldif
+        # Start slapd theo script vận hành của team hạ tầng
+        - sh /etc/openldap/start-slapd.sh
+    client:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      binds:
+        - ../configs/ldap-client.conf:/tmp/ldap.conf
+      exec:
+        - ip addr add 10.0.7.10/24 dev eth1
+        - apk add --no-cache openldap-clients
+        # Cấu hình client LDAP chuẩn công ty (đẩy hàng loạt qua Ansible)
+        - cp /tmp/ldap.conf /etc/openldap/ldap.conf
+
+  links:
+    - endpoints: ["client:eth1", "sw:eth1"]
+    - endpoints: ["ldap:eth1", "sw:eth2"]

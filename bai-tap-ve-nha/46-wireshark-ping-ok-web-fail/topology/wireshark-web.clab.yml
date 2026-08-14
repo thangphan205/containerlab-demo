@@ -1,0 +1,74 @@
+name: wireshark-web-lab
+prefix: ""
+
+topology:
+  groups:
+    hosts:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+
+  nodes:
+    # Switch LAN văn phòng — gom pc-a, pc-b và cổng LAN của fw vào cùng một broadcast domain
+    sw:
+      group: hosts
+      exec:
+        - ip link add name br0 type bridge
+        - ip link set br0 up
+        - ip link set eth1 master br0
+        - ip link set eth2 master br0
+        - ip link set eth3 master br0
+        - ip link set eth1 up
+        - ip link set eth2 up
+        - ip link set eth3 up
+
+    # Gateway kiêm firewall nftables
+    fw:
+      group: hosts
+      binds:
+        - ../nftables/ruleset.nft:/tmp/ruleset.nft
+      exec:
+        - ip addr add 10.0.1.1/24 dev eth1
+        - ip addr add 10.0.2.1/24 dev eth2
+        - ip link set eth1 up
+        - ip link set eth2 up
+        - sysctl -w net.ipv4.ip_forward=1
+        # apk cần default route mgmt (eth0) — phải chạy trước mọi thao tác route
+        - apk add --no-cache nftables tcpdump
+        - mkdir -p /etc/nftables
+        - cp /tmp/ruleset.nft /etc/nftables/ruleset.nft
+        - nft -f /etc/nftables/ruleset.nft
+
+    # Cổng thông tin nội bộ — nginx đã chạy sẵn trong image multitool (listen 80)
+    web:
+      group: hosts
+      exec:
+        - ip addr add 10.0.2.80/24 dev eth1
+        - ip link set eth1 up
+        - apk add --no-cache tcpdump
+        - mkdir -p /usr/share/nginx/html
+        - sh -c 'echo "<h1>internal-portal OK</h1>" > /usr/share/nginx/html/index.html'
+        - ip route replace default via 10.0.2.1 dev eth1
+
+    # User tầng 1 — vẫn vào được portal
+    pc-a:
+      group: hosts
+      exec:
+        - ip addr add 10.0.1.10/24 dev eth1
+        - ip link set eth1 up
+        - apk add --no-cache tcpdump
+        - ip route replace default via 10.0.1.1 dev eth1
+
+    # User tầng 2 (dải mở rộng) — báo không vào được portal
+    pc-b:
+      group: hosts
+      exec:
+        - ip addr add 10.0.1.200/24 dev eth1
+        - ip link set eth1 up
+        - apk add --no-cache tcpdump
+        - ip route replace default via 10.0.1.1 dev eth1
+
+  links:
+    - endpoints: ["pc-a:eth1", "sw:eth1"]
+    - endpoints: ["pc-b:eth1", "sw:eth2"]
+    - endpoints: ["sw:eth3", "fw:eth1"]
+    - endpoints: ["fw:eth2", "web:eth1"]

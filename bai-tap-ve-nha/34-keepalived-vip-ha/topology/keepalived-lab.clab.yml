@@ -1,0 +1,92 @@
+name: keepalived-lab
+prefix: ""
+
+topology:
+  groups:
+    hosts:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+
+  nodes:
+    client:
+      group: hosts
+      exec:
+        - ip addr add 10.0.20.10/24 dev eth1
+
+    sw:
+      group: hosts
+      exec:
+        - ip link add name br0 type bridge
+        - ip link set br0 up
+        - ip link set eth1 master br0
+        - ip link set eth2 master br0
+        - ip link set eth3 master br0
+        - ip link set eth4 master br0
+        - ip link set eth5 master br0
+        - ip link set eth1 up
+        - ip link set eth2 up
+        - ip link set eth3 up
+        - ip link set eth4 up
+        - ip link set eth5 up
+
+    lb1:
+      group: hosts
+      binds:
+        - ../configs/lb1/nginx-off.conf:/tmp/nginx-off.conf
+        - ../configs/lb1/haproxy.cfg:/tmp/haproxy.cfg
+        - ../configs/lb1/keepalived.conf:/tmp/keepalived.conf
+        - ../configs/lb1/check_haproxy.sh:/tmp/check_haproxy.sh
+      exec:
+        - ip addr add 10.0.20.11/24 dev eth1
+        - apk add --no-cache haproxy keepalived
+        # nginx đã chạy sẵn PID 1 trong multitool, chiếm 0.0.0.0:80 — dồn sang cổng phụ để nhường cho haproxy
+        - cp /tmp/nginx-off.conf /etc/nginx/nginx.conf
+        - nginx -s reload
+        - mkdir -p /etc/haproxy /etc/keepalived
+        - cp /tmp/haproxy.cfg /etc/haproxy/haproxy.cfg
+        - cp /tmp/check_haproxy.sh /etc/keepalived/check_haproxy.sh
+        - chmod +x /etc/keepalived/check_haproxy.sh
+        - cp /tmp/keepalived.conf /etc/keepalived/keepalived.conf
+        - haproxy -f /etc/haproxy/haproxy.cfg -D
+        - keepalived -f /etc/keepalived/keepalived.conf
+
+    lb2:
+      group: hosts
+      binds:
+        - ../configs/lb2/nginx-off.conf:/tmp/nginx-off.conf
+        - ../configs/lb2/haproxy.cfg:/tmp/haproxy.cfg
+        - ../configs/lb2/keepalived.conf:/tmp/keepalived.conf
+        - ../configs/lb2/check_haproxy.sh:/tmp/check_haproxy.sh
+      exec:
+        - ip addr add 10.0.20.12/24 dev eth1
+        - apk add --no-cache haproxy keepalived
+        - cp /tmp/nginx-off.conf /etc/nginx/nginx.conf
+        - nginx -s reload
+        - mkdir -p /etc/haproxy /etc/keepalived
+        - cp /tmp/haproxy.cfg /etc/haproxy/haproxy.cfg
+        - cp /tmp/check_haproxy.sh /etc/keepalived/check_haproxy.sh
+        - chmod +x /etc/keepalived/check_haproxy.sh
+        - cp /tmp/keepalived.conf /etc/keepalived/keepalived.conf
+        - haproxy -f /etc/haproxy/haproxy.cfg -D
+        - keepalived -f /etc/keepalived/keepalived.conf
+
+    srv-a:
+      group: hosts
+      exec:
+        - ip addr add 10.0.20.21/24 dev eth1
+        - mkdir -p /usr/share/nginx/html
+        - sh -c 'echo "<h1>SRV-A OK</h1>" > /usr/share/nginx/html/index.html'
+
+    srv-b:
+      group: hosts
+      exec:
+        - ip addr add 10.0.20.22/24 dev eth1
+        - mkdir -p /usr/share/nginx/html
+        - sh -c 'echo "<h1>SRV-B OK</h1>" > /usr/share/nginx/html/index.html'
+
+  links:
+    - endpoints: ["client:eth1", "sw:eth1"]
+    - endpoints: ["lb1:eth1", "sw:eth2"]
+    - endpoints: ["lb2:eth1", "sw:eth3"]
+    - endpoints: ["srv-a:eth1", "sw:eth4"]
+    - endpoints: ["srv-b:eth1", "sw:eth5"]

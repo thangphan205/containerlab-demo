@@ -1,0 +1,57 @@
+name: chaos-routing-lab
+prefix: ""
+
+topology:
+  groups:
+    routers:
+      kind: linux
+      image: quay.io/frrouting/frr:10.5.1
+    hosts:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+
+  nodes:
+    r1:
+      group: routers
+      binds:
+        - ../configs/r1/daemons:/etc/frr/daemons
+        - ../configs/r1/frr.conf:/etc/frr/frr.conf
+      exec:
+        # Xoá default route mgmt để default học qua OSPF có hiệu lực
+        - ip route del default dev eth0
+    r2:
+      group: routers
+      binds:
+        - ../configs/r2/daemons:/etc/frr/daemons
+        - ../configs/r2/frr.conf:/etc/frr/frr.conf
+      exec:
+        - ip route del default dev eth0
+    r3:
+      group: routers
+      binds:
+        - ../configs/r3/daemons:/etc/frr/daemons
+        - ../configs/r3/frr.conf:/etc/frr/frr.conf
+      exec:
+        - ip route del default dev eth0
+    host-a1:
+      group: hosts
+      exec:
+        - ip addr add 10.10.1.10/24 dev eth1
+        - ip route replace default via 10.10.1.1 dev eth1
+    host-a2:
+      group: hosts
+      exec:
+        - ip addr add 10.10.2.10/24 dev eth1
+        - ip route replace default via 10.10.2.1 dev eth1
+    srv-isp:
+      group: hosts
+      exec:
+        - ip addr add 198.51.100.10/24 dev eth1
+        - ip route replace default via 198.51.100.1 dev eth1
+
+  links:
+    - endpoints: ["host-a1:eth1", "r1:eth1"]
+    - endpoints: ["host-a2:eth1", "r1:eth2"]
+    - endpoints: ["r1:eth3", "r2:eth1"]
+    - endpoints: ["r2:eth2", "r3:eth1"]
+    - endpoints: ["r3:eth2", "srv-isp:eth1"]

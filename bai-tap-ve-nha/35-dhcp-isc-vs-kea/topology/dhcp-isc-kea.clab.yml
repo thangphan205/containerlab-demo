@@ -1,0 +1,47 @@
+name: dhcp-isc-kea-lab
+prefix: ""
+
+topology:
+  nodes:
+    client-isc:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        # Xoá default route mgmt để default route học qua DHCP có hiệu lực
+        - ip route del default dev eth0
+    dhcp-isc:
+      kind: linux
+      # Alpine 3.22 (image chuẩn của repo) đã gỡ gói `dhcp` (ISC DHCP EOL 12/2022).
+      # 3.20 là bản Alpine cuối cùng còn gói này.
+      image: alpine:3.20
+      binds:
+        - ../configs/dhcpd.conf:/tmp/dhcpd.conf
+      exec:
+        - apk add --no-cache dhcp
+        - ip addr add 10.0.1.10/24 dev eth1
+        - mkdir -p /etc/dhcp /var/lib/dhcp
+        - touch /var/lib/dhcp/dhcpd.leases
+        - cp /tmp/dhcpd.conf /etc/dhcp/dhcpd.conf
+        - dhcpd -cf /etc/dhcp/dhcpd.conf -lf /var/lib/dhcp/dhcpd.leases eth1
+    client-kea:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - ip route del default dev eth0
+    dhcp-kea:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      binds:
+        - ../configs/kea-dhcp4.conf:/tmp/kea-dhcp4.conf
+      exec:
+        - apk add --no-cache kea
+        - ip addr add 10.0.2.10/24 dev eth1
+        # /run/kea không tự tạo trong image -> kea-dhcp4 fail "Unable to open PID file"/logger lockfile nếu thiếu
+        - mkdir -p /etc/kea /var/lib/kea /run/kea
+        - cp /tmp/kea-dhcp4.conf /etc/kea/kea-dhcp4.conf
+        # kea-dhcp4 không tự daemonize (không có cờ -d/--daemon như dhcpd) -> phải nền hoá thủ công
+        - sh -c "nohup kea-dhcp4 -c /etc/kea/kea-dhcp4.conf >/var/log/kea-dhcp4.log 2>&1 &"
+
+  links:
+    - endpoints: ["client-isc:eth1", "dhcp-isc:eth1"]
+    - endpoints: ["client-kea:eth1", "dhcp-kea:eth1"]

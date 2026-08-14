@@ -1,0 +1,44 @@
+name: chaos-ntp-lab
+prefix: ""
+
+topology:
+  nodes:
+    r1:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      binds:
+        - ../nftables/ruleset.nft:/tmp/ruleset.nft
+      exec:
+        - sysctl -w net.ipv4.ip_forward=1
+        - ip addr add 10.0.1.1/24 dev eth1
+        - ip addr add 10.0.0.1/24 dev eth2
+        - apk add --no-cache nftables
+        - mkdir -p /etc/nftables
+        - cp /tmp/ruleset.nft /etc/nftables/ruleset.nft
+        - nft -f /etc/nftables/ruleset.nft
+    ntp-server:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      binds:
+        - ../configs/chrony-server.conf:/tmp/chrony.conf
+      exec:
+        - apk add --no-cache chrony
+        - ip addr add 10.0.0.10/24 dev eth1
+        - ip route replace default via 10.0.0.1 dev eth1
+        - cp /tmp/chrony.conf /etc/chrony/chrony.conf
+        - chronyd -x
+    client:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      binds:
+        - ../configs/chrony-client.conf:/tmp/chrony.conf
+      exec:
+        - apk add --no-cache chrony
+        - ip addr add 10.0.1.10/24 dev eth1
+        - ip route replace default via 10.0.1.1 dev eth1
+        - cp /tmp/chrony.conf /etc/chrony/chrony.conf
+        - chronyd -x
+
+  links:
+    - endpoints: ["client:eth1", "r1:eth1"]
+    - endpoints: ["r1:eth2", "ntp-server:eth1"]

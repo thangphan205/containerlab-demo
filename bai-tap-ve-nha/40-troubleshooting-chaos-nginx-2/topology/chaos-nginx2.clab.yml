@@ -1,0 +1,61 @@
+name: chaos-nginx2-lab
+prefix: ""
+
+topology:
+  nodes:
+    lb:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      binds:
+        - ../nginx/lb.conf:/tmp/lb.conf
+      exec:
+        - ip addr add 10.0.4.100/24 dev eth1
+        - ip addr add 10.0.14.1/24 dev eth2
+        # Nạp config reverse proxy (nginx đã chạy sẵn trong image — reload để áp)
+        - cp /tmp/lb.conf /etc/nginx/nginx.conf
+        - nginx -s reload
+    bsw:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - ip link add name br0 type bridge
+        - ip link set br0 up
+        - ip link set eth1 master br0
+        - ip link set eth2 master br0
+        - ip link set eth3 master br0
+        - ip link set eth1 up
+        - ip link set eth2 up
+        - ip link set eth3 up
+    web1:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      binds:
+        - ../nginx/backend1.conf:/tmp/backend.conf
+      exec:
+        - ip addr add 10.0.14.11/24 dev eth1
+        - mkdir -p /usr/share/nginx/html
+        - sh -c 'echo "backend web1 OK" > /usr/share/nginx/html/index.html'
+        - cp /tmp/backend.conf /etc/nginx/nginx.conf
+        - nginx -s reload
+    web2:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      binds:
+        - ../nginx/backend2.conf:/tmp/backend.conf
+      exec:
+        - ip addr add 10.0.14.12/24 dev eth1
+        - mkdir -p /usr/share/nginx/html
+        - sh -c 'echo "backend web2 OK" > /usr/share/nginx/html/index.html'
+        - cp /tmp/backend.conf /etc/nginx/nginx.conf
+        - nginx -s reload
+    client:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - ip addr add 10.0.4.10/24 dev eth1
+
+  links:
+    - endpoints: ["client:eth1", "lb:eth1"]
+    - endpoints: ["lb:eth2", "bsw:eth1"]
+    - endpoints: ["web1:eth1", "bsw:eth2"]
+    - endpoints: ["web2:eth1", "bsw:eth3"]

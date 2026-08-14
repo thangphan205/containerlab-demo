@@ -1,0 +1,17 @@
+#!/usr/sbin/nft -f
+
+flush ruleset
+
+table inet filter {
+    chain forward {
+        type filter hook forward priority 0; policy drop;
+
+        ct state established,related accept
+
+        # Cho phép giám sát/ping xuyên subnet (yêu cầu của team NOC)
+        ip protocol icmp accept
+
+        # LAN văn phòng truy cập cổng thông tin nội bộ
+        ip saddr 10.0.1.0/25 tcp dport 80 accept
+    }
+}

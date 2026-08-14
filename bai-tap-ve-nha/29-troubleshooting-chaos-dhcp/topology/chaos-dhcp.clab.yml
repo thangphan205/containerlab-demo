@@ -1,0 +1,43 @@
+name: chaos-dhcp-lab
+prefix: ""
+
+topology:
+  nodes:
+    r1:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - sysctl -w net.ipv4.ip_forward=1
+        - ip addr add 10.0.1.1/24 dev eth1
+        - ip addr add 10.0.2.1/24 dev eth2
+        - ip addr add 10.0.0.1/24 dev eth3
+        - apk add --no-cache dnsmasq
+        # DHCP relay: chuyển tiếp broadcast DISCOVER từ 2 LAN về server 10.0.0.10
+        - dnsmasq --port=0 --dhcp-relay=10.0.1.1,10.0.0.10 --dhcp-relay=10.0.2.1,10.0.0.10 --log-facility=/var/log/dnsmasq.log --log-dhcp
+    dhcp-server:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      binds:
+        - ../configs/dnsmasq.conf:/tmp/dnsmasq.conf
+      exec:
+        - apk add --no-cache dnsmasq
+        - ip addr add 10.0.0.10/24 dev eth1
+        - ip route replace default via 10.0.0.1 dev eth1
+        - cp /tmp/dnsmasq.conf /etc/dnsmasq.conf
+        - dnsmasq --conf-file=/etc/dnsmasq.conf
+    client-a:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        # Xoá default route mgmt để default nhận từ DHCP có hiệu lực
+        - ip route del default dev eth0
+    client-b:
+      kind: linux
+      image: wbitt/network-multitool:3.22.2
+      exec:
+        - ip route del default dev eth0
+
+  links:
+    - endpoints: ["client-a:eth1", "r1:eth1"]
+    - endpoints: ["client-b:eth1", "r1:eth2"]
+    - endpoints: ["r1:eth3", "dhcp-server:eth1"]
