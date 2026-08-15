@@ -11,7 +11,7 @@ table inet filter {
         # Cho phép giám sát/ping xuyên subnet (yêu cầu của team NOC)
         ip protocol icmp accept
 
-        # LAN văn phòng truy cập cổng thông tin nội bộ
-        ip saddr 10.0.1.0/25 tcp dport 80 accept
+        # LAN chi nhánh truy cập hệ thống đặt hàng
+        ip saddr 192.168.20.0/26 tcp dport 80 accept
     }
 }

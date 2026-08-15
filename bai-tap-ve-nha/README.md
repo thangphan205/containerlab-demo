@@ -113,7 +113,8 @@ Toàn bộ nội dung **mã nguồn mở** (xem [LICENSE](../LICENSE)) — mọi
 | [43](./43-troubleshooting-chaos-routing-loop/lab-guide.md) | Troubleshooting chaos lab — Routing loop & blackhole (default route, AD) | 🟢 Đang mở (Mới) | — |
 | [44](./44-troubleshooting-chaos-pbr-datapath/lab-guide.md) | Troubleshooting chaos lab — Dual-WAN policy routing trên Linux (ip rule, NAT) | 🟢 Đang mở (Mới) | — |
 | [45](./45-troubleshooting-chaos-ospf-full-no-ping/lab-guide.md) | Troubleshooting chaos lab — OSPF Full hết nhưng không ping được (mức CCNA) | 🟢 Đang mở (Mới) | — |
-| [46](./46-wireshark-ping-ok-web-fail/lab-guide.md) | Ping OK nhưng Web không vào? Dùng Wireshark tìm thủ phạm | 🟢 Đang mở (Mới) | — |
+| [46](./46-wireshark-ping-ok-web-fail/lab-guide.md) | Ping OK nhưng Web không vào? Dùng Wireshark tìm thủ phạm (1 container Docker, chạy ngay trên máy bạn) | 🟢 Đang mở (Mới) | — |
+| [47](./47-tcpdump-cli-web-timeout/lab-guide.md) | Không có GUI — troubleshoot "web timeout" bằng tcpdump trên server | 🟢 Đang mở (Mới) | — |
 
 ---
 
@@ -149,7 +150,7 @@ Các bài tiếp theo sẽ được bổ sung dần theo tiến độ và phản
 - **Arc 2 — Routing protocol chuyên sâu:** OSPF multi-area, BGP (eBGP, route-map, Local Preference, prefix-list), Policy-Based Routing (dual-WAN).
 - **Arc 3 — Automation/NetDevOps:** Ansible push config, Python parsing, Git workflow (branch/merge/deploy).
 - **Arc 4 — Security & Observability:** nftables firewall (filter traffic giữa subnet), đồng bộ thời gian với NTP (chrony).
-- **Arc 5 — Troubleshooting chaos lab:** Lab cấy lỗi sẵn — OSPF, BGP, VLAN, VRRP, nftables firewall/NAT, DHCP, DNS, NTP, Webserver, TLS/HTTPS, OpenLDAP, OSPF↔BGP redistribute, iBGP nexthop, routing loop & blackhole, dual-WAN PBR, OSPF Full no ping, Wireshark packet capture & analysis.
+- **Arc 5 — Troubleshooting chaos lab:** Lab cấy lỗi sẵn — OSPF, BGP, VLAN, VRRP, nftables firewall/NAT, DHCP, DNS, NTP, Webserver, TLS/HTTPS, OpenLDAP, OSPF↔BGP redistribute, iBGP nexthop, routing loop & blackhole, dual-WAN PBR, OSPF Full no ping, phân tích gói tin bằng Wireshark (trên laptop) và bằng tcpdump CLI (trên server).
 - **Arc 6 — Advanced Security & VPN:** WireGuard VPN site-to-site.
 - **Arc 7 — Triển khai mạng doanh nghiệp:** Dự án 4 tuần xây mạng công ty NTC từng lớp — campus VLAN, OSPF core + VRRP, eBGP WAN chi nhánh, NAT/nftables internet edge.
 

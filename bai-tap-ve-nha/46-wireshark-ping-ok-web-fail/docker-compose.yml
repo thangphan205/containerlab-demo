@@ -1,0 +1,12 @@
+services:
+  portal:
+    image: nginx:1.27-alpine
+    container_name: portal
+    # Cổng 8080 trên máy bạn -> cổng 80 trong container
+    ports:
+      - "8080:80"
+    volumes:
+      # Config do "team app" bàn giao sau đợt deploy tối qua
+      # (mount cả thư mục, không mount từng file — sửa file trên máy host là container thấy ngay)
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/html:/usr/share/nginx/html:ro

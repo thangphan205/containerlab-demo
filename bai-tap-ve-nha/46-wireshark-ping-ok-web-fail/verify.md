@@ -1,83 +1,55 @@
-# Verify checklist — Bài 46 wireshark-ping-ok-web-fail (chạy trên server lab)
+# Verify checklist — Bài 46 (1 container nginx + máy học viên làm client)
 
-## Deploy
+## Phần A — đã verify thật ✅
+
+Môi trường chạy thử: **macOS + Docker Desktop, Docker Engine 29.4.3, image `nginx:1.27-alpine` (nginx 1.27.5)**. Toàn bộ output trong `lab-guide.md` chép từ lần chạy này.
+
+- [x] `docker compose up -d` → `portal   Up   0.0.0.0:8080->80/tcp`.
+- [x] `ping -c 3 127.0.0.1` → 0% loss.
+- [x] `curl -4 -v -m 10 http://127.0.0.1:8080` → in `* Connected to ...`, `> GET /`, `* Request completely sent off`, rồi `curl: (56) Recv failure: Connection reset by peer` (exit code 56).
+- [x] `docker exec portal nginx -T | grep listen` → `listen 127.0.0.1:80;`.
+- [x] `docker exec portal sh -c 'cat /proc/net/tcp'` → `0100007F:0050` (= 127.0.0.1:80).
+- [x] `docker exec portal wget -qO- -T 3 http://127.0.0.1/` → trả về trang HTML.
+- [x] `docker exec portal sh -c 'wget -qO- -T 3 http://$(hostname -i)/'` → `can't connect to remote host (172.18.0.2): Connection refused`.
+- [x] Sửa `listen 80;` trong `nginx/conf.d/default.conf` → `docker exec portal nginx -T | grep listen` thấy ngay config mới (mount thư mục, không mount file).
+- [x] `docker exec portal nginx -s reload` → **không ăn**: `docker logs` in `[emerg] 1#1: bind() to 0.0.0.0:80 failed (98: Address in use)`, `curl` vẫn `(56)`.
+- [x] `docker compose restart portal` → `/proc/net/tcp` đổi thành `00000000:0050` (0.0.0.0:80), `curl -4 -sI` → `HTTP/1.1 200 OK`.
+- [x] `docker logs portal` sau khi thành công → access log ghi IP nguồn `192.168.65.1` (gateway VM của Docker Desktop), **không** phải `127.0.0.1`.
+- [x] `ping 172.18.0.2` (IP container) từ macOS → 100% loss — đã ghi chú trong guide là hành vi bình thường của Docker Desktop, không phải triệu chứng.
+
+## Phần B — cần tự xác nhận (chưa chạy được ở môi trường soạn bài)
+
+### B1. Chữ ký pcap (cần quyền root/ChmodBPF)
+Chạy trong lúc `curl -4 -m 10 http://127.0.0.1:8080` ở terminal khác:
 ```bash
-cd 46-wireshark-ping-ok-web-fail/topology
-sudo clab deploy -t wireshark-web.clab.yml
+# macOS
+sudo tcpdump -nni lo0 -ttt 'tcp port 8080'
+# Linux / WSL2
+sudo tcpdump -nni lo  -ttt 'tcp port 8080'
 ```
-- [ ] Deploy sạch, 5 container (`sw fw web pc-a pc-b`).
-- [ ] `docker exec fw nft list ruleset` → có `table inet filter` với đúng 3 rule: `ct state established,related accept`, `ip protocol icmp accept`, `ip saddr 10.0.1.0/25 tcp dport 80 accept`, chain `forward` `policy drop` (⚠️ **risk**: xác nhận family `inet` nhận cú pháp `ip saddr`; nếu nft báo lỗi → đổi table sang `table ip filter` trong `nftables/ruleset.nft` **và** sửa mọi chỗ nhắc `inet filter` trong lab-guide, gồm cả lệnh `nft add rule ... meta nftrace set 1`).
-- [ ] `docker exec pc-b which tcpdump` → có (⚠️ **risk**: `apk add --no-cache tcpdump` trong `exec` cần default route mgmt `eth0`; nếu fail → kiểm tra `apk` chạy **trước** `ip route replace default via 10.0.1.1`. Nếu image đã có sẵn tcpdump thì bỏ dòng `apk` cho nhanh).
-- [ ] `docker exec sw ip link show master br0` → thấy `eth1`, `eth2`, `eth3` enslaved.
-- [ ] `docker exec pc-a ping -c 2 10.0.1.200` → 0% loss (bridge LAN hoạt động).
-- [ ] `docker exec pc-b ip route` → `default via 10.0.1.1 dev eth1`.
-- [ ] `docker exec web curl -sI http://127.0.0.1` → `200 OK` (nginx mặc định của multitool đang chạy, index.html đã ghi).
+- [ ] Thấy đủ `Flags [S]` → `[S.]` → `[.]` → `[P.]` (GET) → `[R.]`.
+- [ ] `[R.]` xuất hiện **sau** gói chứa `GET`, không phải ngay sau `[S]`.
+- [ ] Sau khi restart container (đã fix): thấy `[S]` → `[S.]` → `[.]` → `[P.]` GET → `[P.]` `200 OK` → `[F.]`.
+- [ ] ⚠️ Nếu chuỗi thật khác (ví dụ `[F.]` thay vì `[R.]`, hoặc Docker Desktop trả `Empty reply` thay vì reset) → chép output thật vào bảng "chữ ký lỗi" và mục Bước 2 của lời giải.
 
-## Triệu chứng (trước khi sửa)
-- [ ] `docker exec pc-b ping -c 3 10.0.2.80` → **0% loss** (mồi nhử ICMP hoạt động).
-- [ ] `docker exec pc-a ping -c 3 10.0.2.80` → 0% loss.
-- [ ] `docker exec pc-a curl -m 10 -sI http://10.0.2.80` → `HTTP/1.1 200 OK`.
-- [ ] `docker exec pc-b curl -m 10 -sS http://10.0.2.80` → fail sau ~10s với `curl: (28) Connection timed out ...` (⚠️ **risk**: nếu ra `Connection refused` → gói đang bị reject chứ không drop, kiểm tra lại `policy drop` và ghi lại output thật để sửa guide; nếu ra `No route to host` → thiếu route/`ip_forward`).
+### B2. Wireshark GUI
+- [ ] **Windows**: Wireshark có interface *Adapter for loopback traffic capture* (Npcap tick loopback lúc cài) và bắt được traffic tới `127.0.0.1:8080`.
+- [ ] **macOS**: interface `lo0` bắt được (Wireshark đã cài ChmodBPF).
+- [ ] `Statistics → Flow Graph` vẽ đúng hình 5 mũi tên như trong lời giải.
+- [ ] `Follow → TCP Stream` (trước khi fix) → chỉ thấy request, không có response.
+- [ ] `tcp.flags.syn==1 && tcp.flags.ack==1` → **có gói** (điểm chốt của bài).
 
-## Bắt gói — chữ ký DROP
+### B3. Khác biệt theo hệ điều hành
+- [ ] **Windows Docker Desktop**: `curl` báo lỗi giống macOS? (`(56)` reset hay `(52) Empty reply`) — ghi lại để bổ sung vào guide nếu khác.
+- [ ] **Linux Docker Engine**: `ping <IP container>` **thông** (khác macOS/Windows) — xác nhận để giữ nguyên ghi chú trong lời giải.
+- [ ] **Linux**: access log ghi IP nguồn `172.x.0.1` thay vì `192.168.65.1`.
+- [ ] **OrbStack** (macOS): hành vi có giống Docker Desktop không (OrbStack route được tới IP container → `ping 172.x` có thể **thông**) → nếu khác, thêm 1 dòng ghi chú vào lời giải.
+
+## Dọn dẹp
 ```bash
-docker exec -d pc-b tcpdump -ni eth1 -w /tmp/pcb.pcap 'host 10.0.2.80'
-docker exec pc-b curl -m 30 -sS http://10.0.2.80 ; docker exec pc-b pkill tcpdump
-docker cp pc-b:/tmp/pcb.pcap .
+docker compose down
 ```
-- [ ] Mở `pcb.pcap` bằng Wireshark trên máy cá nhân (sau `scp`) → thấy SYN lặp lại, **không** có RST, **không** có ICMP.
-- [ ] Khoảng cách retransmit ~1s → 2s → 4s → 8s (⚠️ nếu `-m 30` chưa đủ để thấy 4 lần gửi lại → tăng lên `-m 60` trong guide; nếu backoff khác quy luật → ghi lại số thật và sửa bảng trong lời giải).
-- [ ] Wireshark **Analyze → Expert Information** gắn cờ retransmission.
-- [ ] Test luôn cách 2: VS Code Containerlab extension → chuột phải `pc-b / eth1` → **Capture Traffic** → Wireshark mở realtime (⚠️ **risk**: xác nhận extension bắt được interface của node linux qua SSH remote; nếu không chạy → hạ mục này xuống "tuỳ chọn" trong guide).
+- [ ] Không còn container `portal`, không còn network `46-wireshark-ping-ok-web-fail_default`.
 
-## Khoanh vùng hop chết
-Chạy 4 lệnh bắt nền, rồi `curl` từ `pc-b`:
-```bash
-docker exec -d sw  tcpdump -ni br0  -w /tmp/sw.pcap     'tcp port 80'
-docker exec -d fw  tcpdump -ni eth1 -w /tmp/fw-in.pcap  'tcp port 80'
-docker exec -d fw  tcpdump -ni eth2 -w /tmp/fw-out.pcap 'tcp port 80'
-docker exec -d web tcpdump -ni eth1 -w /tmp/web.pcap    'tcp port 80'
-docker exec pc-b curl -m 15 -sS http://10.0.2.80
-```
-- [ ] `sw.pcap`, `fw-in.pcap` → **có** SYN từ `10.0.1.200` (⚠️ **risk**: bắt trên `br0` có thể không thấy gói tuỳ hành vi bridge; nếu trống → đổi guide sang bắt trên `sw eth2`).
-- [ ] `fw-out.pcap`, `web.pcap` → **không** có gói nào từ `10.0.1.200`.
-- [ ] Lặp lại với `curl` từ `pc-a` → cả 4 pcap **đều có** gói từ `10.0.1.10`, có handshake đủ và `HTTP/1.1 200 OK`.
-
-## Xác nhận bằng nftables
-- [ ] `docker exec fw nft list ruleset -a` → thấy rõ `10.0.1.0/25`.
-- [ ] (Tuỳ chọn, nâng cao) `nft monitor trace`:
-  ```bash
-  docker exec fw nft add rule inet filter forward meta nftrace set 1
-  docker exec -d fw sh -c 'nft monitor trace > /tmp/trace.log 2>&1'
-  docker exec pc-b curl -m 5 -sS http://10.0.2.80
-  docker exec fw sh -c 'pkill -f "nft monitor"; cat /tmp/trace.log'
-  ```
-  - [ ] Thấy verdict `drop` / `policy drop` cho gói từ `10.0.1.200` (⚠️ **risk**: container có thể thiếu module `nf_tables trace` hoặc quyền; nếu fail → giữ nguyên nhãn "tuỳ chọn" trong guide, đừng để học viên kẹt ở bước này. Nhớ `nft -f /etc/nftables/ruleset.nft` để xoá rule trace trước khi sang bước sửa).
-
-## Fix
-```bash
-docker exec fw sed -i 's#ip saddr 10.0.1.0/25 tcp dport 80 accept#ip saddr 10.0.1.0/24 tcp dport 80 accept#' /etc/nftables/ruleset.nft
-docker exec fw nft -f /etc/nftables/ruleset.nft
-```
-- [ ] `docker exec fw nft list ruleset` → rule đã thành `10.0.1.0/24`, không chồng rule cũ (nhờ `flush ruleset` trong file).
-- [ ] `docker exec pc-b curl -sI http://10.0.2.80` → `HTTP/1.1 200 OK`.
-- [ ] `docker exec pc-a curl -sI http://10.0.2.80` → vẫn `HTTP/1.1 200 OK`.
-- [ ] Bắt gói lại tại `pc-b` → handshake 3 bước đủ, Follow TCP Stream đọc được `internal-portal OK`, không còn `[TCP Retransmission]`.
-
-## Kiểm chứng câu hỏi tự kiểm 1 (drop vs reject)
-```bash
-docker exec fw nft insert rule inet filter forward ip saddr 10.0.1.200 tcp dport 80 reject with tcp reset
-docker exec pc-b curl -m 10 -sS http://10.0.2.80     # phải ra 'Connection refused' NGAY, không treo
-docker exec fw nft -f /etc/nftables/ruleset.nft       # nạp lại file để dọn rule thử nghiệm
-```
-- [ ] `refused` tức thì, và pcap có RST (⚠️ nếu `reject with tcp reset` không hợp lệ trong chain `forward` của bản nft này → ghi lại lỗi và sửa/gỡ câu hỏi tự kiểm 1 trong guide).
-
-## Cleanup
-```bash
-sudo clab destroy -t wireshark-web.clab.yml
-```
-- [ ] Không còn container sót.
-
-## Sau khi verify xong
-- [ ] Sửa guide theo output thật (nhất là các mục ⚠️).
-- [ ] Chuyển thư mục ra khỏi `_draft/`, thêm dòng bài 46 vào bảng **Arc 5** trong `bai-tap-ve-nha/README.md` (và `README_en.md` nếu làm bản EN).
+## Trạng thái file trong repo
+- [ ] `nginx/conf.d/default.conf` phải ở **trạng thái lỗi**: `listen 127.0.0.1:80;` (kiểm tra trước khi commit — rất dễ commit nhầm bản đã sửa).

@@ -116,7 +116,8 @@ All content is **open source** (see [LICENSE](../LICENSE)) — feel free to use,
 | [43](./43-troubleshooting-chaos-routing-loop/lab-guide.md) | Chaos Lab — Routing Loop & Blackhole (Default Route, AD) | 🟢 Active (New) | — |
 | [44](./44-troubleshooting-chaos-pbr-datapath/lab-guide.md) | Chaos Lab — Linux Dual-WAN Policy Routing (ip rule, NAT) | 🟢 Active (New) | — |
 | [45](./45-troubleshooting-chaos-ospf-full-no-ping/lab-guide.md) | Chaos Lab — OSPF State Full But Cannot Ping (CCNA Level) | 🟢 Active (New) | — |
-| [46](./46-wireshark-ping-ok-web-fail/lab-guide.md) | Ping OK But Web Fails? Wireshark Troubleshooting | 🟢 Active (New) | — |
+| [46](./46-wireshark-ping-ok-web-fail/lab-guide.md) | Ping OK But Web Fails? Wireshark Troubleshooting (single Docker container, runs on your own machine) | 🟢 Active (New) | — |
+| [47](./47-tcpdump-cli-web-timeout/lab-guide.md) | No GUI — Troubleshoot "Web Timeout" With tcpdump on the Server | 🟢 Active (New) | — |
 
 ---
 
@@ -150,7 +151,7 @@ All content is **open source** (see [LICENSE](../LICENSE)) — feel free to use,
 - **Arc 2 — Deep-Dive Routing Protocols:** OSPF multi-area, BGP (eBGP, route-maps, Local Preference, prefix-lists), Policy-Based Routing (dual-WAN).
 - **Arc 3 — Automation / NetDevOps:** Ansible multi-node config push, Python CLI output parsing, Git branching/merging pipelines.
 - **Arc 4 — Security & Observability:** nftables inter-subnet security policies, NTP time synchronization (chrony).
-- **Arc 5 — Troubleshooting Chaos Labs:** Troubleshooting pre-faulted OSPF, BGP, VLAN, VRRP, nftables, DHCP, DNS, NTP, Webserver, TLS/HTTPS, OpenLDAP, OSPF↔BGP redistribution, iBGP nexthop, routing loops & blackholes, dual-WAN PBR, OSPF Full no ping, Wireshark packet capture & analysis.
+- **Arc 5 — Troubleshooting Chaos Labs:** Troubleshooting pre-faulted OSPF, BGP, VLAN, VRRP, nftables, DHCP, DNS, NTP, Webserver, TLS/HTTPS, OpenLDAP, OSPF↔BGP redistribution, iBGP nexthop, routing loops & blackholes, dual-WAN PBR, OSPF Full no ping, packet analysis with Wireshark (on your laptop) and with tcpdump CLI (on the server).
 - **Arc 6 — Advanced Security & VPN:** WireGuard site-to-site VPN tunnels.
 - **Arc 7 — Enterprise Network Deployment:** End-to-end enterprise network buildout (NTC Enterprise project).
 

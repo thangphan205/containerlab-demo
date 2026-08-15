@@ -96,6 +96,8 @@ yarn.lock
 *.pcap
 *.pcapng
 *.html
+# Trang web tĩnh dùng làm nội dung lab thì vẫn phải theo repo
+!bai-tap-ve-nha/**/nginx/html/*.html
 
 # VS Code extension cache
 .containerlab_history
