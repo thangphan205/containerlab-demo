@@ -321,6 +321,21 @@ Học viên có thể triển khai bài lab bằng **Giao diện đồ họa Ext
 
 ---
 
+### ❌ Lỗi 5: `unable to insert jump to DOCKER-ISOLATION-STAGE-1 rule in FORWARD chain ... Chain 'DOCKER-ISOLATION-STAGE-1' does not exist`
+- **Nguyên nhân**: Xung đột giữa backend `iptables-nft` và `iptables-legacy` trong Docker trên Ubuntu / WSL2 khi Containerlab khởi tạo Docker network có IPv6.
+- **Cách khắc phục**:
+  Chuyển `iptables` / `ip6tables` về chế độ `legacy` và restart lại Docker daemon:
+  ```bash
+  sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
+  sudo update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
+  sudo update-alternatives --set arptables /usr/sbin/arptables-legacy
+  sudo update-alternatives --set ebtables /usr/sbin/ebtables-legacy
+  sudo systemctl restart docker   # Hoặc: sudo service docker restart
+  ```
+  Sau đó chạy lại lệnh deploy bài lab.
+
+---
+
 ## 📚 TÀI NGUYÊN THAM KHẢO
 
 - 🌐 [Tài liệu chính thức Containerlab Installation](https://containerlab.dev/install/)

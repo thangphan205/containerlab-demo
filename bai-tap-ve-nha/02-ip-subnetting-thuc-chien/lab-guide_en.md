@@ -39,6 +39,18 @@ Allocated Network Block: **172.20.4.0/22**.
 - VLSM best practice: Sort department requirements from largest to smallest before calculating subnets.
 - `topology/subnet-lab.clab.yml` intentionally **omits pre-assigned IPs** — calculating and applying them is part of your task.
 
+## Troubleshooting Common Issues
+
+- **Error `unable to insert jump to DOCKER-ISOLATION-STAGE-1 ... Chain 'DOCKER-ISOLATION-STAGE-1' does not exist` during deploy**:
+  - **Root cause:** Conflict between `iptables-nft` and `iptables-legacy` in Docker on Ubuntu / WSL2 when Containerlab initializes the IPv6 management network.
+  - **Resolution:** Switch iptables/ip6tables to `legacy` mode and restart Docker:
+    ```bash
+    sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
+    sudo update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
+    sudo systemctl restart docker   # or if WSL2 does not use systemd: sudo service docker restart
+    ```
+- **Working Directory on WSL2:** Avoid running labs directly from Windows mounts (`/mnt/c/...` or `/mnt/d/...`) due to permission and I/O performance limitations. Clone and run in Linux home directory (`~/containerlab-demo`).
+
 ## Discussion & Community Support
 This lab is self-guided. If you have questions or feedback, discuss them in the [Network Thực Chiến](https://www.facebook.com/profile.php?id=61591373979991) community.
 

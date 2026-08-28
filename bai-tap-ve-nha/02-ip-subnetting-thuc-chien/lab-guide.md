@@ -39,6 +39,18 @@ Khối địa chỉ được cấp: **172.20.4.0/22**.
 - VLSM: sắp xếp yêu cầu từ lớn đến nhỏ trước khi chia sẽ dễ tính hơn.
 - `topology/subnet-lab.clab.yml` cố tình **không gán sẵn IP** — đây là phần bạn phải tự làm.
 
+## Xử lý sự cố thường gặp (Troubleshooting)
+
+- **Lỗi `unable to insert jump to DOCKER-ISOLATION-STAGE-1 ... Chain 'DOCKER-ISOLATION-STAGE-1' does not exist` khi deploy**:
+  - **Nguyên nhân:** Xung đột giữa `iptables-nft` và `iptables-legacy` trong Docker trên Ubuntu / WSL2 khi Containerlab tạo Docker network có IPv6.
+  - **Cách xử lý:** Chuyển iptables/ip6tables sang chế độ `legacy` và khởi động lại dịch vụ Docker:
+    ```bash
+    sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
+    sudo update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
+    sudo systemctl restart docker   # hoặc nếu WSL2 chưa bật systemd: sudo service docker restart
+    ```
+- **Lưu ý đường dẫn trên WSL2:** Tránh chạy bài lab từ ổ đĩa Windows mount (`/mnt/c/...` hoặc `/mnt/d/...`) do giới hạn quyền file và I/O chậm. Hãy clone và chạy trong thư mục Linux của WSL (ví dụ `~/containerlab-demo`).
+
 ## Thảo luận và hỏi đáp
 Bài tập này tự làm và tự xác minh kết quả. Nếu có thắc mắc hoặc cần trao đổi thêm, các bạn hãy đăng bài thảo luận trên group Facebook [Network Thực Chiến](https://www.facebook.com/profile.php?id=61591373979991).
 ## Bài tiếp theo
